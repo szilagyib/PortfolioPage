@@ -6,3 +6,8 @@
 # or in the Cloudflare dashboard.
 
 ANTHROPIC_API_KEY=""
+ALLOWED_ORIGIN="http://localhost:8788,http://127.0.0.1:8788"
+
+# Local development only. Production should bind CHAT_LIMITS to Cloudflare KV
+# instead of setting this flag.
+CHAT_ALLOW_UNLIMITED_WITHOUT_KV="true"
