@@ -73,8 +73,9 @@ cp .dev.vars.example .dev.vars
 wrangler pages dev dist
 ```
 
-Fill `.dev.vars` locally with an Anthropic API key. Real secrets are ignored by
-Git.
+Fill `.dev.vars` locally with an Anthropic API key. The example file enables a
+local-only no-KV bypass; production should use the `CHAT_LIMITS` KV binding
+instead. Real secrets are ignored by Git.
 
 ## Deployment
 
@@ -97,20 +98,23 @@ www.borbalaszilagyi.com
 ```
 
 Use the Cloudflare dashboard for production secrets, environment variables, and
-KV bindings.
+KV bindings. Set `ALLOWED_ORIGIN` to the production domains and bind
+`CHAT_LIMITS`; the chat function fails closed when the KV binding is absent
+unless the local-development bypass is explicitly set.
 
 ## Configuration
 
 | Setting | Where | Default |
 | --- | --- | --- |
 | `ANTHROPIC_API_KEY` | Cloudflare secret / `.dev.vars` | required for chat |
-| `CHAT_LIMITS` | Cloudflare KV binding | rate-limit storage disabled if absent |
+| `CHAT_LIMITS` | Cloudflare KV binding | required unless local bypass is set |
+| `CHAT_ALLOW_UNLIMITED_WITHOUT_KV` | `.dev.vars` only | unset |
 | `CHAT_MODEL` | Cloudflare env var | `claude-haiku-4-5` |
 | `CHAT_MAX_OUTPUT_TOKENS` | Cloudflare env var | `700` |
 | `CHAT_RATE_LIMIT_PER_HOUR` | Cloudflare env var | `10` |
 | `CHAT_RATE_LIMIT_PER_DAY` | Cloudflare env var | `30` |
 | `CHAT_DAILY_TOKEN_BUDGET` | Cloudflare env var | `200000` |
-| `ALLOWED_ORIGIN` | Cloudflare env var | permissive if empty |
+| `ALLOWED_ORIGIN` | Cloudflare env var | same-origin only if empty |
 
 ## Repository Layout
 

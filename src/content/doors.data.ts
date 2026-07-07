@@ -70,7 +70,7 @@ export const doors: readonly Door[] = [
         stack: ['Astro', 'React', 'TypeScript', 'Cloudflare Pages', 'Claude API'],
         preview: {
           src: '/previews/placeholder.svg',
-          alt: 'TODO: cosmic canvas mid-puzzle with a constellation half-drawn',
+          alt: 'Cosmic portfolio canvas with an interactive constellation puzzle',
         },
       },
       { kind: 'projectCard',
@@ -81,7 +81,7 @@ export const doors: readonly Door[] = [
         stack: ['Python', 'Streamlit', 'LanceDB', 'DuckDB', 'SQLite', 'litellm'],
         preview: {
           src: '/previews/placeholder.svg',
-          alt: 'TODO: Streamlit UI with the GlassBox panel showing chunks, scores, and citations',
+          alt: 'GlassBox RAG interface showing retrieval chunks, scores, and citations',
         },
       },
       { kind: 'projectCard',
@@ -92,7 +92,7 @@ export const doors: readonly Door[] = [
         stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
           src: '/previews/placeholder.svg',
-          alt: 'TODO: a real PR with the bot\'s inline comments and merge-gate badge',
+          alt: 'AI code-review agent dashboard with pull-request feedback',
         },
       },
       { kind: 'projectCard',
@@ -103,7 +103,7 @@ export const doors: readonly Door[] = [
         stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Yjs', 'Vercel AI SDK'],
         preview: {
           src: '/previews/placeholder.svg',
-          alt: 'TODO: RAMSey UI screenshot with a fault tree or Markov chain on the canvas',
+          alt: 'RAMSey collaborative diagram editor preview',
         },
       },
 

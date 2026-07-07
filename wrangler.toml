@@ -1,43 +1,30 @@
 # =============================================================================
-# wrangler.toml — project metadata for borbala-portfolio
+# wrangler.toml - project metadata for borbala-portfolio
 # =============================================================================
 #
-# This file is safe to commit. It contains NO secrets and NO environment-
-# specific values. Everything that has to be set lives in the Cloudflare
-# Pages dashboard (so values can change without re-committing).
+# Safe to commit: this file contains project metadata only. Secrets, runtime
+# environment variables, and KV bindings live in the Cloudflare Pages dashboard.
 #
-# See the "DEPLOYMENT CHECKLIST" task in the project task list for the full
-# setup walkthrough.
+# Production dashboard checklist:
+#   Environment variables:
+#     ANTHROPIC_API_KEY          encrypted secret
+#     CHAT_MODEL                 e.g. "claude-haiku-4-5"
+#     CHAT_MAX_OUTPUT_TOKENS     e.g. "700"
+#     CHAT_RATE_LIMIT_PER_HOUR   e.g. "10"
+#     CHAT_RATE_LIMIT_PER_DAY    e.g. "30"
+#     CHAT_DAILY_TOKEN_BUDGET    e.g. "200000"
+#     ALLOWED_ORIGIN             "https://borbalaszilagyi.com,https://www.borbalaszilagyi.com"
 #
-# WHAT GOES WHERE
+#   Functions -> KV namespace bindings:
+#     CHAT_LIMITS                required in production
 #
-#   Cloudflare dashboard → Pages → <project> → Settings → Environment variables
-#     ANTHROPIC_API_KEY          (encrypted secret)
-#     CHAT_MODEL                  e.g. "claude-haiku-4-5"
-#     CHAT_MAX_OUTPUT_TOKENS      e.g. "700"
-#     CHAT_RATE_LIMIT_PER_HOUR    e.g. "10"
-#     CHAT_RATE_LIMIT_PER_DAY     e.g. "30"
-#     CHAT_DAILY_TOKEN_BUDGET     e.g. "200000"
-#     ALLOWED_ORIGIN              e.g. "https://borbala.dev,https://www.borbala.dev"
-#
-#   Cloudflare dashboard → Pages → <project> → Settings → Functions → KV namespace bindings
-#     CHAT_LIMITS                 bind to the KV namespace you created
-#
-#   GitHub repo → Settings → Secrets and variables (only if you deploy via Actions)
-#     CLOUDFLARE_API_TOKEN
-#     CLOUDFLARE_ACCOUNT_ID
-#
-#   Local dev (`wrangler pages dev`)
-#     `.dev.vars`                 copy from `.dev.vars.example`, fill in
-#                                 ANTHROPIC_API_KEY — gitignored.
-#
-# Defaults baked into the Pages Function (used when an env var is absent):
+# Defaults baked into the Pages Function:
 #   CHAT_MODEL                  = "claude-haiku-4-5"
 #   CHAT_MAX_OUTPUT_TOKENS      = 700
 #   CHAT_RATE_LIMIT_PER_HOUR    = 10
 #   CHAT_RATE_LIMIT_PER_DAY     = 30
 #   CHAT_DAILY_TOKEN_BUDGET     = 200000
-#   ALLOWED_ORIGIN              = "" (permissive — set in dashboard for prod)
+#   ALLOWED_ORIGIN              = same-origin only when absent
 # =============================================================================
 
 name = "borbala-portfolio"

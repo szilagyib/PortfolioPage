@@ -29,10 +29,10 @@ interface Env {
   CHAT_RATE_LIMIT_PER_HOUR?: string;
   CHAT_RATE_LIMIT_PER_DAY?: string;
   CHAT_DAILY_TOKEN_BUDGET?: string;
+  CHAT_ALLOW_UNLIMITED_WITHOUT_KV?: string;
   /**
    * Comma-separated list of origins permitted to call this endpoint.
-   * When unset, the endpoint accepts any origin — fine for local dev but
-   * should always be set in production to make casual API scraping harder.
+   * When unset, only same-origin requests are accepted.
    */
   ALLOWED_ORIGIN?: string;
 }
@@ -57,9 +57,15 @@ interface ResponseBody {
 
 // --- Code constants (defensive bounds, not visitor-tunable) ---------------
 /** Cap on conversation length sent to Anthropic. Counts messages, not turns. */
-const MAX_HISTORY_MESSAGES = 12;
+const MAX_HISTORY_MESSAGES = 8;
 /** Bound on raw inbound array length so we don't spend cycles parsing junk. */
-const MAX_RAW_MESSAGES = 100;
+const MAX_RAW_MESSAGES = 24;
+/** Reject obviously oversized bodies before JSON parsing. */
+const MAX_REQUEST_BYTES = 16_384;
+/** Per-message text cap. Keeps prompt-injection spam and accidental pastes small. */
+const MAX_MESSAGE_CHARS = 1200;
+/** Total cleaned conversation cap after trimming. */
+const MAX_TOTAL_MESSAGE_CHARS = 5000;
 
 // --- Fallbacks for env-tunable values (when wrangler.toml isn't read) ----
 const DEFAULT_MODEL = 'claude-haiku-4-5';
@@ -74,6 +80,7 @@ const json = (body: unknown, init?: ResponseInit): Response =>
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff',
       ...(init?.headers ?? {}),
     },
   });
@@ -93,6 +100,18 @@ function parseIntOr(value: string | undefined, fallback: number): number {
   if (!value) return fallback;
   const n = parseInt(value, 10);
   return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+function boolEnv(value: string | undefined): boolean {
+  if (!value) return false;
+  return ['1', 'true', 'yes', 'on'].includes(value.trim().toLowerCase());
+}
+
+function requestTooLarge(request: Request): boolean {
+  const raw = request.headers.get('content-length');
+  if (!raw) return false;
+  const length = Number.parseInt(raw, 10);
+  return Number.isFinite(length) && length > MAX_REQUEST_BYTES;
 }
 
 function todayUTC(): { day: string; hour: string } {
@@ -171,7 +190,22 @@ interface AnthropicTextBlock {
 
 interface AnthropicResponse {
   readonly content?: readonly AnthropicTextBlock[];
-  readonly usage?: { readonly output_tokens?: number };
+  readonly usage?: {
+    readonly input_tokens?: number;
+    readonly cache_creation_input_tokens?: number;
+    readonly cache_read_input_tokens?: number;
+    readonly output_tokens?: number;
+  };
+}
+
+function totalUsageTokens(usage: AnthropicResponse['usage']): number {
+  if (!usage) return 0;
+  return (
+    (usage.input_tokens ?? 0) +
+    (usage.cache_creation_input_tokens ?? 0) +
+    (usage.cache_read_input_tokens ?? 0) +
+    (usage.output_tokens ?? 0)
+  );
 }
 
 /**
@@ -193,7 +227,7 @@ async function callAnthropic(
   model: string,
   maxOutputTokens: number,
   history: readonly ClientMessage[],
-): Promise<{ text: string; outputTokens: number }> {
+): Promise<{ text: string; usageTokens: number }> {
   const body = {
     model,
     max_tokens: maxOutputTokens,
@@ -235,7 +269,7 @@ async function callAnthropic(
     throw new Error('anthropic returned empty text');
   }
 
-  return { text, outputTokens: data.usage?.output_tokens ?? 0 };
+  return { text, usageTokens: totalUsageTokens(data.usage) };
 }
 
 function validateBody(raw: unknown): RequestBody | null {
@@ -248,9 +282,10 @@ function validateBody(raw: unknown): RequestBody | null {
     if (!item || typeof item !== 'object') return null;
     const m = item as { role?: unknown; text?: unknown };
     if (m.role !== 'user' && m.role !== 'assistant') return null;
-    if (typeof m.text !== 'string' || m.text.trim().length === 0) return null;
-    if (m.text.length > 2000) return null;
-    cleaned.push({ role: m.role, text: m.text });
+    if (typeof m.text !== 'string') return null;
+    const text = m.text.trim();
+    if (text.length === 0 || text.length > MAX_MESSAGE_CHARS) return null;
+    cleaned.push({ role: m.role, text });
   }
   // Last message must come from the user — we're answering it.
   if (cleaned[cleaned.length - 1].role !== 'user') return null;
@@ -264,14 +299,16 @@ function validateBody(raw: unknown): RequestBody | null {
     sliced = sliced.slice(1);
   }
   if (sliced.length === 0) return null;
+  const totalChars = sliced.reduce((sum, m) => sum + m.text.length, 0);
+  if (totalChars > MAX_TOTAL_MESSAGE_CHARS) return null;
 
   return { messages: sliced };
 }
 
 function originAllowed(request: Request, allowed: string | undefined): boolean {
-  if (!allowed) return true; // No allow-list configured → permissive.
-  const allowedList = allowed.split(',').map((s) => s.trim()).filter(Boolean);
-  if (allowedList.length === 0) return true;
+  const configured = allowed?.split(',').map((s) => s.trim()).filter(Boolean) ?? [];
+  const requestOrigin = new URL(request.url).origin;
+  const allowedList = configured.length > 0 ? configured : [requestOrigin];
 
   const origin = request.headers.get('origin');
   if (origin && allowedList.includes(origin)) return true;
@@ -295,6 +332,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (!originAllowed(request, env.ALLOWED_ORIGIN)) {
     return json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  if (requestTooLarge(request)) {
+    return json({ error: 'request too large' }, { status: 413 });
   }
 
   let body: unknown;
@@ -321,6 +362,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     dailyTokens: parseIntOr(env.CHAT_DAILY_TOKEN_BUDGET, DEFAULT_DAILY_TOKEN_BUDGET),
   };
 
+  if (!env.CHAT_LIMITS && !boolEnv(env.CHAT_ALLOW_UNLIMITED_WITHOUT_KV)) {
+    return cappedResponse(
+      'The chat is temporarily unavailable because rate limiting is not configured. Use the contact links above to reach Borbála directly.',
+    );
+  }
+
   if (env.CHAT_LIMITS) {
     const ip = request.headers.get('cf-connecting-ip') ?? 'anonymous';
     const ipHash = await sha256Hex(`chat-v1:${ip}`);
@@ -334,16 +381,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const maxOutputTokens = parseIntOr(env.CHAT_MAX_OUTPUT_TOKENS, DEFAULT_MAX_OUTPUT_TOKENS);
 
   try {
-    const { text, outputTokens } = await callAnthropic(
+    const { text, usageTokens } = await callAnthropic(
       env.ANTHROPIC_API_KEY,
       model,
       maxOutputTokens,
       parsed.messages,
     );
-    if (env.CHAT_LIMITS && outputTokens > 0) {
+    if (env.CHAT_LIMITS && usageTokens > 0) {
       // Don't block the response on the bookkeeping write — context.waitUntil
       // lets it finish after the response is already on the wire.
-      context.waitUntil(recordTokenUsage(env.CHAT_LIMITS, outputTokens));
+      context.waitUntil(recordTokenUsage(env.CHAT_LIMITS, usageTokens));
     }
     return json({ role: 'assistant', text } satisfies ResponseBody);
   } catch (err) {
