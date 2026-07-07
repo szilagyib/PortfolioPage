@@ -1,106 +1,135 @@
-# Borbála Szilágyi — Portfolio
+# Borbála Szilágyi Portfolio
 
-An interactive single-page portfolio. A cosmic canvas with a central "YOU" star, five
-destinations arranged in a pentagon, and a pipe-rotation puzzle that gates each one.
-Solving a puzzle "powers" the destination and reveals an artifact card with the content
-behind it (about, leadership, engineering, AI, education). A fortune-cookie shooting star
-sits in the top-right; an Aquarius constellation flourish lives in the bottom-left.
+Interactive showcase portfolio for Borbála Szilágyi, a Budapest-based software
+engineering team lead focused on pragmatic AI adoption, developer tooling, and
+engineering leadership.
 
-The AI destination contains an "ask me anything" chat box that answers questions about
-Borbála's work, grounded on a system prompt held server-side.
+The site is built as a single-page portfolio experience: visitors explore a
+cosmic canvas, unlock sections through lightweight constellation puzzles, read
+selected project and writing cards, download the CV, and ask a scoped AI
+assistant about Borbála's professional background.
 
-## Tech stack
+## What It Showcases
 
-- **Astro 6** static site, **React 19** islands (only the canvas + chat are interactive).
-- **TypeScript 6** strict throughout.
-- **Zustand 5** with `sessionStorage` persistence for per-tab game state.
-- **motion 12** (formerly framer-motion) for animations.
-- **Vitest 4** + **@testing-library/react** + **MSW 2** for tests.
-- **Cloudflare Pages** hosting; **Cloudflare Pages Functions** for the chat API.
-- **Anthropic Claude Haiku** for the chat, with prompt caching on the system message.
-- **Cloudflare KV** for per-IP rate limiting and the daily token-budget guard.
+- Professional profile, leadership style, engineering background, education, and
+  selected writing.
+- Project highlights for the portfolio itself, GlassBox RAG, GitAgents, and
+  RAMSey.
+- A server-side AI assistant grounded on a curated system prompt, with refusal
+  rules and rate limits.
+- Responsive desktop and mobile portfolio flows.
+- Recruiter-friendly CV access and contact-oriented navigation.
+
+## Tech Stack
+
+- **Astro 6** for the static site shell.
+- **React 19** islands for the interactive canvas, puzzles, and chat UI.
+- **TypeScript 6** throughout.
+- **Zustand 5** for per-tab canvas state.
+- **motion 12** for UI animation.
+- **Vitest 4**, Testing Library, and MSW for unit/component tests.
+- **Cloudflare Pages** for hosting.
+- **Cloudflare Pages Functions** for `/api/chat` and `/api/fortune`.
+- **Cloudflare KV** for chat rate-limit and token-budget counters.
+- **Anthropic Claude** for the portfolio assistant.
 
 ## Architecture
 
-Strict layering. Each layer depends only on those below it.
+The app keeps the interactive surface split into small layers:
 
-```
-components/         pure presentational React
-   ↓
-state/              Zustand store wiring domain + services
-   ↓
-services/           side effects: fetch, browser APIs (sessionStorage, etc.)
-   ↓
-domain/             pure types + rules (puzzle solver, etc.) — no React, no DOM
-content/            typed data only (door content, system prompt, puzzles)
+```text
+src/components/   React UI components
+src/state/        Zustand store and canvas state wiring
+src/services/     Browser/API side effects
+src/domain/       Pure types and puzzle rules
+src/content/      Typed portfolio content and assistant prompt
+functions/api/    Cloudflare Pages Functions
 ```
 
-The Pages Function in `functions/api/chat.ts` is the only server-side code. It
-applies an Origin allow-list, per-IP rate limits, a daily token-budget cap, and
-forwards to Anthropic with the system prompt sent under `cache_control: ephemeral`.
+The portfolio is static by default. Server-side behavior is isolated to
+Cloudflare Pages Functions so secrets never ship to the browser.
 
-## Local development
+## Local Development
 
 ```bash
 npm install
-npm run dev          # Astro dev server only — /api/chat won't respond
-npm test             # vitest
-npm run build        # static output → ./dist
-npm run typecheck    # astro check + tsc --noEmit
+npm run dev
 ```
 
-For the full stack (so `/api/chat` works locally):
+Useful checks:
+
+```bash
+npm run test
+npm run typecheck
+npm run build
+```
+
+`npm run dev` starts the Astro dev server. The Cloudflare function endpoints are
+available when running through Wrangler:
 
 ```bash
 npm run build
-cp .dev.vars.example .dev.vars   # then fill in ANTHROPIC_API_KEY
+cp .dev.vars.example .dev.vars
 wrangler pages dev dist
 ```
 
+Fill `.dev.vars` locally with an Anthropic API key. Real secrets are ignored by
+Git.
+
 ## Deployment
 
-Every settable value lives in the Cloudflare Pages dashboard (or as a secret) —
-**nothing sensitive or environment-specific is in this repo**. `wrangler.toml`
-contains project metadata only.
+Target platform: **Cloudflare Pages**.
 
-For the first-time deploy walkthrough, see the **DEPLOYMENT CHECKLIST** task in
-the project task list (it covers KV setup, env vars, Anthropic secret, and the
-GitHub → Cloudflare Pages connection).
+Recommended build settings:
 
-After the initial setup, pushing to the connected branch triggers an auto-deploy.
-
-## Configuration surface
-
-| Setting | Where | Default if absent |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | Cloudflare dashboard (encrypted secret) | — |
-| KV namespace bound to `CHAT_LIMITS` | Cloudflare dashboard → Functions → KV bindings | rate limit skipped |
-| `CHAT_MODEL` | Cloudflare dashboard env var | `claude-haiku-4-5` |
-| `CHAT_MAX_OUTPUT_TOKENS` | Cloudflare dashboard env var | `700` |
-| `CHAT_RATE_LIMIT_PER_HOUR` | Cloudflare dashboard env var | `10` |
-| `CHAT_RATE_LIMIT_PER_DAY` | Cloudflare dashboard env var | `30` |
-| `CHAT_DAILY_TOKEN_BUDGET` | Cloudflare dashboard env var | `200000` |
-| `ALLOWED_ORIGIN` | Cloudflare dashboard env var | `""` (permissive) |
-
-## Repository layout
-
+```text
+Framework preset: Astro
+Build command: npm run build
+Build output directory: dist
+Node version: 20+
 ```
-functions/api/chat.ts     Cloudflare Pages Function — POST /api/chat
-src/
-  components/             React components (canvas, chat, fallback)
-  content/                typed content (door artifacts, system prompt, puzzles)
-  domain/                 pure types + rules
-  layouts/                Astro layouts
-  pages/                  Astro routes
-  services/               side-effectful helpers (fortune, chat, viewport)
-  state/                  Zustand store
-  styles/                 design tokens + global CSS
-tests/                    vitest tests (unit + component)
-public/                   static assets
-wrangler.toml             project metadata for Cloudflare Pages
+
+The production domain is intended to be:
+
+```text
+borbalaszilagyi.com
+www.borbalaszilagyi.com
+```
+
+Use the Cloudflare dashboard for production secrets, environment variables, and
+KV bindings.
+
+## Configuration
+
+| Setting | Where | Default |
+| --- | --- | --- |
+| `ANTHROPIC_API_KEY` | Cloudflare secret / `.dev.vars` | required for chat |
+| `CHAT_LIMITS` | Cloudflare KV binding | rate-limit storage disabled if absent |
+| `CHAT_MODEL` | Cloudflare env var | `claude-haiku-4-5` |
+| `CHAT_MAX_OUTPUT_TOKENS` | Cloudflare env var | `700` |
+| `CHAT_RATE_LIMIT_PER_HOUR` | Cloudflare env var | `10` |
+| `CHAT_RATE_LIMIT_PER_DAY` | Cloudflare env var | `30` |
+| `CHAT_DAILY_TOKEN_BUDGET` | Cloudflare env var | `200000` |
+| `ALLOWED_ORIGIN` | Cloudflare env var | permissive if empty |
+
+## Repository Layout
+
+```text
+functions/api/     Cloudflare Pages Functions
+public/            Static assets, CV, profile image
+src/components/    Canvas, puzzle, chat, and fallback components
+src/config/        Feature/config switches
+src/content/       Portfolio data and assistant system prompt
+src/domain/        Pure domain logic
+src/layouts/       Astro layouts
+src/pages/         Astro routes
+src/services/      Client-side service wrappers
+src/state/         Zustand state
+src/styles/        Global CSS and tokens
+tests/             Unit and component tests
 ```
 
 ## License
 
-Personal portfolio — content (text, images) © Borbála Szilágyi.
-Code is shared as-is for reference; no implicit licence.
+Personal portfolio. Content, images, CV, and personal materials are copyright
+Borbála Szilágyi. Code is shared as-is for reference; no implicit license.
