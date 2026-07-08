@@ -109,12 +109,14 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
     if (dragFromIdx === null) return;
     const p = eventToSvgCoords(e);
     if (p) {
-      // Hit-test: which star (if any) is within 4.5 SVG units of release point.
+      // Hit-test: which star (if any) is within 7 SVG units of release point.
+      // Bigger than the visible star (radius ~1.6) so touch-drag on mobile
+      // doesn't demand pixel-perfect precision.
       const hitIdx = stars.findIndex((s, i) => {
         if (i === dragFromIdx) return false;
         const dx = s.x - p.x;
         const dy = s.y - p.y;
-        return Math.sqrt(dx * dx + dy * dy) <= 4.5;
+        return Math.sqrt(dx * dx + dy * dy) <= 7;
       });
       if (hitIdx !== -1) {
         setState((s) => tryClick(s, hitIdx));
@@ -332,13 +334,15 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
                     transition={{ duration: 0.55, ease: 'easeOut' }}
                   />
                 )}
-                {/* Generous hit target — invisible, larger than the visual.
-                 *   Receives both clicks (for keyboard / accessibility paths)
-                 *   and pointer events (for drag-to-draw). */}
+                {/* Generous hit target — invisible, much larger than the
+                 *   visible star. Radius 7 in SVG units is ~4× the visual
+                 *   star size so touch input on mobile lands reliably.
+                 *   Receives both clicks (keyboard / accessibility paths)
+                 *   and pointer events (drag-to-draw). */}
                 <circle
                   cx={star.x}
                   cy={star.y}
-                  r={4.5}
+                  r={7}
                   fill="transparent"
                   onClick={() => handleStarClick(idx)}
                   onPointerDown={(e) => handleStarPointerDown(e, idx)}
