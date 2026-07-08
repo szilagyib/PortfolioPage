@@ -481,7 +481,11 @@ export function BodyBlocks({ door }: BodyBlocksProps) {
           key={`group-${startedAt}`}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            /* min(100%, 280px) collapses to 100% when the container is
+             * narrower than 280 (mobile), so the grid becomes a single
+             * column and never overflows sideways. On wider containers
+             * it behaves like `minmax(280px, 1fr)` and multi-columns. */
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
             gap: 12,
             margin: '12px 0',
           }}

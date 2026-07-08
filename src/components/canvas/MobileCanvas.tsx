@@ -74,11 +74,15 @@ export default function MobileCanvas() {
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden' }}>
       <CosmicBackground />
 
-      {/* Top bar — name + three matched pill buttons (CV, see-all, restart)
-       *   on a single row; title on a second row underneath. Higher z-index
-       *   than AllDoorsStack (z=9) so the restart icon stays reachable
-       *   while the see-all overlay is open. Subtle gradient backdrop
-       *   keeps buttons legible over any content behind them. */}
+      {/* Top bar
+       *   Left column:
+       *     Row 1 — name + inline ↓ CV pill
+       *     Row 2 — title
+       *   Right column:
+       *     Canvas view — [↓ see all] and, if any door is powered, [↻]
+       *     See-all view — [✕] only (no restart, no see-all)
+       *   Higher z-index than AllDoorsStack (z=9) so ✕ stays reachable.
+       *   Gradient backdrop keeps buttons legible over any content behind. */}
       <header
         style={{
           position: 'fixed',
@@ -86,10 +90,10 @@ export default function MobileCanvas() {
           left: 0,
           right: 0,
           display: 'flex',
-          flexDirection: 'column',
+          justifyContent: 'space-between',
           alignItems: 'flex-start',
           padding: '10px 14px 12px',
-          gap: 4,
+          gap: 10,
           zIndex: 10,
           fontFamily: 'var(--font-mono)',
           background:
@@ -98,54 +102,56 @@ export default function MobileCanvas() {
       >
         <div
           style={{
+            minWidth: 0,
             display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            width: '100%',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 4,
           }}
         >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div
+              style={{
+                fontSize: 14,
+                color: 'var(--text-bright)',
+                letterSpacing: '0.03em',
+                fontWeight: 500,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              Borbála Szilágyi
+            </div>
+            <a
+              href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
+              download
+              aria-label="download CV"
+              style={MOBILE_PILL_CV}
+            >
+              ↓ CV
+            </a>
+          </div>
           <div
             style={{
-              flex: '1 1 auto',
-              minWidth: 0,
-              fontSize: 14,
-              color: 'var(--text-bright)',
-              letterSpacing: '0.03em',
-              fontWeight: 500,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
+              fontSize: 10,
+              color: 'var(--text-dim)',
+              letterSpacing: '0.06em',
             }}
           >
-            Borbála Szilágyi
+            Software Engineer · Team Lead
           </div>
-          <a
-            href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
-            download
-            aria-label="download CV"
-            style={MOBILE_PILL_CV}
-          >
-            ↓ CV
-          </a>
-          <button
-            type="button"
-            onClick={openAll}
-            style={MOBILE_PILL}
-          >
-            ↓ see all
-          </button>
-          {(poweredDoors.length > 0 || allDoorsOpen) && (
-            <button
-              type="button"
-              onClick={reset}
-              aria-label="start over"
-              title="start over"
-              style={MOBILE_PILL}
-            >
-              ↻
-            </button>
-          )}
-          {allDoorsOpen && (
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 6,
+            alignItems: 'center',
+            flex: '0 0 auto',
+          }}
+        >
+          {allDoorsOpen ? (
             <button
               type="button"
               onClick={closeAll}
@@ -155,16 +161,28 @@ export default function MobileCanvas() {
             >
               ✕
             </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={openAll}
+                style={MOBILE_PILL}
+              >
+                ↓ see all
+              </button>
+              {poweredDoors.length > 0 && (
+                <button
+                  type="button"
+                  onClick={reset}
+                  aria-label="start over"
+                  title="start over"
+                  style={MOBILE_PILL}
+                >
+                  ↻
+                </button>
+              )}
+            </>
           )}
-        </div>
-        <div
-          style={{
-            fontSize: 10,
-            color: 'var(--text-dim)',
-            letterSpacing: '0.06em',
-          }}
-        >
-          Software Engineer · Team Lead
         </div>
       </header>
 
