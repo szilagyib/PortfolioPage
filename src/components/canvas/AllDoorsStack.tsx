@@ -33,9 +33,14 @@ export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
       {(onClose || onReset) && (
         <div
           style={{
+            /* Anchored to the modal content's right edge (max-width 720
+             * centred), not the viewport corner — otherwise the buttons
+             * feel detached from the cards on wide screens. On viewports
+             * narrower than the content, the buttons fall back to a
+             * viewport-margin of 18px. */
             position: 'fixed',
             top: 14,
-            right: 18,
+            right: 'max(18px, calc(50vw - 360px))',
             display: 'flex',
             gap: 8,
             zIndex: 1,
