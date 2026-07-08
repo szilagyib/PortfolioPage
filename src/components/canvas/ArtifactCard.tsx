@@ -86,19 +86,19 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
     case 'metric':
       /* Each metric sits in a flex-wrap row (see BodyBlocks). `flex: 1 1
        * auto` lets the cell size to its content and grow into the available
-       * row width; `whiteSpace: nowrap` keeps each label on one line. Cells
-       * therefore end up unequal widths — long labels get wider cells, short
-       * labels get narrower ones — and wrap to the next row when the row
-       * fills up. */
+       * row width. The `.metric-block` class carries `whiteSpace: nowrap`
+       * on wider viewports (keeps each label on one line) and drops back
+       * to normal wrapping on narrow phones so long labels wrap inside
+       * the cell instead of overflowing horizontally. */
       return (
         <div
           key={i}
+          className="metric-block"
           style={{
             padding: '10px 14px',
             border: '1px solid var(--tech-line)',
             borderRadius: 5,
             flex: '1 1 auto',
-            whiteSpace: 'nowrap',
           }}
         >
           <span style={{ color: 'var(--accent-cyan)', fontSize: 'var(--fs-h2)', fontWeight: 600 }}>

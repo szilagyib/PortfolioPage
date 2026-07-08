@@ -243,6 +243,7 @@ export default function Canvas() {
             .map((id) => doors.find((d) => d.id === id))
             .filter((d): d is import('@/domain/door').Door => d !== undefined)}
           onClose={closeAll}
+          onReset={poweredDoors.length > 0 ? reset : undefined}
         />
       )}
     </div>

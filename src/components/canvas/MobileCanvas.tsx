@@ -37,6 +37,7 @@ export default function MobileCanvas() {
   const openAll      = useCanvasStore((s) => s.openAll);
   const closeAll     = useCanvasStore((s) => s.closeAll);
   const openCardFor  = useCanvasStore((s) => s.openCardFor);
+  const reset        = useCanvasStore((s) => s.reset);
 
   const orderedDoors = DOOR_ORDER
     .map((id) => doors.find((d) => d.id === id))
@@ -49,23 +50,37 @@ export default function MobileCanvas() {
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden' }}>
       <CosmicBackground />
 
-      {/* Top bar — identity on the left, CV + see-all on the right */}
+      {/* Top bar — identity + CV stacked on the left; see-all + start-again
+       *   on the right. Higher z-index than AllDoorsStack (z=9) so the
+       *   start-again icon stays reachable while the see-all overlay is
+       *   open. Subtle gradient backdrop keeps buttons legible over any
+       *   content behind them. */}
       <header
         style={{
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
-          padding: '14px 14px 10px',
+          padding: '12px 14px 14px',
           gap: 10,
-          zIndex: 4,
+          zIndex: 10,
           fontFamily: 'var(--font-mono)',
+          background:
+            'linear-gradient(to bottom, rgba(6, 6, 15, 0.94) 0%, rgba(6, 6, 15, 0.85) 70%, rgba(6, 6, 15, 0) 100%)',
         }}
       >
-        <div style={{ minWidth: 0 }}>
+        <div
+          style={{
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 6,
+          }}
+        >
           <div
             style={{
               fontSize: 14,
@@ -75,6 +90,7 @@ export default function MobileCanvas() {
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              maxWidth: '100%',
             }}
           >
             Borbála Szilágyi
@@ -84,14 +100,10 @@ export default function MobileCanvas() {
               fontSize: 10,
               color: 'var(--text-dim)',
               letterSpacing: '0.06em',
-              marginTop: 2,
             }}
           >
             Software Engineer · Team Lead
           </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: 6, flex: '0 0 auto' }}>
           <a
             href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
             download
@@ -102,14 +114,25 @@ export default function MobileCanvas() {
               letterSpacing: '0.06em',
               color: 'var(--accent-cyan)',
               textDecoration: 'none',
-              padding: '5px 8px',
+              padding: '4px 8px',
               border: '1px solid rgba(95, 184, 214, 0.45)',
               borderRadius: 4,
               background: 'rgba(13,18,48,0.55)',
+              marginTop: 2,
             }}
           >
             ↓ CV
           </a>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 6,
+            alignItems: 'center',
+            flex: '0 0 auto',
+          }}
+        >
           <button
             type="button"
             onClick={openAll}
@@ -126,18 +149,38 @@ export default function MobileCanvas() {
           >
             ↓ see all
           </button>
+          {(poweredDoors.length > 0 || allDoorsOpen) && (
+            <button
+              type="button"
+              onClick={reset}
+              aria-label="start over"
+              title="start over"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 14,
+                lineHeight: 1,
+                color: 'var(--text-bright)',
+                border: '1px solid var(--tech-line)',
+                padding: '4px 8px',
+                borderRadius: 4,
+                background: 'rgba(13,18,48,0.55)',
+              }}
+            >
+              ↻
+            </button>
+          )}
         </div>
       </header>
 
-      {/* Stage — YOU on top, destinations stacked below. Fade the whole strip
-       *   in on first paint so the page doesn't pop into view. */}
+      {/* Stage — YOU on top, destinations stacked below. Top offset clears
+       *   the taller mobile header (name + title + CV stacked). */}
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4, ease: REVEAL_EASE }}
         style={{
           position: 'absolute',
-          top: 64,
+          top: 100,
           bottom: 0,
           left: 0,
           right: 0,
@@ -191,21 +234,8 @@ export default function MobileCanvas() {
           {/* Bright central core */}
           <circle cx="0" cy="0" r="2.4" fill="#ffffff" />
         </motion.svg>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.18, ease: REVEAL_EASE }}
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 10,
-            color: 'var(--text-dim)',
-            letterSpacing: '0.1em',
-            marginTop: 2,
-            marginBottom: 14,
-          }}
-        >
-          YOU · here
-        </motion.div>
+        {/* Spacer between YOU star and the destination column */}
+        <div style={{ height: 12 }} />
 
         {/* Vertical trunk-and-destinations column */}
         <div
@@ -292,6 +322,7 @@ export default function MobileCanvas() {
         <AllDoorsStack
           doors={orderedDoors}
           onClose={closeAll}
+          onReset={poweredDoors.length > 0 ? reset : undefined}
         />
       )}
     </div>
