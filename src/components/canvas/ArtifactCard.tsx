@@ -411,14 +411,7 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
             color: 'inherit',
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'baseline',
-              gap: 12,
-            }}
-          >
+          <div className="post-card-row">
             <strong style={{ color: 'var(--text-bright)' }}>
               {b.title}{' '}
               <span aria-hidden style={{ color: 'var(--accent-cyan)' }}>↗</span>
@@ -613,6 +606,11 @@ export function ArtifactCard({
             width: 'min(92vw, 920px)',
             maxHeight: 'min(86vh, 760px)',
             overflowY: 'auto',
+            /* Explicit hidden — otherwise CSS silently promotes overflowX
+             * to 'auto' whenever overflowY is set, and any child that
+             * doesn't wrap (postCard row, long token) produces a
+             * horizontal scrollbar inside the panel. */
+            overflowX: 'hidden',
             transformOrigin: `${originXForPanel}% ${originYForPanel}%`,
             pointerEvents: 'auto',
             cursor: 'auto',
@@ -632,13 +630,13 @@ export function ArtifactCard({
            * card content scrolls. Background matches the panel so content
            * underneath doesn't bleed through. */}
           <div
+            className="artifact-header-pad"
             style={{
               position: 'sticky',
               top: 0,
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              padding: '12px 32px',
               background: 'linear-gradient(180deg, rgba(13,18,48,0.98) 0%, rgba(13,18,48,0.92) 100%)',
               borderBottom: '1px solid rgba(178, 212, 229, 0.14)',
               color: 'var(--tech-label)',

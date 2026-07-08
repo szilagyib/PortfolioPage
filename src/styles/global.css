@@ -48,11 +48,33 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   .metric-block { white-space: normal; }
 }
 
-/* Artifact card body — tighter side padding on phones so pills and
-   metrics have breathing room. */
+/* Artifact card header + body — tighter side padding on phones so
+   pills, metrics, and titles have breathing room. */
+.artifact-header-pad { padding: 12px 32px; }
 .artifact-body { padding: 18px 32px 28px; }
 @media (max-width: 640px) {
-  .artifact-body { padding: 14px 18px 24px; }
+  .artifact-header-pad { padding: 10px 16px; }
+  .artifact-body { padding: 14px 16px 24px; }
+}
+
+/* See-all overlay — tighter outer padding and card padding on phones
+   so cards don't hug the viewport edge. */
+.all-doors-outer { padding: 72px 16px 32px; }
+.all-doors-card { padding: 24px 22px 26px; }
+@media (max-width: 640px) {
+  .all-doors-outer { padding: 68px 10px 24px; }
+  .all-doors-card { padding: 18px 14px 20px; }
+}
+
+/* Post card row — title on left, meta on right; on narrow phones
+   allow wrap so the meta drops to a second line instead of pushing
+   the whole flex row off the card. */
+.post-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* Profile header (ABOUT). Two-column layout: photo on the left, name +
