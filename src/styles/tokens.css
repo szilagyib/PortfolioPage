@@ -1,4 +1,10 @@
 :root {
+  /* Tell the browser this page is always dark. Affects form controls,
+   * scrollbars, and — the reason it's here — the mobile on-screen
+   * keyboard, which reads this hint on iOS Safari and Chrome Android
+   * and paints itself in dark mode instead of light. */
+  color-scheme: dark;
+
   /* palette — cosmic */
   --bg-deep: #06060f;
   --bg-mid:  #1a1640;
