@@ -1,62 +1,55 @@
-# Borbála Szilágyi Portfolio
+# PortfolioPage
 
-Interactive showcase portfolio for Borbála Szilágyi, a Budapest-based software
-engineering team lead focused on pragmatic AI adoption, developer tooling, and
-engineering leadership.
+Interactive single-page showcase portfolio built around a cosmic canvas,
+lightweight constellation puzzles, project cards, a CV download, and a scoped
+AI assistant.
 
-The site is built as a single-page portfolio experience: visitors explore a
-cosmic canvas, unlock sections through lightweight constellation puzzles, read
-selected project and writing cards, download the CV, and ask a scoped AI
-assistant about Borbála's professional background.
+## Goal
 
-## What It Showcases
+The goal is to make a portfolio feel more like a small product than a static
+resume page:
 
-- Professional profile, leadership style, engineering background, education, and
-  selected writing.
-- Project highlights for the portfolio itself, GlassBox RAG, GitAgents, and
-  RAMSey.
-- A server-side AI assistant grounded on a curated system prompt, with refusal
-  rules and rate limits.
-- Responsive desktop and mobile portfolio flows.
-- Recruiter-friendly CV access and contact-oriented navigation.
+- fast static first load
+- rich interactive canvas on desktop
+- simpler responsive flow on mobile
+- project and writing cards that are easy to scan
+- server-side AI assistant with strict scope, rate limits, and cost guards
+- public-safe CV and contact surface
 
 ## Tech Stack
 
-- **Astro 6** for the static site shell.
-- **React 19** islands for the interactive canvas, puzzles, and chat UI.
-- **TypeScript 6** throughout.
-- **Zustand 5** for per-tab canvas state.
-- **motion 12** for UI animation.
-- **Vitest 4**, Testing Library, and MSW for unit/component tests.
-- **Cloudflare Pages** for hosting.
-- **Cloudflare Pages Functions** for `/api/chat` and `/api/fortune`.
-- **Cloudflare KV** for chat rate-limit and token-budget counters.
-- **Anthropic Claude** for the portfolio assistant.
+- **Astro 6** for the static site shell
+- **React 19** islands for the interactive canvas, puzzles, cards, and chat
+- **TypeScript 6**
+- **Zustand 5** for per-tab canvas state
+- **motion 12** for UI animation
+- **Cloudflare Pages** for hosting
+- **Cloudflare Pages Functions** for `/api/chat` and `/api/fortune`
+- **Cloudflare KV** for chat rate-limit and token-budget counters
+- **Anthropic Claude** for the portfolio assistant
+- **Vitest 4**, Testing Library, and MSW for tests
 
 ## Architecture
 
-The app keeps the interactive surface split into small layers:
-
 ```text
-src/components/   React UI components
-src/state/        Zustand store and canvas state wiring
-src/services/     Browser/API side effects
-src/domain/       Pure types and puzzle rules
-src/content/      Typed portfolio content and assistant prompt
-functions/api/    Cloudflare Pages Functions
+functions/api/     Cloudflare Pages Functions
+public/            Static assets and downloadable CV
+src/components/    Canvas, puzzle, chat, and card UI
+src/config/        Feature switches
+src/content/       Typed portfolio content and assistant prompt
+src/domain/        Pure domain logic
+src/layouts/       Astro layouts
+src/pages/         Astro routes
+src/services/      API/browser service wrappers
+src/state/         Zustand state
+src/styles/        Global CSS and design tokens
+tests/             Unit and component tests
 ```
 
-The portfolio is static by default. Server-side behavior is isolated to
-Cloudflare Pages Functions so secrets never ship to the browser.
+The site is static by default. Runtime behavior that needs secrets or abuse
+guards is isolated in Cloudflare Pages Functions.
 
-## Local Development
-
-```bash
-npm install
-npm run dev
-```
-
-Useful checks:
+## Checks
 
 ```bash
 npm run test
@@ -64,24 +57,11 @@ npm run typecheck
 npm run build
 ```
 
-`npm run dev` starts the Astro dev server. The Cloudflare function endpoints are
-available when running through Wrangler:
-
-```bash
-npm run build
-cp .dev.vars.example .dev.vars
-wrangler pages dev dist
-```
-
-Fill `.dev.vars` locally with an Anthropic API key. The example file enables a
-local-only no-KV bypass; production should use the `CHAT_LIMITS` KV binding
-instead. Real secrets are ignored by Git.
-
-## Deployment
+## Deployment Notes
 
 Target platform: **Cloudflare Pages**.
 
-Recommended build settings:
+Build settings:
 
 ```text
 Framework preset: Astro
@@ -90,50 +70,18 @@ Build output directory: dist
 Node version: 20+
 ```
 
-The production domain is intended to be:
+Required production configuration:
 
 ```text
-borbalaszilagyi.com
-www.borbalaszilagyi.com
+ANTHROPIC_API_KEY
+CHAT_LIMITS
+ALLOWED_ORIGIN
 ```
 
-Use the Cloudflare dashboard for production secrets, environment variables, and
-KV bindings. Set `ALLOWED_ORIGIN` to the production domains and bind
-`CHAT_LIMITS`; the chat function fails closed when the KV binding is absent
-unless the local-development bypass is explicitly set.
-
-## Configuration
-
-| Setting | Where | Default |
-| --- | --- | --- |
-| `ANTHROPIC_API_KEY` | Cloudflare secret / `.dev.vars` | required for chat |
-| `CHAT_LIMITS` | Cloudflare KV binding | required unless local bypass is set |
-| `CHAT_ALLOW_UNLIMITED_WITHOUT_KV` | `.dev.vars` only | unset |
-| `CHAT_MODEL` | Cloudflare env var | `claude-haiku-4-5` |
-| `CHAT_MAX_OUTPUT_TOKENS` | Cloudflare env var | `700` |
-| `CHAT_RATE_LIMIT_PER_HOUR` | Cloudflare env var | `10` |
-| `CHAT_RATE_LIMIT_PER_DAY` | Cloudflare env var | `30` |
-| `CHAT_DAILY_TOKEN_BUDGET` | Cloudflare env var | `200000` |
-| `ALLOWED_ORIGIN` | Cloudflare env var | same-origin only if empty |
-
-## Repository Layout
-
-```text
-functions/api/     Cloudflare Pages Functions
-public/            Static assets, CV, profile image
-src/components/    Canvas, puzzle, chat, and fallback components
-src/config/        Feature/config switches
-src/content/       Portfolio data and assistant system prompt
-src/domain/        Pure domain logic
-src/layouts/       Astro layouts
-src/pages/         Astro routes
-src/services/      Client-side service wrappers
-src/state/         Zustand state
-src/styles/        Global CSS and tokens
-tests/             Unit and component tests
-```
+`CHAT_LIMITS` must be bound to a Cloudflare KV namespace. Without it, the chat
+fails closed instead of making unmetered model calls.
 
 ## License
 
-Personal portfolio. Content, images, CV, and personal materials are copyright
-Borbála Szilágyi. Code is shared as-is for reference; no implicit license.
+Personal portfolio. Content, images, CV, and personal materials are not licensed
+for reuse. Code is shared as-is for reference; no implicit license.
