@@ -71,8 +71,8 @@ export const doors: readonly Door[] = [
         href: 'https://github.com/szilagyib/PortfolioPage',
         stack: ['Astro', 'React', 'TypeScript', 'Cloudflare Pages', 'Claude API'],
         preview: {
-          src: '/previews/placeholder.svg',
-          alt: 'Cosmic portfolio canvas with an interactive constellation puzzle',
+          src: '/previews/portfolio.png',
+          alt: 'Cosmic portfolio canvas with the pentagon of destinations around a central YOU star',
         },
       },
       { kind: 'projectCard',
