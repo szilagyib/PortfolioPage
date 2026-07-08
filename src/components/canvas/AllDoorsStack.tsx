@@ -23,6 +23,7 @@ export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
         position: 'fixed',
         inset: 0,
         overflowY: 'auto',
+        overflowX: 'hidden',
         zIndex: 9,
         background: 'rgba(6,6,15,0.92)',
         /* Padding tightened horizontally so cards have room on narrow
