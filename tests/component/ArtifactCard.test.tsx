@@ -38,6 +38,6 @@ describe('<ArtifactCard />', () => {
 
   it('renders bullet items from a bullet block', () => {
     render(<ArtifactCard door={leadership} onClose={() => {}} />);
-    expect(screen.getByText(/Rolled out AI tooling/i)).toBeInTheDocument();
+    expect(screen.getByText(/AI tools land through real work/i)).toBeInTheDocument();
   });
 });

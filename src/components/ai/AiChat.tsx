@@ -116,22 +116,16 @@ export function AiChat() {
             <p style={{ margin: '0 0 10px' }}>
               I'm an AI grounded on Borbála's bio — ask anything about her work, leadership, or AI experience.
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {/* Layout + typography driven by CSS classes (see global.css
+             *   .chat-suggestions) so mobile can switch to a stacked
+             *   column with nowrap — each question stays on one line. */}
+            <div className="chat-suggestions">
               {SUGGESTIONS.map((s) => (
                 <button
                   key={s}
                   type="button"
                   onClick={() => void handleSend(s)}
-                  style={{
-                    padding: '6px 10px',
-                    fontSize: 12,
-                    fontFamily: 'var(--font-mono)',
-                    color: 'var(--accent-cyan)',
-                    background: 'transparent',
-                    border: '1px solid rgba(95, 184, 214, 0.35)',
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                  }}
+                  className="chat-suggestion"
                 >
                   {s}
                 </button>
