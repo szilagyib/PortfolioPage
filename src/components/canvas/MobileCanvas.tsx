@@ -50,11 +50,11 @@ export default function MobileCanvas() {
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden' }}>
       <CosmicBackground />
 
-      {/* Top bar — identity + CV stacked on the left; see-all + start-again
-       *   on the right. Higher z-index than AllDoorsStack (z=9) so the
-       *   start-again icon stays reachable while the see-all overlay is
-       *   open. Subtle gradient backdrop keeps buttons legible over any
-       *   content behind them. */}
+      {/* Top bar — identity on the left (name + CV on the top row, title
+       *   below); see-all + start-again on the right. Higher z-index than
+       *   AllDoorsStack (z=9) so the start-again icon stays reachable while
+       *   the see-all overlay is open. Subtle gradient backdrop keeps
+       *   buttons legible over any content behind them. */}
       <header
         style={{
           position: 'fixed',
@@ -64,7 +64,7 @@ export default function MobileCanvas() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
-          padding: '12px 14px 14px',
+          padding: '10px 14px 12px',
           gap: 10,
           zIndex: 10,
           fontFamily: 'var(--font-mono)',
@@ -78,22 +78,42 @@ export default function MobileCanvas() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            gap: 6,
+            gap: 4,
           }}
         >
-          <div
-            style={{
-              fontSize: 14,
-              color: 'var(--text-bright)',
-              letterSpacing: '0.03em',
-              fontWeight: 500,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              maxWidth: '100%',
-            }}
-          >
-            Borbála Szilágyi
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div
+              style={{
+                fontSize: 14,
+                color: 'var(--text-bright)',
+                letterSpacing: '0.03em',
+                fontWeight: 500,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              Borbála Szilágyi
+            </div>
+            <a
+              href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
+              download
+              aria-label="download CV"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 10,
+                letterSpacing: '0.06em',
+                color: 'var(--accent-cyan)',
+                textDecoration: 'none',
+                padding: '3px 7px',
+                border: '1px solid rgba(95, 184, 214, 0.45)',
+                borderRadius: 4,
+                background: 'rgba(13,18,48,0.55)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              ↓ CV
+            </a>
           </div>
           <div
             style={{
@@ -104,25 +124,6 @@ export default function MobileCanvas() {
           >
             Software Engineer · Team Lead
           </div>
-          <a
-            href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
-            download
-            aria-label="download CV"
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 10,
-              letterSpacing: '0.06em',
-              color: 'var(--accent-cyan)',
-              textDecoration: 'none',
-              padding: '4px 8px',
-              border: '1px solid rgba(95, 184, 214, 0.45)',
-              borderRadius: 4,
-              background: 'rgba(13,18,48,0.55)',
-              marginTop: 2,
-            }}
-          >
-            ↓ CV
-          </a>
         </div>
 
         <div
@@ -173,14 +174,14 @@ export default function MobileCanvas() {
       </header>
 
       {/* Stage — YOU on top, destinations stacked below. Top offset clears
-       *   the taller mobile header (name + title + CV stacked). */}
+       *   the two-row mobile header (name+CV row, then title). */}
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4, ease: REVEAL_EASE }}
         style={{
           position: 'absolute',
-          top: 100,
+          top: 62,
           bottom: 0,
           left: 0,
           right: 0,
@@ -188,7 +189,7 @@ export default function MobileCanvas() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          padding: '12px 18px 28px',
+          padding: '8px 18px 28px',
           zIndex: 1,
         }}
       >
