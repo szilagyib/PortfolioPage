@@ -1,33 +1,16 @@
-# =============================================================================
-# wrangler.toml - project metadata for portfolio-page
-# =============================================================================
-#
-# Safe to commit: this file contains project metadata only. Secrets, runtime
-# environment variables, and KV bindings live in the Cloudflare Pages dashboard.
-#
-# Production dashboard checklist:
-#   Environment variables:
-#     ANTHROPIC_API_KEY          encrypted secret
-#     CHAT_MODEL                 e.g. "claude-haiku-4-5"
-#     CHAT_MAX_OUTPUT_TOKENS     e.g. "700"
-#     CHAT_RATE_LIMIT_PER_HOUR   e.g. "10"
-#     CHAT_RATE_LIMIT_PER_DAY    e.g. "30"
-#     CHAT_DAILY_TOKEN_BUDGET    e.g. "200000"
-#     ALLOWED_ORIGIN             "https://borbalaszilagyi.com,https://www.borbalaszilagyi.com"
-#
-#   Functions -> KV namespace bindings:
-#     CHAT_LIMITS                required in production
-#
-# Defaults baked into the Pages Function:
-#   CHAT_MODEL                  = "claude-haiku-4-5"
-#   CHAT_MAX_OUTPUT_TOKENS      = 700
-#   CHAT_RATE_LIMIT_PER_HOUR    = 10
-#   CHAT_RATE_LIMIT_PER_DAY     = 30
-#   CHAT_DAILY_TOKEN_BUDGET     = 200000
-#   ALLOWED_ORIGIN              = same-origin only when absent
-# =============================================================================
-
 name = "portfolio-page"
 pages_build_output_dir = "dist"
 compatibility_date = "2025-09-01"
 compatibility_flags = ["nodejs_compat"]
+
+[vars]
+CHAT_MODEL = "claude-haiku-4-5"
+CHAT_MAX_OUTPUT_TOKENS = "700"
+CHAT_RATE_LIMIT_PER_HOUR = "10"
+CHAT_RATE_LIMIT_PER_DAY = "30"
+CHAT_DAILY_TOKEN_BUDGET = "200000"
+ALLOWED_ORIGIN = "https://borbalaszilagyi.com,https://www.borbalaszilagyi.com"
+
+[[kv_namespaces]]
+binding = "CHAT_LIMITS"
+id = "1f74f091026a4d3e8fb911d81b69c1e1"
