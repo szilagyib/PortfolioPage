@@ -4,5 +4,8 @@ import Canvas from '@/components/canvas/Canvas';
 import '@/styles/global.css';
 ---
 <Base title="Borbála Szilágyi — Portfolio">
-  <Canvas client:visible />
+  <!-- client:only skips SSR so the desktop layout never flashes on mobile
+       before React picks the right breakpoint. Users see the body gradient
+       (cosmic background) until React mounts. -->
+  <Canvas client:only="react" />
 </Base>
