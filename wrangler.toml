@@ -1,5 +1,5 @@
 # =============================================================================
-# wrangler.toml - project metadata for borbala-portfolio
+# wrangler.toml - project metadata for portfolio-page
 # =============================================================================
 #
 # Safe to commit: this file contains project metadata only. Secrets, runtime
@@ -27,7 +27,7 @@
 #   ALLOWED_ORIGIN              = same-origin only when absent
 # =============================================================================
 
-name = "borbala-portfolio"
+name = "portfolio-page"
 pages_build_output_dir = "dist"
 compatibility_date = "2025-09-01"
 compatibility_flags = ["nodejs_compat"]
