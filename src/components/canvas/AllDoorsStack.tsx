@@ -15,6 +15,7 @@ interface AllDoorsStackProps {
 export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
   return (
     <motion.div
+      className="all-doors-outer"
       role="region"
       aria-label="all rooms"
       initial={{ opacity: 0 }}
@@ -26,9 +27,6 @@ export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
         overflowX: 'hidden',
         zIndex: 9,
         background: 'rgba(6,6,15,0.92)',
-        /* Padding tightened horizontally so cards have room on narrow
-         * mobile screens; top padding bumped for the header row. */
-        padding: '72px 16px 32px',
       }}
     >
       {(onClose || onReset) && (
@@ -90,11 +88,11 @@ export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
         {doors.map((d) => (
           <div
             key={d.id}
+            className="all-doors-card"
             style={{
               background: 'linear-gradient(180deg, #0d1230 0%, #06060f 100%)',
               border: '1px solid rgba(178, 212, 229, 0.35)',
               borderRadius: 10,
-              padding: '24px 22px 26px',
               lineHeight: 1.6,
               boxShadow:
                 '0 0 0 1px rgba(178, 212, 229, 0.12), ' +
