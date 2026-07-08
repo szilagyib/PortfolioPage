@@ -47,3 +47,101 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 @media (max-width: 640px) {
   .metric-block { white-space: normal; }
 }
+
+/* Artifact card body — tighter side padding on phones so pills and
+   metrics have breathing room. */
+.artifact-body { padding: 18px 32px 28px; }
+@media (max-width: 640px) {
+  .artifact-body { padding: 14px 18px 24px; }
+}
+
+/* Profile header (ABOUT). Two-column layout: photo on the left, name +
+   location + contact icons stacked on the right. Everything stays close
+   to the photo — especially on phones where the 108px photo would
+   otherwise push the icons onto their own row. */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+.profile-header-photo {
+  width: 108px;
+  height: 108px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--accent-violet);
+  flex: 0 0 auto;
+}
+.profile-header-info { flex: 1 1 auto; min-width: 0; }
+.profile-header-name { margin: 0; font-size: var(--fs-h2); line-height: 1.2; }
+.profile-header-location {
+  margin: 6px 0 0;
+  color: var(--text-dim);
+  font-size: var(--fs-label);
+  letter-spacing: 0.02em;
+}
+.profile-header-contacts {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+}
+.profile-header-contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid rgba(95, 184, 214, 0.4);
+  background: rgba(13, 18, 48, 0.55);
+  color: var(--accent-cyan);
+  text-decoration: none;
+  transition:
+    border-color var(--d-fast) var(--ease-out),
+    background var(--d-fast) var(--ease-out);
+}
+.profile-header-contact:hover {
+  border-color: rgba(178, 212, 229, 0.78);
+  background: rgba(40, 52, 88, 0.7);
+}
+@media (max-width: 640px) {
+  .profile-header { gap: 14px; }
+  .profile-header-photo { width: 82px; height: 82px; }
+  .profile-header-name { font-size: 18px; }
+  .profile-header-contacts { gap: 8px; margin-top: 10px; }
+  .profile-header-contact { width: 34px; height: 34px; border-radius: 6px; }
+}
+
+/* Ask-me suggestion pills. Wrap freely on wide screens; stack in a
+   single column on phones so each question stays on one line. */
+.chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chat-suggestion {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--accent-cyan);
+  background: transparent;
+  border: 1px solid rgba(95, 184, 214, 0.35);
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+}
+@media (max-width: 640px) {
+  .chat-suggestions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .chat-suggestion {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}

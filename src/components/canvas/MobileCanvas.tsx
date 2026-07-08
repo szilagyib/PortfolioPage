@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, type CSSProperties } from 'react';
 import { motion } from 'motion/react';
 import { CosmicBackground } from './CosmicBackground';
 import { MobileDestination } from './MobileDestination';
@@ -16,6 +16,30 @@ const DOOR_ORDER: readonly DoorId[] =
   ['about', 'ai', 'leadership', 'engineering', 'elsewhere'];
 
 const REVEAL_EASE = [0.16, 1, 0.3, 1] as const;
+
+/* Top-bar pill styling. All three buttons (CV, see-all, ↻) share the
+ * same height/padding so they line up on a single row. CV keeps the
+ * cyan accent to signal it's a download. */
+const MOBILE_PILL: CSSProperties = {
+  fontFamily: 'var(--font-mono)',
+  fontSize: 10,
+  lineHeight: 1,
+  letterSpacing: '0.06em',
+  color: 'var(--text-bright)',
+  border: '1px solid var(--tech-line)',
+  padding: '5px 8px',
+  borderRadius: 4,
+  background: 'rgba(13,18,48,0.55)',
+  whiteSpace: 'nowrap',
+  flex: '0 0 auto',
+};
+
+const MOBILE_PILL_CV: CSSProperties = {
+  ...MOBILE_PILL,
+  color: 'var(--accent-cyan)',
+  borderColor: 'rgba(95, 184, 214, 0.45)',
+  textDecoration: 'none',
+};
 
 /**
  * Mobile-only layout. Vertical strip: YOU pinned near the top, destinations
@@ -50,11 +74,11 @@ export default function MobileCanvas() {
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden' }}>
       <CosmicBackground />
 
-      {/* Top bar — identity on the left (name + CV on the top row, title
-       *   below); see-all + start-again on the right. Higher z-index than
-       *   AllDoorsStack (z=9) so the start-again icon stays reachable while
-       *   the see-all overlay is open. Subtle gradient backdrop keeps
-       *   buttons legible over any content behind them. */}
+      {/* Top bar — name + three matched pill buttons (CV, see-all, restart)
+       *   on a single row; title on a second row underneath. Higher z-index
+       *   than AllDoorsStack (z=9) so the restart icon stays reachable
+       *   while the see-all overlay is open. Subtle gradient backdrop
+       *   keeps buttons legible over any content behind them. */}
       <header
         style={{
           position: 'fixed',
@@ -62,10 +86,10 @@ export default function MobileCanvas() {
           left: 0,
           right: 0,
           display: 'flex',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
           alignItems: 'flex-start',
           padding: '10px 14px 12px',
-          gap: 10,
+          gap: 4,
           zIndex: 10,
           fontFamily: 'var(--font-mono)',
           background:
@@ -74,79 +98,39 @@ export default function MobileCanvas() {
       >
         <div
           style={{
-            minWidth: 0,
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            gap: 4,
+            alignItems: 'center',
+            gap: 8,
+            width: '100%',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div
-              style={{
-                fontSize: 14,
-                color: 'var(--text-bright)',
-                letterSpacing: '0.03em',
-                fontWeight: 500,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              Borbála Szilágyi
-            </div>
-            <a
-              href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
-              download
-              aria-label="download CV"
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 10,
-                letterSpacing: '0.06em',
-                color: 'var(--accent-cyan)',
-                textDecoration: 'none',
-                padding: '3px 7px',
-                border: '1px solid rgba(95, 184, 214, 0.45)',
-                borderRadius: 4,
-                background: 'rgba(13,18,48,0.55)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              ↓ CV
-            </a>
-          </div>
           <div
             style={{
-              fontSize: 10,
-              color: 'var(--text-dim)',
-              letterSpacing: '0.06em',
+              flex: '1 1 auto',
+              minWidth: 0,
+              fontSize: 14,
+              color: 'var(--text-bright)',
+              letterSpacing: '0.03em',
+              fontWeight: 500,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            Software Engineer · Team Lead
+            Borbála Szilágyi
           </div>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            gap: 6,
-            alignItems: 'center',
-            flex: '0 0 auto',
-          }}
-        >
+          <a
+            href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
+            download
+            aria-label="download CV"
+            style={MOBILE_PILL_CV}
+          >
+            ↓ CV
+          </a>
           <button
             type="button"
             onClick={openAll}
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 10,
-              letterSpacing: '0.06em',
-              color: 'var(--text-bright)',
-              border: '1px solid var(--tech-line)',
-              padding: '5px 8px',
-              borderRadius: 4,
-              background: 'rgba(13,18,48,0.55)',
-            }}
+            style={MOBILE_PILL}
           >
             ↓ see all
           </button>
@@ -156,20 +140,31 @@ export default function MobileCanvas() {
               onClick={reset}
               aria-label="start over"
               title="start over"
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 14,
-                lineHeight: 1,
-                color: 'var(--text-bright)',
-                border: '1px solid var(--tech-line)',
-                padding: '4px 8px',
-                borderRadius: 4,
-                background: 'rgba(13,18,48,0.55)',
-              }}
+              style={MOBILE_PILL}
             >
               ↻
             </button>
           )}
+          {allDoorsOpen && (
+            <button
+              type="button"
+              onClick={closeAll}
+              aria-label="close"
+              title="close"
+              style={MOBILE_PILL}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        <div
+          style={{
+            fontSize: 10,
+            color: 'var(--text-dim)',
+            letterSpacing: '0.06em',
+          }}
+        >
+          Software Engineer · Team Lead
         </div>
       </header>
 
@@ -320,11 +315,10 @@ export default function MobileCanvas() {
       )}
 
       {allDoorsOpen && (
-        <AllDoorsStack
-          doors={orderedDoors}
-          onClose={closeAll}
-          onReset={poweredDoors.length > 0 ? reset : undefined}
-        />
+        /* No onClose / onReset here: the mobile top bar (higher z-index)
+         * already renders ✕ close and ↻ start-over. Passing them again
+         * would render buttons hidden behind the top bar. */
+        <AllDoorsStack doors={orderedDoors} />
       )}
     </div>
   );

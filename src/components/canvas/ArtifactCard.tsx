@@ -255,96 +255,38 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
       );
 
     case 'profileHeader':
+      /* Layout is now driven by CSS classes (see global.css .profile-header
+       * and friends) so the mobile breakpoint can shrink the photo and
+       * keep the contact icons stacked next to the name/location instead
+       * of wrapping to a new row. */
       return (
-        <div
-          key={i}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 22,
-            flexWrap: 'wrap',
-            marginBottom: 8,
-          }}
-        >
+        <div key={i} className="profile-header">
           <img
+            className="profile-header-photo"
             src={b.photo.src}
             alt={b.photo.alt}
             loading="lazy"
             width={108}
             height={108}
-            style={{
-              width: 108,
-              height: 108,
-              objectFit: 'cover',
-              borderRadius: '50%',
-              border: '2px solid var(--accent-violet)',
-              flex: '0 0 auto',
-            }}
           />
-          <div style={{ flex: '1 1 220px', minWidth: 0 }}>
-            <h2
-              style={{
-                margin: 0,
-                fontSize: 'var(--fs-h2)',
-                lineHeight: 1.2,
-              }}
-            >
-              {b.name}
-            </h2>
-            <p
-              style={{
-                margin: '6px 0 0',
-                color: 'var(--text-dim)',
-                fontSize: 'var(--fs-label)',
-                letterSpacing: '0.02em',
-              }}
-            >
-              {b.location}
-            </p>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              gap: 14,
-              alignItems: 'center',
-              flex: '0 0 auto',
-            }}
-          >
-            {b.contacts.map((c, j) => (
-              <a
-                key={j}
-                href={c.href}
-                aria-label={c.label}
-                title={c.label}
-                target={isExternal(c.href) ? '_blank' : undefined}
-                rel={isExternal(c.href) ? 'noopener noreferrer' : undefined}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 38,
-                  height: 38,
-                  borderRadius: 8,
-                  border: '1px solid rgba(95, 184, 214, 0.4)',
-                  background: 'rgba(13,18,48,0.55)',
-                  color: 'var(--accent-cyan)',
-                  textDecoration: 'none',
-                  transition:
-                    'border-color var(--d-fast) var(--ease-out), ' +
-                    'background var(--d-fast) var(--ease-out)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(178, 212, 229, 0.78)';
-                  e.currentTarget.style.background = 'rgba(40, 52, 88, 0.7)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(95, 184, 214, 0.4)';
-                  e.currentTarget.style.background = 'rgba(13,18,48,0.55)';
-                }}
-              >
-                <ContactIcon kind={c.icon} />
-              </a>
-            ))}
+          <div className="profile-header-info">
+            <h2 className="profile-header-name">{b.name}</h2>
+            <p className="profile-header-location">{b.location}</p>
+            <div className="profile-header-contacts">
+              {b.contacts.map((c, j) => (
+                <a
+                  key={j}
+                  className="profile-header-contact"
+                  href={c.href}
+                  aria-label={c.label}
+                  title={c.label}
+                  target={isExternal(c.href) ? '_blank' : undefined}
+                  rel={isExternal(c.href) ? 'noopener noreferrer' : undefined}
+                >
+                  <ContactIcon kind={c.icon} />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       );
@@ -713,7 +655,7 @@ export function ArtifactCard({
                     letterSpacing: '0.08em',
                   }}
                 >
-                  · claude haiku · limited free queries
+                  · claude haiku
                 </span>
               </span>
             ) : (
@@ -738,7 +680,7 @@ export function ArtifactCard({
               ✕
             </button>
           </div>
-          <div style={{ padding: '18px 32px 28px' }}>
+          <div className="artifact-body">
             <BodyBlocks door={door} />
           </div>
         </motion.div>
