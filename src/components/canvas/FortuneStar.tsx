@@ -6,6 +6,7 @@ export function FortuneStar() {
   const [isOpen, setIsOpen] = useState(false);
   const [fortune, setFortune] = useState<Fortune | null>(null);
   const [loading, setLoading] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   async function open() {
     setIsOpen(true);
@@ -38,6 +39,10 @@ export function FortuneStar() {
         type="button"
         onClick={open}
         aria-label="open fortune"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocus={() => setHovered(true)}
+        onBlur={() => setHovered(false)}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
         style={{
@@ -130,6 +135,42 @@ export function FortuneStar() {
               <rect x="128" y="11.6" width="20" height="0.8" fill="url(#fortuneSpikeH)" />
             </g>
             <circle cx="138" cy="12" r="2.4" fill="#ffffff" />
+          </motion.g>
+
+          {/* Hover glitter — a cluster of tiny sparkle dots around the
+           *   comet head that fade in when the mouse enters or the star
+           *   is keyboard-focused. Each dot pulses on its own phase so
+           *   the effect reads as glitter rather than a synced blink. */}
+          <motion.g
+            animate={{ opacity: hovered ? 1 : 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            style={{ pointerEvents: 'none' }}
+          >
+            <motion.circle
+              cx="122" cy="4" r="1.1" fill="#ffffff"
+              animate={{ opacity: [0.25, 1, 0.25] }}
+              transition={{ duration: 1.3, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.circle
+              cx="156" cy="6" r="0.9" fill="#ffffff"
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.circle
+              cx="148" cy="26" r="0.8" fill="#a8d8ff"
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.circle
+              cx="128" cy="22" r="0.7" fill="#ffffff"
+              animate={{ opacity: [1, 0.35, 1] }}
+              transition={{ duration: 0.95, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.circle
+              cx="164" cy="18" r="0.6" fill="#a8d8ff"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            />
           </motion.g>
         </svg>
       </motion.button>
