@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, type ReactNode } from 'react';
+import { Fragment, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Door } from '@/domain/door';
 import type { ArtifactBlock, ContactIconKind } from '@/domain/artifact';
@@ -544,13 +544,31 @@ export function ArtifactCard({
 }: ArtifactCardProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
+  /**
+   * Close wrapper that first blurs any focused input and resets the
+   * window scroll. On iOS, focusing a <textarea> inside a fixed-
+   * positioned panel scrolls the whole window to bring the input into
+   * view above the keyboard — even with overflow:hidden on the body.
+   * That scroll offset lingers after the modal closes, and the canvas
+   * underneath appears shifted. Blur + scrollTo(0,0) undoes both.
+   */
+  const handleClose = useCallback(() => {
+    if (typeof document !== 'undefined') {
+      (document.activeElement as HTMLElement | null)?.blur();
+    }
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+    onClose();
+  }, [onClose]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [handleClose]);
 
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -586,7 +604,7 @@ export function ArtifactCard({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.18 }}
-        onClick={onClose}
+        onClick={handleClose}
         className="artifact-modal-pad"
         style={{
           /* Card lives at viewport level so it can grow well beyond the
@@ -676,7 +694,7 @@ export function ArtifactCard({
               ref={closeButtonRef}
               type="button"
               aria-label="close"
-              onClick={onClose}
+              onClick={handleClose}
               style={{
                 color: 'var(--text-bright)',
                 fontSize: 18,
