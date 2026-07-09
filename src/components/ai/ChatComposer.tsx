@@ -38,11 +38,11 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
   return (
     <form
       onSubmit={handleSubmit}
+      className="chat-composer-form"
       style={{
         display: 'flex',
         flexDirection: 'column',
         gap: 4,
-        marginTop: 12,
       }}
     >
       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
@@ -55,6 +55,7 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
           placeholder="type a question…"
           disabled={disabled}
           maxLength={MAX_LENGTH}
+          className="chat-composer-input"
           style={{
             flex: 1,
             width: '100%',
@@ -78,6 +79,7 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
         <button
           type="submit"
           disabled={sendDisabled}
+          className="chat-composer-send"
           style={{
             padding: '10px 18px',
             fontFamily: 'var(--font-mono)',
