@@ -77,6 +77,16 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   flex-wrap: wrap;
 }
 
+/* Artifact modal — outer backdrop padding and panel width. On phones
+   the panel matches the see-all card width (viewport - 20) so opening
+   a single door and opening 'see all' feel visually consistent. */
+.artifact-modal-pad { padding: 32px 24px; }
+.artifact-panel-width { width: min(92vw, 920px); }
+@media (max-width: 640px) {
+  .artifact-modal-pad { padding: 20px 10px; }
+  .artifact-panel-width { width: calc(100vw - 20px); }
+}
+
 /* Profile header (ABOUT). Two-column layout: photo on the left, name +
    location + contact icons stacked on the right. Everything stays close
    to the photo — especially on phones where the 108px photo would

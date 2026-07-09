@@ -582,9 +582,11 @@ export function ArtifactCard({
         exit={{ opacity: 0 }}
         transition={{ duration: 0.18 }}
         onClick={onClose}
+        className="artifact-modal-pad"
         style={{
           /* Card lives at viewport level so it can grow well beyond the
-           * pentagon stage. Click anywhere outside the panel dismisses. */
+           * pentagon stage. Click anywhere outside the panel dismisses.
+           * Backdrop padding is class-driven so it tightens on phones. */
           position: 'fixed',
           inset: 0,
           pointerEvents: 'auto',
@@ -593,7 +595,6 @@ export function ArtifactCard({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '32px 24px',
         }}
       >
         <motion.div
@@ -602,8 +603,8 @@ export function ArtifactCard({
           exit={{ scale: 0.4, opacity: 0 }}
           transition={{ duration: 0.42, ease: REVEAL_EASE }}
           onClick={(e) => e.stopPropagation()}
+          className="artifact-panel-width"
           style={{
-            width: 'min(92vw, 920px)',
             maxHeight: 'min(86vh, 760px)',
             overflowY: 'auto',
             /* Explicit hidden — otherwise CSS silently promotes overflowX
