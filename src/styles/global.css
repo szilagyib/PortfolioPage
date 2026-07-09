@@ -57,12 +57,122 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   .artifact-body { padding: 14px 16px 24px; }
 }
 
-/* See-all overlay — tighter outer padding and card padding on phones
-   so cards don't hug the viewport edge. */
-.all-doors-outer { padding: 72px 16px 32px; }
-.all-doors-card { padding: 24px 22px 26px; }
+/* See-all overlay.
+ *
+ * The scroll container itself has no padding — spacing now lives in
+ * two children:
+ *   - `.all-doors-header` is a sticky top bar (desktop only, rendered
+ *     when onClose / onReset are provided) with identity + actions and
+ *     a gradient backdrop so cards fade smoothly under it while
+ *     scrolling.
+ *   - `.all-doors-cards` is the max-width 920 grid wrapper.
+ *
+ * On phones the mobile top bar (higher z-index) already handles
+ * identity + actions, so the sticky header does not render and the
+ * cards wrapper picks up the top-padding to clear the mobile bar.
+ */
+.all-doors-outer { padding: 0; }
+
+.all-doors-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(6, 6, 15, 0.98) 0%,
+      rgba(6, 6, 15, 0.92) 55%,
+      rgba(6, 6, 15, 0) 100%
+    );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.all-doors-header-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 14px 32px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  font-family: var(--font-mono);
+}
+.all-doors-header-namerow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.all-doors-header-name {
+  font-size: 15px;
+  color: var(--text-bright);
+  letter-spacing: 0.03em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.all-doors-header-cv {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--accent-cyan);
+  text-decoration: none;
+  padding: 4px 9px;
+  border: 1px solid rgba(95, 184, 214, 0.4);
+  border-radius: 4px;
+  background: rgba(13, 18, 48, 0.55);
+  white-space: nowrap;
+  transition:
+    border-color var(--d-fast) var(--ease-out),
+    background var(--d-fast) var(--ease-out);
+}
+.all-doors-header-cv:hover {
+  border-color: rgba(178, 212, 229, 0.78);
+  background: rgba(40, 52, 88, 0.7);
+}
+.all-doors-header-title {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+.all-doors-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.all-doors-header-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-bright);
+  border: 1px solid var(--tech-line);
+  padding: 6px 10px;
+  border-radius: 3px;
+  background: rgba(13, 18, 48, 0.55);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color var(--d-fast) var(--ease-out),
+    background var(--d-fast) var(--ease-out);
+}
+.all-doors-header-btn:hover {
+  border-color: rgba(178, 212, 229, 0.55);
+  background: rgba(40, 52, 88, 0.6);
+}
+
+.all-doors-cards {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 12px 32px 32px;
+  display: grid;
+  gap: 24px;
+}
+.all-doors-card { padding: 24px 28px 28px; }
 @media (max-width: 640px) {
-  .all-doors-outer { padding: 68px 10px 24px; }
+  /* No sticky header on mobile — the mobile top bar (z:10) handles
+   * identity + actions, and passes no onClose / onReset here. Cards
+   * take the top spacing to clear that bar. */
+  .all-doors-cards { padding: 68px 10px 24px; }
   .all-doors-card { padding: 18px 14px 20px; }
 }
 
