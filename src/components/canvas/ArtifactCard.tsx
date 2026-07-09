@@ -347,7 +347,12 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
                 display: 'block',
                 width: '100%',
                 aspectRatio: '16 / 9',
-                objectFit: 'cover',
+                /* contain (not cover) so wide screenshots like the
+                 * portfolio one don't lose edge content to a crop.
+                 * The dark background blends any small letterbox
+                 * into the cosmic theme. */
+                objectFit: 'contain',
+                background: '#06060f',
                 borderRadius: 4,
                 marginBottom: 10,
                 border: '1px solid rgba(178, 212, 229, 0.12)',
@@ -605,7 +610,10 @@ export function ArtifactCard({
           onClick={(e) => e.stopPropagation()}
           className="artifact-panel-width"
           style={{
-            maxHeight: 'min(86vh, 760px)',
+            /* dvh (not vh) so the panel resizes as the mobile keyboard
+             * opens / closes; keeps the sticky composer above the
+             * keyboard instead of pinned to the layout-viewport bottom. */
+            maxHeight: 'min(86dvh, 760px)',
             overflowY: 'auto',
             /* Explicit hidden — otherwise CSS silently promotes overflowX
              * to 'auto' whenever overflowY is set, and any child that

@@ -71,7 +71,21 @@ export default function MobileCanvas() {
   const puzzleDoor = activePuzzle ? doors.find((d) => d.id === activePuzzle) ?? null : null;
 
   return (
-    <div style={{ position: 'fixed', inset: 0, overflow: 'hidden' }}>
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        /* Use height: 100dvh (not inset:0 which uses layout viewport)
+         * so the canvas re-lays out when the mobile keyboard opens or
+         * closes. Without this, iOS keeps the layout viewport frozen
+         * and the canvas can appear shifted after returning from the
+         * AI chat. */
+        height: '100dvh',
+        overflow: 'hidden',
+      }}
+    >
       <CosmicBackground />
 
       {/* Top bar
