@@ -14,15 +14,40 @@ import '@fontsource/jetbrains-mono/latin-ext-500.css';
 
 interface Props { title: string }
 const { title } = Astro.props;
+
+const description =
+  'Borbála Szilágyi — Software Engineering Team Lead. Cosmic interactive CV.';
+// Absolute URLs so link unfurls on LinkedIn, Slack, Twitter etc.
+// resolve correctly. Astro.site is set in astro.config.mjs.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/previews/portfolio.png', Astro.site).href;
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Borbála Szilágyi — Software Engineering Team Lead. Cosmic interactive CV." />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#06060f" />
+
+    {/* Open Graph — LinkedIn, Slack, iMessage, Discord, etc. */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Borbála Szilágyi" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="Cosmic portfolio canvas — pentagon of destinations around a central YOU star" />
+    <meta property="og:locale" content="en_US" />
+
+    {/* Twitter card — falls back to OG on platforms that don't parse it. */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <title>{title}</title>
   </head>
   <body>
