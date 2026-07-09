@@ -38,6 +38,7 @@ export function FortuneStar() {
         type="button"
         onClick={open}
         aria-label="open fortune"
+        title="a little wisdom — click for a fortune"
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
         style={{

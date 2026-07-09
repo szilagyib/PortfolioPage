@@ -30,9 +30,9 @@ export function Hint({ visible }: HintProps) {
           }}
         >
           <span style={{ color: 'var(--accent-cyan)' }}>▸</span>
-          select a destination to start the puzzle
+          pick a star to explore
           <span style={{ color: 'var(--text-dim)' }}>·</span>
-          <span style={{ color: 'var(--text-dim)' }}>or see everything ↗</span>
+          <span style={{ color: 'var(--text-dim)' }}>short on time? ↓ see everything</span>
         </motion.div>
       )}
     </AnimatePresence>
