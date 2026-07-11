@@ -109,14 +109,15 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
     if (dragFromIdx === null) return;
     const p = eventToSvgCoords(e);
     if (p) {
-      // Hit-test: which star (if any) is within 7 SVG units of release point.
-      // Bigger than the visible star (radius ~1.6) so touch-drag on mobile
-      // doesn't demand pixel-perfect precision.
+      // Hit-test: which star (if any) is within 12 SVG units of release
+      // point. On a ~340px-wide mobile puzzle this maps to ~40px radius
+      // (~80px tap area) — well above Apple's 44px touch-target minimum,
+      // so drag-drop lands even with a fingertip approximation.
       const hitIdx = stars.findIndex((s, i) => {
         if (i === dragFromIdx) return false;
         const dx = s.x - p.x;
         const dy = s.y - p.y;
-        return Math.sqrt(dx * dx + dy * dy) <= 7;
+        return Math.sqrt(dx * dx + dy * dy) <= 12;
       });
       if (hitIdx !== -1) {
         setState((s) => tryClick(s, hitIdx));
@@ -365,14 +366,16 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
                   />
                 )}
                 {/* Generous hit target — invisible, much larger than the
-                 *   visible star. Radius 7 in SVG units is ~4× the visual
-                 *   star size so touch input on mobile lands reliably.
+                 *   visible star. Radius 12 in SVG units is ~7× the visual
+                 *   star size, giving a ~40px radius on a mobile puzzle
+                 *   (~80px tap area, well above the 44px touch minimum)
+                 *   so drag-to-draw doesn't demand fingertip precision.
                  *   Receives both clicks (keyboard / accessibility paths)
                  *   and pointer events (drag-to-draw). */}
                 <circle
                   cx={star.x}
                   cy={star.y}
-                  r={7}
+                  r={12}
                   fill="transparent"
                   onClick={() => handleStarClick(idx)}
                   onPointerDown={(e) => handleStarPointerDown(e, idx)}
