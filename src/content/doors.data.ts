@@ -31,7 +31,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Industrial products across railway and manufacturing, all in active development. JVM backends (Java/Spring), TypeScript/React frontends, Postgres in between — a deliberately conservative stack for safety-critical systems with product lifecycles measured in decades.' },
+        '4 active products across rail and manufacturing. Backend-heavy Java, React on top.' },
       { kind: 'productList', products: [
         {
           name: 'Titanium', type: 'Web',
@@ -63,7 +63,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Side projects and writing. Each link opens in a new tab.' },
+        'Side projects and writing — where I try new tools and ideas before deciding whether they belong in production.' },
       { kind: 'sectionLabel', text: 'Projects' },
       { kind: 'projectCard',
         name: 'This portfolio',
