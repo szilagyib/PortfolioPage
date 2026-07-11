@@ -24,6 +24,20 @@ export function Route({ id, fromX, fromY, toX, toY, powered, dimmed = false }: R
   const dasharray = powered ? undefined : '0.5,1.5';
 
   /**
+   * Stop the line short of the destination so no line segment sits
+   * behind the destination card. Without this, the peak-opacity
+   * middle of the line renders under the card and shows through
+   * whenever the card is transparent (first load, returning from an
+   * open card, or during any opacity animation).
+   *
+   * 0.82 of the way from center to the destination lands just before
+   * the pentagon-orbit card body at typical stage sizes.
+   */
+  const endRatio = 0.82;
+  const endX = fromX + (toX - fromX) * endRatio;
+  const endY = fromY + (toY - fromY) * endRatio;
+
+  /**
    * One-shot power-up particle. It used to render on every re-render of
    * Route — so closing a card (which toggles `dimmed`) replayed the white
    * dot along every powered route. Now the particle only mounts during a
@@ -52,7 +66,7 @@ export function Route({ id, fromX, fromY, toX, toY, powered, dimmed = false }: R
         <linearGradient
           id={gradientId}
           gradientUnits="userSpaceOnUse"
-          x1={fromX} y1={fromY} x2={toX} y2={toY}
+          x1={fromX} y1={fromY} x2={endX} y2={endY}
         >
           <stop offset="0%"  stopColor={baseColor} stopOpacity="0" />
           <stop offset="14%" stopColor={baseColor} stopOpacity={peakOpacity} />
@@ -61,7 +75,7 @@ export function Route({ id, fromX, fromY, toX, toY, powered, dimmed = false }: R
         </linearGradient>
       </defs>
       <line
-        x1={fromX} y1={fromY} x2={toX} y2={toY}
+        x1={fromX} y1={fromY} x2={endX} y2={endY}
         stroke={`url(#${gradientId})`}
         strokeWidth={powered ? 2.5 : 1.5}
         strokeDasharray={dasharray}
@@ -73,7 +87,7 @@ export function Route({ id, fromX, fromY, toX, toY, powered, dimmed = false }: R
           r="0.8"
           fill="#fff"
           initial={{ cx: fromX, cy: fromY, opacity: 0.95 }}
-          animate={{ cx: toX, cy: toY, opacity: [0.95, 0.95, 0] }}
+          animate={{ cx: endX, cy: endY, opacity: [0.95, 0.95, 0] }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
         />
       )}
