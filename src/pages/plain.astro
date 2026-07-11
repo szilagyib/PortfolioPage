@@ -1,0 +1,462 @@
+---
+/**
+ * Plain content-only view. Same underlying content as the cosmic canvas
+ * (pulled from `doors.data.ts`) rendered as semantic HTML with no
+ * JavaScript islands, no motion, no scrolling constraints.
+ *
+ * Intended audience: ATS scrapers, recruiter tools, LinkedIn preview
+ * bots, and anyone who wants the fast-scan version. Deployed to
+ * `/plain` today; can be aliased to a subdomain (e.g. `cv.` or
+ * `plain.`) at Cloudflare edge without any code changes.
+ */
+import Base from '@/layouts/Base.astro';
+import { doors } from '@/content/doors.data';
+import type { ArtifactBlock } from '@/domain/artifact';
+import type { DoorId } from '@/domain/door';
+
+const DISPLAY_ORDER: readonly DoorId[] = [
+  'about',
+  'leadership',
+  'engineering',
+  'elsewhere',
+];
+
+const sections = DISPLAY_ORDER
+  .map((id) => doors.find((d) => d.id === id))
+  .filter((d): d is NonNullable<typeof d> => d !== undefined);
+
+function toTitle(name: string): string {
+  return name.charAt(0) + name.slice(1).toLowerCase();
+}
+
+function isExternal(href: string): boolean {
+  return /^https?:/.test(href);
+}
+
+function contactDisplay(href: string): string {
+  return href.replace(/^(https?:\/\/(www\.)?|mailto:)/, '');
+}
+---
+<Base title="Borbála Szilágyi — Software Engineer · Team Lead">
+  {/* Override the interactive site's body overflow so this document
+      scrolls normally like any content page. */}
+  <style is:global>
+    body {
+      overflow: auto !important;
+      min-height: 100dvh;
+    }
+  </style>
+
+  <main class="plain">
+    <header class="plain-header">
+      {(() => {
+        const about = doors.find((d) => d.id === 'about');
+        const profile = about?.artifact.find((b) => b.kind === 'profileHeader');
+        if (profile && profile.kind === 'profileHeader') {
+          return (
+            <img
+              class="plain-photo"
+              src={profile.photo.src}
+              alt={profile.photo.alt}
+              width="120"
+              height="120"
+            />
+          );
+        }
+        return null;
+      })()}
+      <div class="plain-identity">
+        <h1>Borbála Szilágyi</h1>
+        <p class="plain-tagline">Software Engineer · Team Lead</p>
+        <p class="plain-location">Budapest, Hungary</p>
+        <ul class="plain-contacts">
+          <li>
+            <a href="mailto:szilagyiborbala8@gmail.com">
+              szilagyiborbala8@gmail.com
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://github.com/szilagyib"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              github.com/szilagyib
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.linkedin.com/in/szilagyiborbala8"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              linkedin.com/in/szilagyiborbala8
+            </a>
+          </li>
+          <li>
+            <a
+              class="plain-cv"
+              href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
+              download
+            >
+              ↓ Download CV (PDF)
+            </a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    {sections.map((door) => (
+      <section
+        class="plain-section"
+        aria-labelledby={`plain-h-${door.id}`}
+      >
+        <h2 id={`plain-h-${door.id}`}>{toTitle(door.name)}</h2>
+        {door.artifact.map((block: ArtifactBlock, i: number) => {
+          if (block.kind === 'aiChat') return null;
+
+          if (block.kind === 'heading') {
+            return <h3>{block.text}</h3>;
+          }
+          if (block.kind === 'paragraph') {
+            return <p>{block.text}</p>;
+          }
+          if (block.kind === 'bullet') {
+            return (
+              <ul>
+                {block.items.map((item: string) => <li>{item}</li>)}
+              </ul>
+            );
+          }
+          if (block.kind === 'metric') {
+            return (
+              <p class="plain-metric">
+                <strong>{block.value}</strong>
+                <span>{block.label}</span>
+              </p>
+            );
+          }
+          if (block.kind === 'quote') {
+            return (
+              <blockquote>
+                {block.text}
+                {block.attribution && <footer>— {block.attribution}</footer>}
+              </blockquote>
+            );
+          }
+          if (block.kind === 'sectionLabel') {
+            return <h3 class="plain-section-label">{block.text}</h3>;
+          }
+          if (block.kind === 'productList') {
+            return (
+              <ul class="plain-products">
+                {block.products.map((p) => (
+                  <li>
+                    <strong>{p.name}</strong>
+                    <span class="plain-product-type">{p.type}</span>
+                    <p>{p.summary}</p>
+                    <p class="plain-product-stack">{p.stack.join(' · ')}</p>
+                  </li>
+                ))}
+              </ul>
+            );
+          }
+          if (block.kind === 'projectCard') {
+            return (
+              <div class="plain-project">
+                <p class="plain-project-title">
+                  <a
+                    href={block.href}
+                    target={isExternal(block.href) ? '_blank' : undefined}
+                    rel={isExternal(block.href) ? 'noopener noreferrer' : undefined}
+                  >
+                    {block.name}
+                  </a>
+                </p>
+                <p>{block.summary}</p>
+                {block.stack && block.stack.length > 0 && (
+                  <p class="plain-project-stack">{block.stack.join(' · ')}</p>
+                )}
+              </div>
+            );
+          }
+          if (block.kind === 'postCard') {
+            return (
+              <div class="plain-post">
+                <p class="plain-post-title">
+                  <a
+                    href={block.href}
+                    target={isExternal(block.href) ? '_blank' : undefined}
+                    rel={isExternal(block.href) ? 'noopener noreferrer' : undefined}
+                  >
+                    {block.title}
+                  </a>
+                  <span class="plain-post-meta">
+                    {block.publication ? `${block.publication} · ${block.date}` : block.date}
+                  </span>
+                </p>
+                <blockquote>{block.quote}</blockquote>
+              </div>
+            );
+          }
+          if (block.kind === 'contactGroup') {
+            return (
+              <ul class="plain-contact-group">
+                {block.contacts.map((c) => (
+                  <li>
+                    <a
+                      href={c.href}
+                      target={isExternal(c.href) ? '_blank' : undefined}
+                      rel={isExternal(c.href) ? 'noopener noreferrer' : undefined}
+                    >
+                      {contactDisplay(c.href)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            );
+          }
+          if (block.kind === 'profileHeader') return null;
+          if (block.kind === 'photo') return null;
+          return null;
+        })}
+      </section>
+    ))}
+
+    <footer class="plain-footer">
+      <p>
+        Prefer the interactive version?{' '}
+        <a href="/">borbalaszilagyi.com</a>
+      </p>
+    </footer>
+  </main>
+</Base>
+
+<style>
+  .plain {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+    color: var(--text-bright);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+  }
+
+  .plain-header {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .plain-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-violet);
+    object-fit: cover;
+    flex: 0 0 auto;
+  }
+  .plain-identity {
+    flex: 1 1 320px;
+    min-width: 0;
+  }
+  .plain-identity h1 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+  .plain-tagline {
+    margin: 0 0 2px;
+    color: var(--text-dim);
+    font-size: 15px;
+    letter-spacing: 0.04em;
+  }
+  .plain-location {
+    margin: 0 0 12px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .plain-contacts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .plain-contacts a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .plain-contacts a:hover {
+    border-bottom-color: var(--accent-cyan);
+  }
+  .plain-cv {
+    display: inline-block;
+    padding: 3px 8px;
+    border: 1px solid rgba(95, 184, 214, 0.45) !important;
+    border-radius: 4px;
+    background: rgba(13, 18, 48, 0.55);
+  }
+
+  .plain-section {
+    margin-top: 48px;
+  }
+  .plain-section h2 {
+    margin: 0 0 12px;
+    padding-bottom: 4px;
+    font-size: 20px;
+    color: var(--tech-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    border-bottom: 1px solid rgba(178, 212, 229, 0.18);
+  }
+  .plain-section h3 {
+    margin: 24px 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+  .plain-section-label {
+    margin: 32px 0 12px !important;
+    font-family: var(--font-mono);
+    font-size: 12px !important;
+    color: var(--tech-label) !important;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500 !important;
+    border-bottom: 1px solid rgba(178, 212, 229, 0.12);
+    padding-bottom: 4px;
+  }
+  .plain-section p {
+    margin: 12px 0;
+  }
+  .plain-section ul {
+    padding-left: 22px;
+    margin: 12px 0;
+  }
+  .plain-section li {
+    margin-bottom: 6px;
+  }
+
+  .plain-metric {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    margin: 6px 0 !important;
+  }
+  .plain-metric strong {
+    color: var(--accent-cyan);
+    font-size: 20px;
+    font-weight: 600;
+    min-width: 64px;
+  }
+  .plain-metric span {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .plain-products {
+    list-style: none !important;
+    padding: 0 !important;
+  }
+  .plain-products > li {
+    border-top: 1px solid rgba(178, 212, 229, 0.12);
+    padding: 12px 0;
+  }
+  .plain-products > li:last-child {
+    border-bottom: 1px solid rgba(178, 212, 229, 0.12);
+  }
+  .plain-product-type {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--tech-label);
+    letter-spacing: 0.08em;
+    margin-left: 10px;
+  }
+  .plain-product-stack {
+    margin: 4px 0 0 !important;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .plain-project,
+  .plain-post {
+    margin: 16px 0;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(178, 212, 229, 0.08);
+  }
+  .plain-project-title,
+  .plain-post-title {
+    margin: 0 0 4px !important;
+    font-weight: 600;
+  }
+  .plain-project-title a,
+  .plain-post-title a {
+    color: var(--text-bright);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(95, 184, 214, 0.5);
+  }
+  .plain-post-meta {
+    margin-left: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+  .plain-project-stack {
+    margin: 6px 0 0 !important;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  blockquote {
+    margin: 12px 0;
+    padding-left: 14px;
+    border-left: 2px solid var(--accent-violet);
+    color: var(--text-bright);
+    font-style: italic;
+  }
+  blockquote > footer {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .plain-footer {
+    margin-top: 64px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(178, 212, 229, 0.14);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+  .plain-footer a {
+    color: var(--accent-cyan);
+  }
+
+  @media (max-width: 640px) {
+    .plain { padding: 32px 18px 64px; }
+    .plain-header { gap: 18px; }
+    .plain-photo { width: 96px; height: 96px; }
+    .plain-identity h1 { font-size: 24px; }
+  }
+
+  @media print {
+    .plain { max-width: none; padding: 20px; color: #000; }
+    .plain h1, .plain h2, .plain h3 { color: #000; }
+    .plain-contacts a { color: #000 !important; }
+    .plain-footer { display: none; }
+    body { background: #fff !important; }
+  }
+</style>
