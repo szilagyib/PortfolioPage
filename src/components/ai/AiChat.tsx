@@ -6,8 +6,8 @@ import { ChatComposer } from './ChatComposer';
 const SUGGESTIONS: readonly string[] = [
   "What's the hardest part of being a team lead?",
   'Surprise me with a fun fact!',
+  'What does she wish more engineers knew?',
   'How does she use AI in day-to-day coding?',
-  'What kind of systems does she build?',
 ];
 
 export function AiChat() {
