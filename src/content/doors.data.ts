@@ -9,10 +9,11 @@ export const doors: readonly Door[] = [
     artifact: [
       { kind: 'paragraph', text:
         'Team lead at Prolan since 2024 — a cross-functional Scrum team of four engineers across four products in a safety-critical environment. Still hands-on with code review and shipping.' },
-      { kind: 'metric', value: '379',  label: 'tickets resolved in 2025 (+7% YoY, +33% demand)' },
-      { kind: 'metric', value: '+30%', label: 'feature delivery from AI tooling' },
-      { kind: 'metric', value: '4',    label: 'products owned end-to-end' },
-      { kind: 'metric', value: '0',    label: 'voluntary attrition since 2024' },
+      { kind: 'metric', value: '60+',   label: 'features shipped in 2025 across 4 products' },
+      { kind: 'metric', value: '<24h',  label: 'median PR → merge cycle' },
+      { kind: 'metric', value: '+30%',  label: 'feature delivery from AI tooling' },
+      { kind: 'metric', value: '4',     label: 'products owned end-to-end' },
+      { kind: 'metric', value: '0',     label: 'voluntary attrition since 2024' },
       { kind: 'bullet', items: [
         'Owns the architectural calls across four products in active development — tech stack, integration boundaries, rewrite-vs-refactor decisions.',
         'Rolled out AI tooling (Claude Code, ChatGPT/Codex) on the team in 2025.',
