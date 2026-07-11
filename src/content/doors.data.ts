@@ -8,14 +8,16 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Team lead at Prolan since 2024 — a cross-functional Scrum team of four engineers across four products in a safety-critical environment. Still hands-on with code review and shipping.' },
+        'Team lead at Prolan since 2024 — a cross-functional Scrum team of 4 engineers across 4 products in a safety-critical environment. Still hands-on with code review and shipping.' },
+      { kind: 'paragraph', text:
+        'What I care about beyond the delivery: an atmosphere the team wants to show up to. High trust, disagreements aired out loud, ownership on the person closest to the problem. Room for creativity, for new ideas, and for trying a technique that hasn\'t proved itself yet — that\'s the space where the best work comes from, and where new tools like AI-assisted development get an honest shot at production.' },
       { kind: 'metric', value: '60+',   label: 'features shipped in 2025 across 4 products' },
       { kind: 'metric', value: '<24h',  label: 'median PR → merge cycle' },
       { kind: 'metric', value: '+30%',  label: 'feature delivery from AI tooling' },
       { kind: 'metric', value: '4',     label: 'products owned end-to-end' },
       { kind: 'metric', value: '0',     label: 'voluntary attrition since 2024' },
       { kind: 'bullet', items: [
-        'Owns the architectural calls across four products in active development — tech stack, integration boundaries, rewrite-vs-refactor decisions.',
+        'Owns the architectural calls across 4 products in active development — tech stack, integration boundaries, rewrite-vs-refactor decisions.',
         'Rolled out AI tooling (Claude Code, ChatGPT/Codex) on the team in 2025.',
         'Strengthening cross-team collaboration through recurring meetings with adjacent teams, shared working norms, and broader internal-tool adoption.',
         'Supervising a Master\'s thesis. Mentoring interns.',
@@ -29,7 +31,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Industrial products across railway and manufacturing, all in active development.' },
+        'Industrial products across railway and manufacturing, all in active development. JVM backends (Java/Spring), TypeScript/React frontends, Postgres in between — a deliberately conservative stack for safety-critical systems with product lifecycles measured in decades.' },
       { kind: 'productList', products: [
         {
           name: 'Titanium', type: 'Web',
@@ -42,14 +44,14 @@ export const doors: readonly Door[] = [
           stack: ['Java','Spring','Postgres','Maven','Docker','React','TypeScript'],
         },
         {
-          name: 'ProrisCAD', type: 'Desktop',
-          summary: 'Model-driven railway safety systems designer and parameterisation software. Built on Eclipse Modeling Framework with custom DSLs and a graphical editor.',
-          stack: ['Java','Eclipse Modeling Framework','Maven','Ecore/Xcore','Xtext/Xtend','Graphiti'],
+          name: 'DisCom', type: 'Desktop + Web',
+          summary: 'Cross-border railway communication with real-time translation between operational languages.',
+          stack: ['Java','Swing','Node.js','Express.js','React','Postgres','Maven','Docker'],
         },
         {
-          name: 'DisCom', type: 'Desktop + Web',
-          summary: 'Cross-border railway communication software providing translation between languages.',
-          stack: ['Java','Swing','Node.js','Express.js','React','Postgres','Maven','Docker'],
+          name: 'ProrisCAD', type: 'Desktop',
+          summary: 'Model-driven CAD for designing and parameterising railway safety systems: safety engineers describe signalling logic in custom DSLs, and the tool generates deployable parameterisation. Built on Eclipse Modeling Framework — Xtext for the DSLs, Graphiti for the graphical editor.',
+          stack: ['Java','Eclipse Modeling Framework','Maven','Ecore/Xcore','Xtext/Xtend','Graphiti'],
         },
       ]},
     ],
@@ -88,7 +90,7 @@ export const doors: readonly Door[] = [
       { kind: 'projectCard',
         name: 'GitHubAgents',
         summary:
-          'Two AI agents for GitLab and GitHub CI pipelines: one reviews PRs/MRs with inline comments and merge gating, the other applies safe auto-fixes back to the branch. Per-language rule configs and a telemetry dashboard.',
+          '2 AI agents for GitLab and GitHub CI pipelines: one reviews PRs/MRs with inline comments and merge gating, the other applies safe auto-fixes back to the branch. Per-language rule configs and a telemetry dashboard.',
         href: 'https://github.com/szilagyib/GitHubAgents',
         stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
@@ -154,7 +156,7 @@ export const doors: readonly Door[] = [
         ],
       },
       { kind: 'paragraph', text:
-        '10 years writing code, 5 in industry, 2+ leading an engineering team. The shift from engineering into leadership happened in 2024 — I bring both technical understanding and a clear focus on people. Three things drive how I work: creating real teams where people are partners, not just coworkers; learning new tools by building something with them; and finding where AI-assisted development actually earns its place in production code.' },
+        '10 years writing code — 5 in industry, and 2+ leading an engineering team. The move from engineering into leadership happened in 2024; I brought both technical grounding and a clear focus on people. Three things drive how I work: creating real teams where people are partners, not just coworkers; learning new tools by building something with them; and finding where AI-assisted development actually earns its place in production code.' },
       { kind: 'paragraph', text:
         'BSc + MSc Computer Science and Engineering at BME (2017–2023). MBA in Finance and Management at ELTE (2023–2025). Teaching Assistant for Formal Methods at BME, Spring 2022.' },
     ],
