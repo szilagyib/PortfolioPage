@@ -31,7 +31,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        '4 active products across rail and manufacturing. Backend-heavy Java, React on top.' },
+        '4 active products across rail and manufacturing. Java on the backend, React on the frontend.' },
       { kind: 'productList', products: [
         {
           name: 'Titanium', type: 'Web',
