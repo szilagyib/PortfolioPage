@@ -90,7 +90,7 @@ export const doors: readonly Door[] = [
       { kind: 'projectCard',
         name: 'GitHubAgents',
         summary:
-          '2 AI agents for GitLab and GitHub CI pipelines: one reviews PRs/MRs with inline comments and merge gating, the other applies safe auto-fixes back to the branch. Per-language rule configs and a telemetry dashboard.',
+          'Paired AI agents for GitLab and GitHub CI pipelines: one reviews PRs/MRs with inline comments and merge gating, the other applies safe auto-fixes back to the branch. Per-language rule configs and a telemetry dashboard.',
         href: 'https://github.com/szilagyib/GitHubAgents',
         stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
