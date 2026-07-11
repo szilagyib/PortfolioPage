@@ -286,6 +286,36 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
             );
           })}
 
+          {/* First-visit drag hint — a bright dot that travels from star 0
+           *   to star 1 along the first segment, showing new visitors that
+           *   the puzzle expects a trace between stars. Renders only while
+           *   no star has been lit; disappears the moment the user clicks
+           *   or drags. */}
+          {state.clicked.length === 0 && stars.length >= 2 && (
+            <motion.circle
+              r={0.9}
+              fill="#fff"
+              initial={{ opacity: 0 }}
+              animate={{
+                cx: [stars[0].x, stars[1].x, stars[0].x],
+                cy: [stars[0].y, stars[1].y, stars[0].y],
+                opacity: [0, 0.95, 0.95, 0],
+              }}
+              transition={{
+                duration: 2.4,
+                times: [0, 0.35, 0.65, 1],
+                repeat: Infinity,
+                repeatDelay: 0.6,
+                ease: 'easeInOut',
+                delay: 0.8,
+              }}
+              style={{
+                filter: 'drop-shadow(0 0 1.2px rgba(255,255,255,0.9))',
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+
           {/* Stars — no numbers; lit stars glow, unlit ones gently pulse. */}
           {stars.map((star, idx) => {
             const lit = isClicked(state, idx);
