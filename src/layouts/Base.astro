@@ -20,7 +20,14 @@ const description =
 // Absolute URLs so link unfurls on LinkedIn, Slack, Twitter etc.
 // resolve correctly. Astro.site is set in astro.config.mjs.
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL('/previews/portfolio.png', Astro.site).href;
+// Dedicated 1200x630 card so Messenger / LinkedIn / Facebook unfurl
+// at their target aspect (1.91:1) without cropping the site screenshot.
+const ogImage = new URL('/previews/og-card.png', Astro.site).href;
+
+// Cloudflare Web Analytics — cookieless, GDPR-safe, first-party.
+// Set PUBLIC_CF_ANALYTICS_TOKEN in the Cloudflare Pages env for the
+// beacon to render; without it, no script is emitted (dev + CI safe).
+const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 ---
 <!doctype html>
 <html lang="en">
@@ -52,5 +59,13 @@ const ogImage = new URL('/previews/portfolio.png', Astro.site).href;
   </head>
   <body>
     <slot />
+    {cfAnalyticsToken && (
+      <script
+        is:inline
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={`{"token": "${cfAnalyticsToken}"}`}
+      />
+    )}
   </body>
 </html>
