@@ -88,7 +88,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   -webkit-backdrop-filter: blur(6px);
 }
 .all-doors-header-inner {
-  max-width: 1800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 14px 20px 22px;
   display: flex;
@@ -161,7 +161,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 
 .all-doors-cards {
-  max-width: 1800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 12px 20px 32px;
   display: grid;
@@ -188,14 +188,14 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 
 /* Artifact modal — outer backdrop padding and panel width.
- *   Desktop: panel is near-full-screen (viewport - 40px) up to 1800px
+ *   Desktop: panel is near-full-screen (viewport - 40px) up to 1200px
  *            for ultra-wide monitors, so content reads as one big
  *            block rather than a narrow letterbox.
  *   Mobile:  panel matches the see-all card width (viewport - 20) so
  *            opening a single door and 'see all' feel visually
  *            consistent. */
 .artifact-modal-pad { padding: 32px 20px; }
-.artifact-panel-width { width: min(calc(100vw - 40px), 1800px); }
+.artifact-panel-width { width: min(calc(100vw - 40px), 1200px); }
 @media (max-width: 640px) {
   .artifact-modal-pad { padding: 20px 10px; }
   .artifact-panel-width { width: calc(100vw - 20px); }
