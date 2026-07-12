@@ -68,9 +68,9 @@ export const doors: readonly Door[] = [
       { kind: 'projectCard',
         name: 'This portfolio',
         summary:
-          'The site you\'re on. A cosmic single-page canvas with a constellation-drawing puzzle and a server-side Claude Haiku chat. Astro static build with React islands; deployed on Cloudflare Pages, written end-to-end with Claude Code.',
+          'The site you\'re on. A cosmic single-page canvas with a constellation-drawing puzzle and a server-side AI chat. Astro static build with React islands; deployed on Cloudflare Pages, written end-to-end with Claude Code.',
         href: 'https://github.com/szilagyib/PortfolioPage',
-        stack: ['Astro', 'React', 'TypeScript', 'Cloudflare Pages', 'Claude API'],
+        stack: ['Astro', 'React', 'TypeScript', 'Cloudflare Pages'],
         preview: {
           src: '/previews/portfolio.png',
           alt: 'Cosmic portfolio canvas with the pentagon of destinations around a central YOU star',
