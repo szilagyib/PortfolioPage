@@ -11,7 +11,7 @@ export const doors: readonly Door[] = [
         'Team lead at Prolan since 2024 — a cross-functional Scrum team of 4 engineers across 4 products in a safety-critical environment. Still hands-on with code review and shipping.' },
       { kind: 'paragraph', text:
         'What I care about beyond the delivery: an atmosphere the team wants to show up to. High trust, disagreements aired out loud, ownership on the person closest to the problem. Room for creativity, for new ideas, and for trying a technique that hasn\'t proved itself yet — that\'s the space where the best work comes from, and where new tools like AI-assisted development get an honest shot at production.' },
-      { kind: 'metric', value: '60+',   label: 'features shipped in 2025 across 4 products' },
+      { kind: 'metric', value: '60+',   label: 'features shipped in 2025' },
       { kind: 'metric', value: '<24h',  label: 'median PR → merge cycle' },
       { kind: 'metric', value: '+30%',  label: 'feature delivery from AI tooling' },
       { kind: 'metric', value: '4',     label: 'products owned end-to-end' },
@@ -63,7 +63,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Side projects and writing — where I try new tools and ideas before deciding whether they belong in production.' },
+        'Side projects and writing — where I experiment with new tools and ideas on my own time.' },
       { kind: 'sectionLabel', text: 'Projects' },
       { kind: 'projectCard',
         name: 'This portfolio',
