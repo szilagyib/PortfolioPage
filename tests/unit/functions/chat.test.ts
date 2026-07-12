@@ -45,6 +45,19 @@ function context(req: Request, env: Record<string, unknown>) {
   };
 }
 
+function openAIOk() {
+  return vi.fn(async () =>
+    new Response(JSON.stringify({
+      choices: [{ message: { content: 'She leads engineering work.' } }],
+      usage: {
+        prompt_tokens: 150,
+        completion_tokens: 40,
+        total_tokens: 190,
+      },
+    }), { status: 200 }),
+  );
+}
+
 function anthropicOk() {
   return vi.fn(async () =>
     new Response(JSON.stringify({
@@ -69,12 +82,12 @@ afterEach(() => {
 });
 
 describe('chat Pages Function guardrails', () => {
-  it('rejects foreign origins before calling Anthropic', async () => {
-    const fetchMock = anthropicOk();
+  it('rejects foreign origins before calling the model', async () => {
+    const fetchMock = openAIOk();
     vi.stubGlobal('fetch', fetchMock);
 
     const res = await onRequestPost(context(request({ origin: 'https://evil.example' }), {
-      ANTHROPIC_API_KEY: 'test-key',
+      CHAT_API_KEY: 'test-key',
       CHAT_LIMITS: mockKv(),
     }) as never);
 
@@ -83,11 +96,11 @@ describe('chat Pages Function guardrails', () => {
   });
 
   it('fails closed when the KV rate-limit binding is missing', async () => {
-    const fetchMock = anthropicOk();
+    const fetchMock = openAIOk();
     vi.stubGlobal('fetch', fetchMock);
 
     const res = await onRequestPost(context(request({ origin: 'https://borbalaszilagyi.com' }), {
-      ANTHROPIC_API_KEY: 'test-key',
+      CHAT_API_KEY: 'test-key',
     }) as never);
 
     expect(res.status).toBe(200);
@@ -96,11 +109,11 @@ describe('chat Pages Function guardrails', () => {
   });
 
   it('allows the explicit local no-KV bypass', async () => {
-    const fetchMock = anthropicOk();
+    const fetchMock = openAIOk();
     vi.stubGlobal('fetch', fetchMock);
 
     const res = await onRequestPost(context(request({ origin: 'https://borbalaszilagyi.com' }), {
-      ANTHROPIC_API_KEY: 'test-key',
+      CHAT_API_KEY: 'test-key',
       CHAT_ALLOW_UNLIMITED_WITHOUT_KV: 'true',
     }) as never);
 
@@ -110,14 +123,14 @@ describe('chat Pages Function guardrails', () => {
   });
 
   it('rejects oversized requests before parsing or model calls', async () => {
-    const fetchMock = anthropicOk();
+    const fetchMock = openAIOk();
     vi.stubGlobal('fetch', fetchMock);
 
     const res = await onRequestPost(context(request({
       origin: 'https://borbalaszilagyi.com',
       headers: { 'content-length': '20000' },
     }), {
-      ANTHROPIC_API_KEY: 'test-key',
+      CHAT_API_KEY: 'test-key',
       CHAT_LIMITS: mockKv(),
     }) as never);
 
@@ -125,15 +138,15 @@ describe('chat Pages Function guardrails', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('records total Anthropic usage against the daily KV budget', async () => {
-    const fetchMock = anthropicOk();
+  it('records total OpenAI usage against the daily KV budget', async () => {
+    const fetchMock = openAIOk();
     vi.stubGlobal('fetch', fetchMock);
     const kv = mockKv();
     const ctx = context(request({
       origin: 'https://borbalaszilagyi.com',
       headers: { 'cf-connecting-ip': '203.0.113.8' },
     }), {
-      ANTHROPIC_API_KEY: 'test-key',
+      CHAT_API_KEY: 'test-key',
       CHAT_LIMITS: kv,
     });
 
@@ -143,5 +156,46 @@ describe('chat Pages Function guardrails', () => {
     const today = new Date().toISOString().slice(0, 10);
     expect(res.status).toBe(200);
     expect(kv.store.get(`tokens:${today}`)).toBe('190');
+  });
+
+  it('routes to Anthropic when CHAT_PROVIDER=anthropic', async () => {
+    const fetchMock = anthropicOk();
+    vi.stubGlobal('fetch', fetchMock);
+    const kv = mockKv();
+    const ctx = context(request({
+      origin: 'https://borbalaszilagyi.com',
+      headers: { 'cf-connecting-ip': '203.0.113.9' },
+    }), {
+      CHAT_PROVIDER: 'anthropic',
+      CHAT_API_KEY: 'test-key',
+      CHAT_LIMITS: kv,
+    });
+
+    const res = await onRequestPost(ctx as never);
+    await ctx.waitUntilAll();
+
+    expect(res.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url] = fetchMock.mock.calls[0] as unknown as [string];
+    expect(String(url)).toBe('https://api.anthropic.com/v1/messages');
+    const today = new Date().toISOString().slice(0, 10);
+    expect(kv.store.get(`tokens:${today}`)).toBe('190');
+  });
+
+  it('routes to OpenAI by default', async () => {
+    const fetchMock = openAIOk();
+    vi.stubGlobal('fetch', fetchMock);
+    const ctx = context(request({
+      origin: 'https://borbalaszilagyi.com',
+      headers: { 'cf-connecting-ip': '203.0.113.10' },
+    }), {
+      CHAT_API_KEY: 'test-key',
+      CHAT_LIMITS: mockKv(),
+    });
+
+    const res = await onRequestPost(ctx as never);
+    expect(res.status).toBe(200);
+    const [url] = fetchMock.mock.calls[0] as unknown as [string];
+    expect(String(url)).toBe('https://api.openai.com/v1/chat/completions');
   });
 });

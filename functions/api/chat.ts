@@ -2,12 +2,11 @@
  * Pages Function: POST /api/chat
  *
  * Accepts a short message history, applies per-IP rate limits and a daily
- * token-budget cap (both persisted in KV), and forwards to Anthropic's
- * Messages API. Returns a single assistant turn — batch, not streaming.
+ * token-budget cap (both persisted in KV), and forwards to the configured
+ * chat model. Returns a single assistant turn — batch, not streaming.
  *
- * The system prompt is sent with `cache_control: ephemeral`, so repeat
- * requests within a short window cost the cached-input rate (~$0.08/Mt vs
- * $0.25/Mt for fresh input on Haiku).
+ * Provider is selected by the CHAT_PROVIDER env var ("openai" | "anthropic").
+ * Swap models by env alone; no code change needed.
  */
 
 import { SYSTEM_PROMPT } from '../../src/content/ai-system-prompt';
@@ -18,11 +17,13 @@ import { SYSTEM_PROMPT } from '../../src/content/ai-system-prompt';
  * (secrets) — there is no other config seam.
  */
 interface Env {
-  /** Anthropic API key. Set as a SECRET, not a var. */
-  ANTHROPIC_API_KEY?: string;
+  /** Chat model provider. "openai" (default) or "anthropic". */
+  CHAT_PROVIDER?: string;
+  /** API key for the selected provider. Set as a SECRET, not a var. */
+  CHAT_API_KEY?: string;
   /** KV namespace used for rate-limit + token-budget counters. */
   CHAT_LIMITS?: KVNamespace;
-  /** Anthropic model id. Default: claude-haiku-4-5. */
+  /** Model id (provider-specific). Default: gpt-4o-mini. */
   CHAT_MODEL?: string;
   /** Cap on max_tokens per response. Default: 700. */
   CHAT_MAX_OUTPUT_TOKENS?: string;
@@ -38,6 +39,7 @@ interface Env {
 }
 
 type ClientRole = 'user' | 'assistant';
+type Provider = 'openai' | 'anthropic';
 
 interface ClientMessage {
   readonly role: ClientRole;
@@ -56,7 +58,7 @@ interface ResponseBody {
 }
 
 // --- Code constants (defensive bounds, not visitor-tunable) ---------------
-/** Cap on conversation length sent to Anthropic. Counts messages, not turns. */
+/** Cap on conversation length sent to the model. Counts messages, not turns. */
 const MAX_HISTORY_MESSAGES = 8;
 /** Bound on raw inbound array length so we don't spend cycles parsing junk. */
 const MAX_RAW_MESSAGES = 24;
@@ -68,7 +70,8 @@ const MAX_MESSAGE_CHARS = 1200;
 const MAX_TOTAL_MESSAGE_CHARS = 5000;
 
 // --- Fallbacks for env-tunable values (when wrangler.toml isn't read) ----
-const DEFAULT_MODEL = 'claude-haiku-4-5';
+const DEFAULT_PROVIDER: Provider = 'openai';
+const DEFAULT_MODEL = 'gpt-4o-mini';
 const DEFAULT_MAX_OUTPUT_TOKENS = 700;
 const DEFAULT_RATE_PER_HOUR = 10;
 const DEFAULT_RATE_PER_DAY = 30;
@@ -105,6 +108,12 @@ function parseIntOr(value: string | undefined, fallback: number): number {
 function boolEnv(value: string | undefined): boolean {
   if (!value) return false;
   return ['1', 'true', 'yes', 'on'].includes(value.trim().toLowerCase());
+}
+
+function resolveProvider(value: string | undefined): Provider {
+  const v = value?.trim().toLowerCase();
+  if (v === 'openai' || v === 'anthropic') return v;
+  return DEFAULT_PROVIDER;
 }
 
 function requestTooLarge(request: Request): boolean {
@@ -183,6 +192,27 @@ function rateLimitMessage(reason: RateLimitDecision['reason']): string {
   }
 }
 
+/**
+ * Wrap user-supplied content with delimiter tags so the model can tell
+ * visitor input apart from system text. HTML-escape angle brackets and
+ * ampersands inside the content so a visitor can't close the wrapping
+ * tag prematurely and inject text outside it.
+ */
+function wrapVisitorInput(text: string): string {
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  return `<visitor>${escaped}</visitor>`;
+}
+
+interface ProviderReply {
+  readonly text: string;
+  readonly usageTokens: number;
+}
+
+// --- Provider: Anthropic ---------------------------------------------------
+
 interface AnthropicTextBlock {
   readonly type: 'text';
   readonly text: string;
@@ -198,7 +228,7 @@ interface AnthropicResponse {
   };
 }
 
-function totalUsageTokens(usage: AnthropicResponse['usage']): number {
+function anthropicUsage(usage: AnthropicResponse['usage']): number {
   if (!usage) return 0;
   return (
     (usage.input_tokens ?? 0) +
@@ -208,26 +238,12 @@ function totalUsageTokens(usage: AnthropicResponse['usage']): number {
   );
 }
 
-/**
- * Wrap user-supplied content with delimiter tags so the model can tell
- * visitor input apart from system text. HTML-escape angle brackets and
- * ampersands inside the content so a visitor can't close the wrapping
- * tag prematurely and inject text outside it.
- */
-function wrapVisitorInput(text: string): string {
-  const escaped = text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-  return `<visitor>${escaped}</visitor>`;
-}
-
 async function callAnthropic(
   apiKey: string,
   model: string,
   maxOutputTokens: number,
   history: readonly ClientMessage[],
-): Promise<{ text: string; usageTokens: number }> {
+): Promise<ProviderReply> {
   const body = {
     model,
     max_tokens: maxOutputTokens,
@@ -269,7 +285,86 @@ async function callAnthropic(
     throw new Error('anthropic returned empty text');
   }
 
-  return { text, usageTokens: totalUsageTokens(data.usage) };
+  return { text, usageTokens: anthropicUsage(data.usage) };
+}
+
+// --- Provider: OpenAI ------------------------------------------------------
+
+interface OpenAIChoice {
+  readonly message?: { readonly content?: string | null };
+}
+
+interface OpenAIResponse {
+  readonly choices?: readonly OpenAIChoice[];
+  readonly usage?: {
+    readonly prompt_tokens?: number;
+    readonly completion_tokens?: number;
+    readonly total_tokens?: number;
+  };
+}
+
+function openAIUsage(usage: OpenAIResponse['usage']): number {
+  if (!usage) return 0;
+  if (typeof usage.total_tokens === 'number') return usage.total_tokens;
+  return (usage.prompt_tokens ?? 0) + (usage.completion_tokens ?? 0);
+}
+
+async function callOpenAI(
+  apiKey: string,
+  model: string,
+  maxOutputTokens: number,
+  history: readonly ClientMessage[],
+): Promise<ProviderReply> {
+  const body = {
+    model,
+    max_tokens: maxOutputTokens,
+    messages: [
+      { role: 'system' as const, content: SYSTEM_PROMPT },
+      ...history.map((m) => ({
+        role: m.role,
+        content: m.role === 'user' ? wrapVisitorInput(m.text) : m.text,
+      })),
+    ],
+  };
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    throw new Error(`openai ${res.status}: ${await res.text().catch(() => '')}`);
+  }
+
+  const data = (await res.json()) as OpenAIResponse;
+  const text = (data.choices?.[0]?.message?.content ?? '').trim();
+
+  if (!text) {
+    throw new Error('openai returned empty text');
+  }
+
+  return { text, usageTokens: openAIUsage(data.usage) };
+}
+
+// --- Provider dispatch -----------------------------------------------------
+
+function callProvider(
+  provider: Provider,
+  apiKey: string,
+  model: string,
+  maxOutputTokens: number,
+  history: readonly ClientMessage[],
+): Promise<ProviderReply> {
+  switch (provider) {
+    case 'anthropic':
+      return callAnthropic(apiKey, model, maxOutputTokens, history);
+    case 'openai':
+      return callOpenAI(apiKey, model, maxOutputTokens, history);
+  }
 }
 
 function validateBody(raw: unknown): RequestBody | null {
@@ -292,7 +387,7 @@ function validateBody(raw: unknown): RequestBody | null {
 
   // Keep only the most recent slice. After slicing the first surviving
   // message might be an assistant turn (e.g. when total > cap and parity
-  // doesn't line up); Anthropic requires the conversation to start with
+  // doesn't line up); the API requires the conversation to start with
   // a user message, so drop any leading assistants here.
   let sliced = cleaned.slice(-MAX_HISTORY_MESSAGES);
   while (sliced.length > 0 && sliced[0].role !== 'user') {
@@ -350,7 +445,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ error: 'invalid messages' }, { status: 400 });
   }
 
-  if (!env.ANTHROPIC_API_KEY) {
+  if (!env.CHAT_API_KEY) {
     return cappedResponse(
       'The chat is not configured yet — the API key is missing in the deployment. Use the contact links above to reach Borbála directly.',
     );
@@ -377,12 +472,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
   }
 
+  const provider = resolveProvider(env.CHAT_PROVIDER);
   const model = env.CHAT_MODEL?.trim() || DEFAULT_MODEL;
   const maxOutputTokens = parseIntOr(env.CHAT_MAX_OUTPUT_TOKENS, DEFAULT_MAX_OUTPUT_TOKENS);
 
   try {
-    const { text, usageTokens } = await callAnthropic(
-      env.ANTHROPIC_API_KEY,
+    const { text, usageTokens } = await callProvider(
+      provider,
+      env.CHAT_API_KEY,
       model,
       maxOutputTokens,
       parsed.messages,
