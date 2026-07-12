@@ -130,10 +130,11 @@ function todayUTC(): { day: string; hour: string } {
   return { day, hour };
 }
 
-interface RateLimitDecision {
-  readonly allowed: boolean;
-  readonly reason?: 'hour' | 'day' | 'tokens';
-}
+type LimitReason = 'hour' | 'day' | 'tokens';
+
+type RateLimitDecision =
+  | { readonly allowed: true }
+  | { readonly allowed: false; readonly reason: LimitReason };
 
 async function checkAndIncrementRate(
   kv: KVNamespace,
@@ -179,7 +180,7 @@ async function recordTokenUsage(
   await kv.put(key, String(current + outputTokens), { expirationTtl: 90000 });
 }
 
-function rateLimitMessage(reason: RateLimitDecision['reason']): string {
+function rateLimitMessage(reason: LimitReason): string {
   switch (reason) {
     case 'hour':
       return 'You\'ve hit the hourly question cap — try again in a little while. (The cap is per-IP so a chatty visitor doesn\'t exhaust the free tier for everyone.)';
@@ -187,8 +188,6 @@ function rateLimitMessage(reason: RateLimitDecision['reason']): string {
       return 'You\'ve hit the daily question cap. Come back tomorrow, or reach out via the contact links above.';
     case 'tokens':
       return 'The chat has used its daily allowance — Borbála will top it up tomorrow. Meanwhile, the contact links above are the fastest way to reach her.';
-    default:
-      return 'The chat is briefly unavailable. Try again in a moment, or use the contact links above.';
   }
 }
 
