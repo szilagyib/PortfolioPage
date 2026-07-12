@@ -675,18 +675,7 @@ export function ArtifactCard({
             }}
           >
             {isChatOnly ? (
-              <span style={{ textTransform: 'lowercase' }}>
-                ask me anything
-                <span
-                  style={{
-                    color: 'var(--text-dim)',
-                    marginLeft: 10,
-                    letterSpacing: '0.08em',
-                  }}
-                >
-                  · claude haiku
-                </span>
-              </span>
+              <span style={{ textTransform: 'lowercase' }}>ask me anything</span>
             ) : (
               <span style={{ textTransform: 'lowercase' }}>{door.name}</span>
             )}
