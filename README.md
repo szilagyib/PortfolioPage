@@ -57,35 +57,6 @@ npm run typecheck
 npm run build
 ```
 
-## Deployment Notes
-
-Target platform: **Cloudflare Pages**.
-
-Build settings:
-
-```text
-Framework preset: Astro
-Build command: npm run build
-Build output directory: dist
-Node version: 20+
-```
-
-Required production configuration:
-
-```text
-CHAT_API_KEY       (secret — matches the selected provider)
-CHAT_PROVIDER      ("openai" | "anthropic"; default "openai")
-CHAT_MODEL         (provider-specific model id)
-CHAT_LIMITS        (KV namespace binding)
-ALLOWED_ORIGIN
-```
-
-`CHAT_LIMITS` must be bound to a Cloudflare KV namespace. Without it, the chat
-fails closed instead of making unmetered model calls.
-
-Swap providers by setting `CHAT_PROVIDER` + `CHAT_MODEL` and rotating
-`CHAT_API_KEY` — no code change needed.
-
 ## License
 
 Personal portfolio. Content, images, CV, and personal materials are not licensed

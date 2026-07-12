@@ -315,9 +315,12 @@ async function callOpenAI(
   maxOutputTokens: number,
   history: readonly ClientMessage[],
 ): Promise<ProviderReply> {
+  // `max_completion_tokens` supersedes `max_tokens` on OpenAI and is
+  // accepted by both the older chat models and the newer reasoning ones
+  // (o1/o3/gpt-5-*), so we always send this form.
   const body = {
     model,
-    max_tokens: maxOutputTokens,
+    max_completion_tokens: maxOutputTokens,
     messages: [
       { role: 'system' as const, content: SYSTEM_PROMPT },
       ...history.map((m) => ({
