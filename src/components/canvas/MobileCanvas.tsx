@@ -265,7 +265,9 @@ export default function MobileCanvas() {
         {/* Spacer between YOU star and the destination column */}
         <div style={{ height: 12 }} />
 
-        {/* Vertical trunk-and-destinations column */}
+        {/* Destinations column. No trunk on mobile — the pentagon-spoke
+         *   metaphor doesn't translate to a vertical stack; each card
+         *   already signals powered/unpowered clearly on its own. */}
         <div
           style={{
             width: '100%',
@@ -273,32 +275,9 @@ export default function MobileCanvas() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'stretch',
-            gap: 10,
-            position: 'relative',
+            gap: 12,
           }}
         >
-          {/* Connecting trunk behind the destinations — soft cyan gradient
-           *   with a subtle outer glow, replacing the static dashed line. */}
-          <div
-            aria-hidden
-            style={{
-              position: 'absolute',
-              top: -12,
-              bottom: -10,
-              left: '50%',
-              width: 1.5,
-              background:
-                'linear-gradient(to bottom, ' +
-                  'rgba(178, 212, 229, 0) 0%, ' +
-                  'rgba(178, 212, 229, 0.55) 8%, ' +
-                  'rgba(95, 184, 214, 0.4) 60%, ' +
-                  'rgba(178, 212, 229, 0.15) 100%)',
-              boxShadow: '0 0 6px rgba(95, 184, 214, 0.35)',
-              transform: 'translateX(-50%)',
-              zIndex: 0,
-            }}
-          />
-
           {orderedDoors.map((d, i) => (
             <motion.div
               key={d.id}
@@ -309,7 +288,6 @@ export default function MobileCanvas() {
                 delay: 0.16 + i * 0.07,
                 ease: REVEAL_EASE,
               }}
-              style={{ position: 'relative', zIndex: 1 }}
             >
               <MobileDestination
                 id={d.id}
