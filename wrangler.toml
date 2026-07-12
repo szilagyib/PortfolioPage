@@ -4,7 +4,8 @@ compatibility_date = "2025-09-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-CHAT_MODEL = "claude-haiku-4-5"
+CHAT_PROVIDER = "openai"
+CHAT_MODEL = "gpt-4o-mini"
 CHAT_MAX_OUTPUT_TOKENS = "700"
 CHAT_RATE_LIMIT_PER_HOUR = "10"
 CHAT_RATE_LIMIT_PER_DAY = "30"

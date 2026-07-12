@@ -1,7 +1,7 @@
 /**
  * System prompt for the "ask me anything" chatbot on the AI artifact card.
  *
- * Designed to fit in a single cached Anthropic system message (~4k tokens).
+ * Sent as the system message to the configured chat model (~4k tokens).
  * Updates should preserve the structure below — the SCOPE, REFUSED TOPICS,
  * and INSTRUCTION-HANDLING sections in particular protect against the AI
  * being asked to impersonate Borbála, fabricate experience, drift into

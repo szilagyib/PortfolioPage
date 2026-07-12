@@ -2,10 +2,13 @@
 # with `wrangler pages dev`. `.dev.vars` is gitignored — never commit a real key.
 #
 # Production secrets are set separately via:
-#   wrangler pages secret put ANTHROPIC_API_KEY --project-name borbala-portfolio
+#   wrangler pages secret put CHAT_API_KEY --project-name borbala-portfolio
 # or in the Cloudflare dashboard.
+#
+# Provider is selected by CHAT_PROVIDER in wrangler.toml ("openai" | "anthropic").
+# CHAT_API_KEY must match the selected provider.
 
-ANTHROPIC_API_KEY=""
+CHAT_API_KEY=""
 ALLOWED_ORIGIN="http://localhost:8788,http://127.0.0.1:8788"
 
 # Local development only. Production should bind CHAT_LIMITS to Cloudflare KV

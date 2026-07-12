@@ -26,7 +26,7 @@ resume page:
 - **Cloudflare Pages** for hosting
 - **Cloudflare Pages Functions** for `/api/chat` and `/api/fortune`
 - **Cloudflare KV** for chat rate-limit and token-budget counters
-- **Anthropic Claude** for the portfolio assistant
+- **OpenAI or Anthropic** for the portfolio assistant (provider selected by env)
 - **Vitest 4**, Testing Library, and MSW for tests
 
 ## Architecture
@@ -73,13 +73,18 @@ Node version: 20+
 Required production configuration:
 
 ```text
-ANTHROPIC_API_KEY
-CHAT_LIMITS
+CHAT_API_KEY       (secret — matches the selected provider)
+CHAT_PROVIDER      ("openai" | "anthropic"; default "openai")
+CHAT_MODEL         (provider-specific model id)
+CHAT_LIMITS        (KV namespace binding)
 ALLOWED_ORIGIN
 ```
 
 `CHAT_LIMITS` must be bound to a Cloudflare KV namespace. Without it, the chat
 fails closed instead of making unmetered model calls.
+
+Swap providers by setting `CHAT_PROVIDER` + `CHAT_MODEL` and rotating
+`CHAT_API_KEY` — no code change needed.
 
 ## License
 

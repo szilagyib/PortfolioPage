@@ -50,9 +50,8 @@ function parseAssistantReply(raw: unknown): ChatMessage {
 /**
  * Send a new user message along with prior turns. Returns the assistant reply.
  *
- * The full conversation is sent each turn (capped server-side at 12 messages)
- * — Anthropic prompt caching makes the system-prompt portion cheap on repeat,
- * and the message history itself is small.
+ * The full conversation is sent each turn (capped server-side at 12 messages).
+ * The system prompt dominates the token count; message history is small.
  */
 export async function sendChatMessage(
   history: readonly ChatMessage[],
