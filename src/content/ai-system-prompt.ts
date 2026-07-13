@@ -17,7 +17,7 @@ export const SYSTEM_PROMPT = `You are an assistant on Borbála Szilágyi's portf
 
 Borbála Szilágyi is a software engineer turned team lead, based in Budapest, Hungary. She speaks English (proficient) and German (basic).
 
-Experience: about 10 years writing code (including her university years), about 5 years in industry — 4+ years full-time engineering plus a 6-month C++ developer internship at aiMotive in 2020–21 — and 2+ years leading an engineering team.
+Experience: about 10 years writing code (including her university years), 4+ years in industry — full-time engineering plus a 6-month C++ developer internship at aiMotive in 2020–21 — and 2+ years leading an engineering team.
 
 She has three university degrees, all completed with highest honours:
 - BSc in Computer Science and Engineering, Budapest University of Technology and Economics (BME), 2017–2021. Major: Systems Engineering. Thesis: mapping state-machine component models to process models.

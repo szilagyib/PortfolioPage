@@ -11,7 +11,7 @@ export const doors: readonly Door[] = [
         'Team lead at Prolan since 2024, running a cross-functional Scrum team of 4 engineers across 4 products in a safety-critical environment. Still hands-on with code review and shipping.' },
       { kind: 'paragraph', text:
         'Beyond the delivery, what I care about is the atmosphere — a team people actually want to show up to. High trust, disagreements aired out loud, ownership on whoever is closest to the problem. Room for creativity, for new ideas, and for trying a technique that hasn\'t proved itself yet — that\'s where the best work comes from, and where new tools like AI-assisted development get an honest shot at production.' },
-      { kind: 'metric', value: '60+',   label: 'features shipped in 2025' },
+      { kind: 'metric', value: '380+',  label: 'tickets resolved in 2025' },
       { kind: 'metric', value: '<24h',  label: 'PR → merge cycle' },
       { kind: 'metric', value: '+30%',  label: 'delivery uplift from AI' },
       { kind: 'metric', value: '4',     label: 'products end-to-end' },
@@ -35,22 +35,22 @@ export const doors: readonly Door[] = [
       { kind: 'productList', products: [
         {
           name: 'Titanium', type: 'Web',
-          summary: 'End-to-end component and inventory management for manufacturing and production environments.',
+          summary: 'End-to-end component and inventory management for manufacturing and production environments. Took over a half-finished modernization, retired the legacy alongside it, and reworked the permission model.',
           stack: ['Java','Spring','Postgres','Vaadin','Maven','Docker','React','TypeScript'],
         },
         {
           name: 'WebDiag', type: 'Web',
-          summary: 'Real-time diagnostics, data collection, fault analysis, and reporting for safety-critical railway signalling stations.',
+          summary: 'Real-time diagnostics, data collection, fault analysis, and reporting for safety-critical railway signalling stations. Runs in production.',
           stack: ['Java','Spring','Postgres','Maven','Docker','React','TypeScript'],
         },
         {
           name: 'DisCom', type: 'Desktop + Web',
-          summary: 'Cross-border railway communication with real-time translation between operational languages.',
+          summary: 'Cross-border railway communication built around a fixed phrasebook — the same operational sentences, translated across languages. Deployed as a desktop client; a web variant is in the works.',
           stack: ['Java','Swing','Node.js','Express.js','React','Postgres','Maven','Docker'],
         },
         {
           name: 'ProrisCAD', type: 'Desktop',
-          summary: 'Model-driven CAD for designing and parameterising railway safety systems: safety engineers describe signalling logic in custom DSLs, and the tool generates deployable parameterisation. Built on Eclipse Modeling Framework — Xtext for the DSLs, Graphiti for the graphical editor.',
+          summary: 'Model-driven designer for railway signalling systems. Engineers model the signalling logic graphically; the tool generates the deployable parameterisation. Main architect for years — feature direction, framework calls, and the day-to-day shape of the tool.',
           stack: ['Java','Eclipse Modeling Framework','Maven','Ecore/Xcore','Xtext/Xtend','Graphiti'],
         },
       ]},
@@ -63,7 +63,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Side projects and writing — where I experiment with new tools and ideas on my own time.' },
+        'Side projects and recent writings — where I experiment with new tools and ideas on my own time.' },
       { kind: 'sectionLabel', text: 'Projects' },
       { kind: 'projectCard',
         name: 'This portfolio',
@@ -88,10 +88,10 @@ export const doors: readonly Door[] = [
         },
       },
       { kind: 'projectCard',
-        name: 'GitHubAgents',
+        name: 'GitAgents',
         summary:
           'Paired AI agents for GitLab and GitHub CI pipelines: one reviews PRs/MRs with inline comments and merge gating, the other applies safe auto-fixes back to the branch. Per-language rule configs and a telemetry dashboard.',
-        href: 'https://github.com/szilagyib/GitHubAgents',
+        href: 'https://github.com/szilagyib/GitAgents',
         stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
           src: '/previews/placeholder.svg',
@@ -156,7 +156,7 @@ export const doors: readonly Door[] = [
         ],
       },
       { kind: 'paragraph', text:
-        '10 years writing code, 5 of them in industry, and 2+ leading an engineering team. I moved from engineering into leadership in 2024, bringing the technical grounding with me and the same focus on people. Three things shape how I work: building real teams where people are partners, not just coworkers; picking up new tools by making something with them; and figuring out where AI-assisted development actually earns its place in production code.' },
+        '10 years writing code, 4+ in industry, and 2+ leading an engineering team. I moved from engineering into leadership in 2024, bringing the technical grounding with me and the same focus on people. Three things shape how I work: building real teams where people are partners, not just coworkers; picking up new tools by making something with them; and figuring out where AI-assisted development actually earns its place in production code.' },
       { kind: 'paragraph', text:
         'BSc + MSc Computer Science and Engineering at BME (2017–2023). MBA in Finance and Management at ELTE (2023–2025). Teaching Assistant for Formal Methods at BME, Spring 2022.' },
     ],
