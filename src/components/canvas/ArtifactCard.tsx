@@ -84,29 +84,47 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
       );
 
     case 'metric':
-      /* Each metric sits in a flex-wrap row (see BodyBlocks). `flex: 1 1
-       * auto` lets the cell size to its content and grow into the available
-       * row width. The `.metric-block` class carries `whiteSpace: nowrap`
-       * on wider viewports (keeps each label on one line) and drops back
-       * to normal wrapping on narrow phones so long labels wrap inside
-       * the cell instead of overflowing horizontally. */
+      /* Vertical stack: hero value on top, small mono label below. Hairline
+       * border + inset top highlight give a subtle glass lift consistent
+       * with the artifact panel. `.metric-block` still carries
+       * `whiteSpace: nowrap` on wider viewports to keep each label on one
+       * line, and drops to normal wrapping on phones. */
       return (
         <div
           key={i}
           className="metric-block"
           style={{
-            padding: '10px 14px',
-            border: '1px solid var(--tech-line)',
-            borderRadius: 5,
+            padding: '12px 14px 10px',
+            border: '1px solid rgba(178, 212, 229, 0.14)',
+            borderRadius: 10,
             flex: '1 1 auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+            background: 'linear-gradient(180deg, rgba(178, 212, 229, 0.03), transparent)',
+            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05)',
           }}
         >
-          <span style={{ color: 'var(--accent-cyan)', fontSize: 'var(--fs-h2)', fontWeight: 600 }}>
+          <div
+            style={{
+              color: 'var(--accent-cyan)',
+              fontSize: 'var(--fs-h2)',
+              fontWeight: 600,
+              lineHeight: 1,
+            }}
+          >
             {b.value}
-          </span>{' '}
-          <span style={{ color: 'var(--text-dim)', fontSize: 'var(--fs-label)' }}>
+          </div>
+          <div
+            style={{
+              color: 'var(--text-dim)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              letterSpacing: '0.04em',
+            }}
+          >
             {b.label}
-          </span>
+          </div>
         </div>
       );
 
@@ -508,7 +526,7 @@ export function BodyBlocks({ door }: BodyBlocksProps) {
           style={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: 10,
+            gap: 8,
             margin: '12px 0',
           }}
         >
@@ -642,14 +660,16 @@ export function ArtifactCard({
             pointerEvents: 'auto',
             cursor: 'auto',
             background: 'linear-gradient(180deg, rgba(13,18,48,0.96) 0%, rgba(6,6,15,0.96) 100%)',
-            border: '1px solid rgba(178, 212, 229, 0.35)',
-            borderRadius: 10,
+            border: '1px solid rgba(178, 212, 229, 0.18)',
+            borderRadius: 12,
             color: 'var(--text-bright)',
             lineHeight: 1.55,
+            /* Inset top-edge highlight gives the panel a subtle glass
+             * lift; outer glow + heavy drop-shadow do the depth. */
             boxShadow:
-              '0 0 0 1px rgba(178, 212, 229, 0.12), ' +
-              '0 0 24px rgba(178, 212, 229, 0.16), ' +
-              '0 0 64px rgba(178, 212, 229, 0.10), ' +
+              'inset 0 1px 0 rgba(255, 255, 255, 0.06), ' +
+              '0 0 24px rgba(178, 212, 229, 0.12), ' +
+              '0 0 64px rgba(178, 212, 229, 0.08), ' +
               '0 24px 64px rgba(0, 0, 0, 0.55)',
           }}
         >
