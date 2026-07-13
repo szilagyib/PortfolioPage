@@ -289,22 +289,30 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   }
 }
 
-/* Ask-me suggestion pills. Two per row on desktop; one column on phones. */
+/* Ask-me suggestion pills. Three natural-width chips in a single row on
+   desktop, mildly rounded (not full pill). Phones collapse to a single
+   stacked column with ellipsized long questions. */
 .chat-suggestions {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, max-content);
+  justify-content: start;
   gap: 6px;
 }
 .chat-suggestion {
-  padding: 6px 10px;
+  padding: 6px 12px;
   font-size: 12px;
   font-family: var(--font-mono);
   color: var(--accent-cyan);
-  background: transparent;
+  background: rgba(95, 184, 214, 0.06);
   border: 1px solid rgba(95, 184, 214, 0.35);
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   text-align: left;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.chat-suggestion:hover {
+  background: rgba(95, 184, 214, 0.14);
+  border-color: rgba(95, 184, 214, 0.6);
 }
 @media (max-width: 640px) {
   .chat-suggestions {
@@ -315,6 +323,6 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 11px;
-    padding: 6px 10px;
+    padding: 6px 12px;
   }
 }

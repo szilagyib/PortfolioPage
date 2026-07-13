@@ -8,14 +8,14 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Team lead at Prolan since 2024 — a cross-functional Scrum team of 4 engineers across 4 products in a safety-critical environment. Still hands-on with code review and shipping.' },
+        'Team lead at Prolan since 2024, running a cross-functional Scrum team of 4 engineers across 4 products in a safety-critical environment. Still hands-on with code review and shipping.' },
       { kind: 'paragraph', text:
-        'What I care about beyond the delivery: an atmosphere the team wants to show up to. High trust, disagreements aired out loud, ownership on the person closest to the problem. Room for creativity, for new ideas, and for trying a technique that hasn\'t proved itself yet — that\'s the space where the best work comes from, and where new tools like AI-assisted development get an honest shot at production.' },
+        'Beyond the delivery, what I care about is the atmosphere — a team people actually want to show up to. High trust, disagreements aired out loud, ownership on whoever is closest to the problem. Room for creativity, for new ideas, and for trying a technique that hasn\'t proved itself yet — that\'s where the best work comes from, and where new tools like AI-assisted development get an honest shot at production.' },
       { kind: 'metric', value: '60+',   label: 'features shipped in 2025' },
-      { kind: 'metric', value: '<24h',  label: 'median PR → merge cycle' },
-      { kind: 'metric', value: '+30%',  label: 'feature delivery from AI tooling' },
-      { kind: 'metric', value: '4',     label: 'products owned end-to-end' },
-      { kind: 'metric', value: '0',     label: 'voluntary attrition since 2024' },
+      { kind: 'metric', value: '<24h',  label: 'PR → merge cycle' },
+      { kind: 'metric', value: '+30%',  label: 'delivery uplift from AI' },
+      { kind: 'metric', value: '4',     label: 'products end-to-end' },
+      { kind: 'metric', value: '0',     label: 'attrition since 2024' },
       { kind: 'bullet', items: [
         'Owns the architectural calls across 4 products in active development — tech stack, integration boundaries, rewrite-vs-refactor decisions.',
         'Rolled out AI tooling (Claude Code, ChatGPT/Codex) on the team in 2025.',
@@ -156,7 +156,7 @@ export const doors: readonly Door[] = [
         ],
       },
       { kind: 'paragraph', text:
-        '10 years writing code — 5 in industry, and 2+ leading an engineering team. The move from engineering into leadership happened in 2024; I brought both technical grounding and a clear focus on people. Three things drive how I work: creating real teams where people are partners, not just coworkers; learning new tools by building something with them; and finding where AI-assisted development actually earns its place in production code.' },
+        '10 years writing code, 5 of them in industry, and 2+ leading an engineering team. I moved from engineering into leadership in 2024, bringing the technical grounding with me and the same focus on people. Three things shape how I work: building real teams where people are partners, not just coworkers; picking up new tools by making something with them; and figuring out where AI-assisted development actually earns its place in production code.' },
       { kind: 'paragraph', text:
         'BSc + MSc Computer Science and Engineering at BME (2017–2023). MBA in Finance and Management at ELTE (2023–2025). Teaching Assistant for Formal Methods at BME, Spring 2022.' },
     ],

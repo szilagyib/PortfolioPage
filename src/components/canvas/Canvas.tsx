@@ -112,7 +112,15 @@ export default function Canvas() {
       <CosmicBackground />
       <SystemReadout />
       <CvDownload />
-      <SkipButton onClick={openAll} />
+      <SkipButton
+        onClick={openAll}
+        highlight={
+          !activePuzzle &&
+          poweredDoors.length === 0 &&
+          !openCard &&
+          !allDoorsOpen
+        }
+      />
       <ResetButton
         visible={poweredDoors.length > 0 && !allDoorsOpen}
         onClick={reset}
