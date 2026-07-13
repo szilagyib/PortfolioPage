@@ -105,7 +105,7 @@ export const doors: readonly Door[] = [
         href: 'https://github.com/szilagyib/RAMSey',
         stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Yjs', 'Vercel AI SDK'],
         preview: {
-          src: '/previews/placeholder.svg',
+          src: '/previews/ramsey.png',
           alt: 'RAMSey collaborative diagram editor preview',
         },
       },
