@@ -48,13 +48,103 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   .metric-block { white-space: normal; }
 }
 
-/* Artifact card header + body — tighter side padding on phones so
-   pills, metrics, and titles have breathing room. */
-.artifact-header-pad { padding: 12px 32px; }
-.artifact-body { padding: 18px 32px 28px; }
+/* Artifact card body — tighter side padding on phones so pills,
+   metrics, and titles have breathing room. Header spacing lives with
+   .artifact-panel-header-inner just below. */
+.artifact-body { padding: 8px 32px 28px; }
 @media (max-width: 640px) {
-  .artifact-header-pad { padding: 10px 16px; }
-  .artifact-body { padding: 14px 16px 24px; }
+  .artifact-body { padding: 6px 16px 24px; }
+}
+
+/* Artifact panel sticky header.
+ *
+ * Magazine layout: section name (or "ask me anything" for chat-only)
+ * is the eyebrow title; identity is a small mono subtitle beneath;
+ * CV pill and ✕ close align on the right. Sticks to the panel's
+ * scroll top so both stay reachable while reading long content.
+ * The gradient fades to transparent so body content scrolling under
+ * it reads as continuous ink, not two disjoint boxes.
+ */
+.artifact-panel-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(13, 18, 48, 0.98) 0%,
+      rgba(13, 18, 48, 0.9) 60%,
+      rgba(13, 18, 48, 0) 100%
+    );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.artifact-panel-header-inner {
+  padding: 20px 32px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  font-family: var(--font-mono);
+}
+.artifact-panel-header-title { min-width: 0; }
+.artifact-panel-header-section {
+  font-size: 14px;
+  color: var(--accent-cyan);
+  letter-spacing: 0.16em;
+  text-transform: lowercase;
+  line-height: 1;
+}
+.artifact-panel-header-identity {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+.artifact-panel-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.artifact-panel-header-close {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-bright);
+  border: 1px solid var(--tech-line);
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: rgba(13, 18, 48, 0.55);
+  cursor: pointer;
+  transition:
+    border-color var(--d-fast) var(--ease-out),
+    background var(--d-fast) var(--ease-out);
+}
+.artifact-panel-header-close:hover {
+  border-color: rgba(178, 212, 229, 0.55);
+  background: rgba(40, 52, 88, 0.6);
+}
+@media (max-width: 640px) {
+  .artifact-panel-header-inner {
+    padding: 14px 16px 14px;
+    gap: 12px;
+  }
+  .artifact-panel-header-section {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+  }
+  .artifact-panel-header-identity {
+    margin-top: 6px;
+    font-size: 10px;
+  }
+  /* Only the name on mobile — the full role line makes the header
+   * feel cramped on phones. Desktop keeps both. */
+  .artifact-panel-header-identity-role { display: none; }
 }
 
 /* See-all overlay.
@@ -143,14 +233,18 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 .all-doors-header-btn {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14px;
+  line-height: 1;
   color: var(--text-bright);
   border: 1px solid var(--tech-line);
-  padding: 6px 10px;
-  border-radius: 3px;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
   background: rgba(13, 18, 48, 0.55);
   cursor: pointer;
-  white-space: nowrap;
   transition:
     border-color var(--d-fast) var(--ease-out),
     background var(--d-fast) var(--ease-out);
@@ -163,9 +257,20 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .all-doors-cards {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 12px 20px 32px;
+  padding: 12px 20px 24px;
   display: grid;
   gap: 24px;
+}
+
+.all-doors-footer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4px 20px 40px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.14em;
 }
 .all-doors-card { padding: 24px 28px 28px; }
 @media (max-width: 640px) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { sendChatMessage, type ChatMessage } from '@/services/chat.service';
 import { ChatBubble } from './ChatBubble';
 import { ChatComposer } from './ChatComposer';
@@ -9,9 +9,59 @@ const SUGGESTIONS: readonly string[] = [
   'Surprise me with a fun fact!',
 ];
 
+/* LocalStorage key + 24h retention. A visitor who reads Leadership,
+ * closes it, and pops back into the chat within the day expects to
+ * see their earlier questions. Longer than a day starts to feel
+ * stale, so we bin it. */
+const CHAT_STORAGE_KEY = 'pf.chat.v1';
+const CHAT_STORAGE_TTL_MS = 24 * 60 * 60 * 1000;
+
+interface StoredChat {
+  readonly messages: readonly ChatMessage[];
+  readonly savedAt: number;
+}
+
+function readStoredChat(): readonly ChatMessage[] | null {
+  try {
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as StoredChat;
+    if (
+      !parsed ||
+      !Array.isArray(parsed.messages) ||
+      typeof parsed.savedAt !== 'number' ||
+      Date.now() - parsed.savedAt > CHAT_STORAGE_TTL_MS
+    ) {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+      return null;
+    }
+    return parsed.messages;
+  } catch {
+    return null;
+  }
+}
+
 export function AiChat() {
   const [messages, setMessages] = useState<readonly ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const restored = readStoredChat();
+    if (restored && restored.length > 0) setMessages(restored);
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (messages.length === 0) {
+        localStorage.removeItem(CHAT_STORAGE_KEY);
+        return;
+      }
+      const payload: StoredChat = { messages, savedAt: Date.now() };
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      /* private mode or storage full — silently give up on persistence */
+    }
+  }, [messages]);
 
   const handleSend = async (text: string) => {
     const userMessage: ChatMessage = { role: 'user', text };

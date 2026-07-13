@@ -1,6 +1,12 @@
 import { motion } from 'motion/react';
 import type { Door } from '@/domain/door';
 import { BodyBlocks } from './ArtifactCard';
+import { CvPill } from './CvPill';
+
+/* Baked in when the module first loads. Static-generated pages inline
+ * it at build time; the client-side view reads whatever year the
+ * visitor arrives in. Either way it's a small aliveness signal. */
+const LAST_UPDATED_YEAR = new Date().getFullYear();
 
 interface AllDoorsStackProps {
   readonly doors: readonly Door[];
@@ -9,12 +15,10 @@ interface AllDoorsStackProps {
    *  to, and by MobileCanvas, whose own top bar handles identity +
    *  actions at a higher z-index). */
   readonly onClose?: () => void;
-  /** Optional "start over" — resets all state and closes the overlay. */
-  readonly onReset?: () => void;
 }
 
-export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
-  const showHeader = Boolean(onClose || onReset);
+export function AllDoorsStack({ doors, onClose }: AllDoorsStackProps) {
+  const showHeader = Boolean(onClose);
 
   return (
     <motion.div
@@ -38,31 +42,13 @@ export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
             <div>
               <div className="all-doors-header-namerow">
                 <div className="all-doors-header-name">Borbála Szilágyi</div>
-                <a
-                  href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
-                  download
-                  aria-label="download CV"
-                  className="all-doors-header-cv"
-                >
-                  ↓ CV
-                </a>
+                <CvPill className="all-doors-header-cv" />
               </div>
               <div className="all-doors-header-title">
                 Software Engineer · Team Lead
               </div>
             </div>
             <div className="all-doors-header-actions">
-              {onReset && (
-                <button
-                  type="button"
-                  onClick={onReset}
-                  aria-label="start over"
-                  title="start over"
-                  className="all-doors-header-btn"
-                >
-                  ↻ start over
-                </button>
-              )}
               {onClose && (
                 <button
                   type="button"
@@ -71,7 +57,7 @@ export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
                   title="back to canvas"
                   className="all-doors-header-btn"
                 >
-                  ✕ back to canvas
+                  ✕
                 </button>
               )}
             </div>
@@ -110,6 +96,10 @@ export function AllDoorsStack({ doors, onClose, onReset }: AllDoorsStackProps) {
           </div>
         ))}
       </div>
+
+      <footer className="all-doors-footer">
+        updated · {LAST_UPDATED_YEAR}
+      </footer>
     </motion.div>
   );
 }

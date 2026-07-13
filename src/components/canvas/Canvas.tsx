@@ -14,6 +14,7 @@ import { Hint } from './Hint';
 import { doors } from '@/content/doors.data';
 import { useCanvasStore } from '@/state/canvas.store';
 import { useBreakpoint, useReducedMotion } from '@/services/viewport.service';
+import { useReturningVisitorAutoSkip } from '@/services/visitor.service';
 import MobileCanvas from './MobileCanvas';
 import { ReducedMotionView } from './ReducedMotionView';
 import type { DoorId } from '@/domain/door';
@@ -92,6 +93,8 @@ export default function Canvas() {
   const bp = useBreakpoint();
   const reducedMotion = useReducedMotion();
 
+  useReturningVisitorAutoSkip();
+
   /* Reduced-motion users see the everything-at-once stack (no parallax,
    * no orbit animation, no puzzles). Mobile users get the vertical-strip
    * canvas. Desktop falls through to the pentagon below. */
@@ -107,24 +110,29 @@ export default function Canvas() {
   const puzzleDoor = activePuzzle ? doors.find((d) => d.id === activePuzzle) ?? null : null;
   const cardOrigin = openCard ? positioned.find((p) => p.id === openCard) ?? null : null;
 
+  /* Canvas UI (identity, CV, see-everything, start-over) only makes
+   * sense while the pentagon view is active. When a modal — artifact
+   * card, puzzle, or see-all overlay — is open, hide them: they'd
+   * either duplicate what the modal shows or be un-clickable. */
+  const canvasIdle = !openCard && !activePuzzle && !allDoorsOpen;
+
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden' }}>
       <CosmicBackground />
-      <SystemReadout />
-      <CvDownload />
-      <SkipButton
-        onClick={openAll}
-        highlight={
-          !activePuzzle &&
-          poweredDoors.length === 0 &&
-          !openCard &&
-          !allDoorsOpen
-        }
-      />
-      <ResetButton
-        visible={poweredDoors.length > 0 && !allDoorsOpen}
-        onClick={reset}
-      />
+      {canvasIdle && (
+        <>
+          <SystemReadout />
+          <CvDownload />
+          <SkipButton
+            onClick={openAll}
+            highlight={poweredDoors.length === 0}
+          />
+          <ResetButton
+            visible={poweredDoors.length > 0}
+            onClick={reset}
+          />
+        </>
+      )}
       <FortuneStar />
 
       {/* Stage region — destinations fan around YOU, never crossing reserved zones */}
@@ -251,7 +259,6 @@ export default function Canvas() {
             .map((id) => doors.find((d) => d.id === id))
             .filter((d): d is import('@/domain/door').Door => d !== undefined)}
           onClose={closeAll}
-          onReset={poweredDoors.length > 0 ? reset : undefined}
         />
       )}
     </div>

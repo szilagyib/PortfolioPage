@@ -673,51 +673,39 @@ export function ArtifactCard({
               '0 24px 64px rgba(0, 0, 0, 0.55)',
           }}
         >
-          {/* Sticky header so the close button stays reachable while the
-           * card content scrolls. Background matches the panel so content
-           * underneath doesn't bleed through. */}
-          <div
-            className="artifact-header-pad"
-            style={{
-              position: 'sticky',
-              top: 0,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              background: 'linear-gradient(180deg, rgba(13,18,48,0.98) 0%, rgba(13,18,48,0.92) 100%)',
-              borderBottom: '1px solid rgba(178, 212, 229, 0.14)',
-              color: 'var(--tech-label)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: 'var(--fs-readout)',
-              letterSpacing: '0.1em',
-              zIndex: 1,
-              backdropFilter: 'blur(4px)',
-            }}
-          >
-            {isChatOnly ? (
-              <span style={{ textTransform: 'lowercase' }}>ask me anything</span>
-            ) : (
-              <span style={{ textTransform: 'lowercase' }}>{door.name}</span>
-            )}
-            <button
-              ref={closeButtonRef}
-              type="button"
-              aria-label="close"
-              onClick={handleClose}
-              style={{
-                color: 'var(--text-bright)',
-                fontSize: 18,
-                lineHeight: 1,
-                padding: '4px 8px',
-                border: '1px solid rgba(178, 212, 229, 0.25)',
-                borderRadius: 4,
-                background: 'transparent',
-                cursor: 'pointer',
-              }}
-            >
-              ✕
-            </button>
-          </div>
+          {/* Sticky panel header — section name leads as the eyebrow
+           * title, identity + role sit under it as a small mono
+           * subtitle, actions align right. Because canvas identity is
+           * hidden while a modal is open, this is the ONLY place the
+           * visitor sees "who + how to download the CV" during a deep
+           * read, without duplicating anything behind the panel. */}
+          <header className="artifact-panel-header">
+            <div className="artifact-panel-header-inner">
+              <div className="artifact-panel-header-title">
+                <div className="artifact-panel-header-section">
+                  {isChatOnly ? 'ask me anything' : door.name}
+                </div>
+                <div className="artifact-panel-header-identity">
+                  <span className="artifact-panel-header-identity-name">Borbála Szilágyi</span>
+                  <span className="artifact-panel-header-identity-role">
+                    {' · Software Engineer · Team Lead'}
+                  </span>
+                </div>
+              </div>
+              <div className="artifact-panel-header-actions">
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  aria-label="close"
+                  title="close"
+                  onClick={handleClose}
+                  className="artifact-panel-header-close"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          </header>
           <div className="artifact-body">
             <BodyBlocks door={door} />
           </div>

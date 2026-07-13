@@ -1,0 +1,73 @@
+---
+import Base from '@/layouts/Base.astro';
+import '@/styles/global.css';
+---
+<Base title="404 — Borbála Szilágyi">
+  <main class="notfound">
+    <div class="notfound-inner">
+      <div class="notfound-code">404</div>
+      <p class="notfound-msg">this star isn&rsquo;t on the map.</p>
+      <a href="/" class="notfound-home">↩ back to canvas</a>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .notfound {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: var(--font-mono);
+  }
+  .notfound-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .notfound-code {
+    font-size: 96px;
+    color: var(--accent-cyan);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-shadow:
+      0 0 24px rgba(95, 184, 214, 0.35),
+      0 0 64px rgba(95, 184, 214, 0.18);
+  }
+  .notfound-msg {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+  }
+  .notfound-home {
+    margin-top: 8px;
+    padding: 8px 14px;
+    color: var(--accent-cyan);
+    text-decoration: none;
+    border: 1px solid rgba(95, 184, 214, 0.4);
+    border-radius: 4px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    background: rgba(13, 18, 48, 0.55);
+    box-shadow: 0 0 14px rgba(95, 184, 214, 0.08);
+    transition:
+      border-color var(--d-fast) var(--ease-out),
+      background var(--d-fast) var(--ease-out),
+      box-shadow var(--d-fast) var(--ease-out),
+      color var(--d-fast) var(--ease-out);
+  }
+  .notfound-home:hover {
+    border-color: rgba(178, 212, 229, 0.78);
+    background: rgba(40, 52, 88, 0.7);
+    box-shadow: 0 0 18px rgba(178, 212, 229, 0.18);
+    color: var(--text-bright);
+  }
+  @media (max-width: 640px) {
+    .notfound-code { font-size: 68px; }
+  }
+</style>
