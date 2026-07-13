@@ -45,7 +45,7 @@ export const doors: readonly Door[] = [
         },
         {
           name: 'DisCom', type: 'Desktop + Web',
-          summary: 'Cross-border railway communication built around a fixed phrasebook — the same operational sentences, translated across languages. Deployed as a desktop client; a web variant is in the works.',
+          summary: 'Cross-border railway communication that translates a fixed operational phrasebook between languages. Deployed as a desktop client; a web variant is in the works.',
           stack: ['Java','Swing','Node.js','Express.js','React','Postgres','Maven','Docker'],
         },
         {
