@@ -706,7 +706,7 @@ export function ArtifactCard({
               </div>
             </div>
           </header>
-          <div className="artifact-body">
+          <div className={isChatOnly ? 'artifact-body artifact-body-chat' : 'artifact-body'}>
             <BodyBlocks door={door} />
           </div>
         </motion.div>

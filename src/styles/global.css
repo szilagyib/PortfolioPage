@@ -50,10 +50,15 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 
 /* Artifact card body — tighter side padding on phones so pills,
    metrics, and titles have breathing room. Header spacing lives with
-   .artifact-panel-header-inner just below. */
+   .artifact-panel-header-inner just below.
+   Chat-only cards drop the bottom padding entirely: the sticky
+   composer supplies the panel's bottom edge itself, and the padding
+   would otherwise leave dead scroll space beneath it. */
 .artifact-body { padding: 8px 32px 28px; }
+.artifact-body-chat { padding-bottom: 0; }
 @media (max-width: 640px) {
   .artifact-body { padding: 6px 16px 24px; }
+  .artifact-body-chat { padding-bottom: 0; }
 }
 
 /* Artifact panel sticky header.
@@ -366,8 +371,9 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 
 /* Chat composer — sticks to the bottom of the scroll container so it
-   stays reachable while bubbles scroll above. Semi-opaque background
-   with a top-fade so bubbles fade under it. */
+   stays reachable while bubbles scroll above. Solid at the bottom
+   edge so nothing behind bleeds through on mobile scroll; a top-fade
+   lets bubbles ghost under the header. */
 .chat-composer-form {
   position: sticky;
   bottom: 0;
@@ -375,8 +381,8 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   margin-top: 12px;
   background: linear-gradient(
     to top,
-    rgba(6, 6, 15, 0.96) 0%,
-    rgba(6, 6, 15, 0.9) 60%,
+    rgb(6, 6, 15) 0%,
+    rgba(6, 6, 15, 0.94) 55%,
     rgba(6, 6, 15, 0) 100%
   );
   z-index: 1;
