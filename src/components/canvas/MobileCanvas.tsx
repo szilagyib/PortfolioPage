@@ -4,8 +4,10 @@ import { CosmicBackground } from './CosmicBackground';
 import { MobileDestination } from './MobileDestination';
 import { ArtifactCard } from './ArtifactCard';
 import { AllDoorsStack } from './AllDoorsStack';
+import { CvPill } from './CvPill';
 import { doors } from '@/content/doors.data';
 import { useCanvasStore } from '@/state/canvas.store';
+import { useReturningVisitorAutoSkip } from '@/services/visitor.service';
 import type { DoorId } from '@/domain/door';
 
 const PuzzleHost = lazy(() =>
@@ -41,6 +43,11 @@ const MOBILE_PILL_CV: CSSProperties = {
   textDecoration: 'none',
 };
 
+const SEE_ALL_REST_SHADOW =
+  '0 0 12px rgba(178, 212, 229, 0.06), 0 0 28px rgba(95, 184, 214, 0)';
+const SEE_ALL_PEAK_SHADOW =
+  '0 0 12px rgba(178, 212, 229, 0.32), 0 0 28px rgba(95, 184, 214, 0.14)';
+
 /**
  * Mobile-only layout. Vertical strip: YOU pinned near the top, destinations
  * stacked below as full-width rows, connected by a glowing trunk line.
@@ -62,6 +69,8 @@ export default function MobileCanvas() {
   const closeAll     = useCanvasStore((s) => s.closeAll);
   const openCardFor  = useCanvasStore((s) => s.openCardFor);
   const reset        = useCanvasStore((s) => s.reset);
+
+  useReturningVisitorAutoSkip();
 
   const orderedDoors = DOOR_ORDER
     .map((id) => doors.find((d) => d.id === id))
@@ -96,7 +105,13 @@ export default function MobileCanvas() {
        *     Canvas view — [↓ see all] and, if any door is powered, [↻]
        *     See-all view — [✕] only (no restart, no see-all)
        *   Higher z-index than AllDoorsStack (z=9) so ✕ stays reachable.
-       *   Gradient backdrop keeps buttons legible over any content behind. */}
+       *   Gradient backdrop keeps buttons legible over any content behind.
+       *
+       *   Hidden while an artifact card or puzzle is open — those modals
+       *   take over the screen and carry their own header (identity +
+       *   close), matching the desktop behaviour where canvas UI hides
+       *   whenever a modal is engaged. */}
+      {!activePuzzle && !openCard && (
       <header
         style={{
           position: 'fixed',
@@ -137,14 +152,7 @@ export default function MobileCanvas() {
             >
               Borbála Szilágyi
             </div>
-            <a
-              href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
-              download
-              aria-label="download CV"
-              style={MOBILE_PILL_CV}
-            >
-              ↓ CV
-            </a>
+            <CvPill style={MOBILE_PILL_CV} />
           </div>
           <div
             style={{
@@ -177,13 +185,23 @@ export default function MobileCanvas() {
             </button>
           ) : (
             <>
-              <button
+              <motion.button
                 type="button"
                 onClick={openAll}
+                animate={
+                  !activePuzzle && poweredDoors.length === 0 && !openCard
+                    ? { boxShadow: [SEE_ALL_REST_SHADOW, SEE_ALL_PEAK_SHADOW, SEE_ALL_REST_SHADOW] }
+                    : { boxShadow: SEE_ALL_REST_SHADOW }
+                }
+                transition={
+                  !activePuzzle && poweredDoors.length === 0 && !openCard
+                    ? { boxShadow: { duration: 2.6, repeat: Infinity, ease: 'easeInOut' } }
+                    : { duration: 0.3, ease: 'easeOut' }
+                }
                 style={MOBILE_PILL}
               >
                 ↓ see all
-              </button>
+              </motion.button>
               {poweredDoors.length > 0 && (
                 <button
                   type="button"
@@ -199,6 +217,7 @@ export default function MobileCanvas() {
           )}
         </div>
       </header>
+      )}
 
       {/* Stage — YOU on top, destinations stacked below. Top offset clears
        *   the two-row mobile header (name+CV row, then title). */}
