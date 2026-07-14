@@ -51,14 +51,17 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 /* Artifact card body — tighter side padding on phones so pills,
    metrics, and titles have breathing room. Header spacing lives with
    .artifact-panel-header-inner just below.
-   Chat-only cards drop the bottom padding entirely: the sticky
+   Chat-only cards drop the bottom padding on desktop: the sticky
    composer supplies the panel's bottom edge itself, and the padding
-   would otherwise leave dead scroll space beneath it. */
+   would otherwise leave dead scroll space beneath it. Mobile has no
+   sticky composer, so the padding has to come back — without it the
+   send button sits flush in the panel's rounded corner and reads as
+   clipped. */
 .artifact-body { padding: 8px 32px 28px; }
 .artifact-body-chat { padding-bottom: 0; }
 @media (max-width: 640px) {
   .artifact-body { padding: 6px 16px 24px; }
-  .artifact-body-chat { padding-bottom: 0; }
+  .artifact-body-chat { padding-bottom: 16px; }
 }
 
 /* Artifact panel sticky header.
@@ -309,6 +312,30 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 @media (max-width: 640px) {
   .artifact-modal-pad { padding: 20px 10px; }
   .artifact-panel-width { width: calc(100vw - 20px); }
+}
+
+/* Chat-only panel on phones.
+ *
+ * Every other door has enough content to fill the panel's max height.
+ * The chat door doesn't (intro line + 3 suggestion pills + composer),
+ * so it rendered as a short content-sized card floating mid-viewport
+ * with the canvas visible underneath it. Give it the same height the
+ * other doors reach and let the composer settle at the bottom of the
+ * sheet: header stays fixed, the message log takes the slack. */
+@media (max-width: 640px) {
+  .artifact-panel-chat {
+    height: min(86dvh, 760px);
+    display: flex;
+    flex-direction: column;
+  }
+  .artifact-panel-chat .artifact-panel-header { flex: 0 0 auto; }
+  .artifact-panel-chat .artifact-body-chat,
+  .artifact-panel-chat .chat-shell {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .artifact-panel-chat .chat-log { flex: 1 1 auto; }
 }
 
 /* Profile header (ABOUT). Two-column layout: photo on the left, name +

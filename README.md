@@ -1,5 +1,7 @@
 # PortfolioPage
 
+![The portfolio canvas: a pentagon of destinations around a central YOU star](public/previews/portfolio.png)
+
 Interactive single-page showcase portfolio built around a cosmic canvas,
 lightweight constellation puzzles, project cards, a CV download, and a scoped
 AI assistant.

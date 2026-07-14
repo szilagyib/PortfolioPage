@@ -644,7 +644,9 @@ export function ArtifactCard({
           exit={{ scale: 0.4, opacity: 0 }}
           transition={{ duration: 0.42, ease: REVEAL_EASE }}
           onClick={(e) => e.stopPropagation()}
-          className="artifact-panel-width"
+          className={
+            isChatOnly ? 'artifact-panel-width artifact-panel-chat' : 'artifact-panel-width'
+          }
           style={{
             /* dvh (not vh) so the panel resizes as the mobile keyboard
              * opens / closes; keeps the sticky composer above the
