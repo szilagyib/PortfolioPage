@@ -116,7 +116,7 @@ export function AiChat() {
     last.failed === true;
 
   return (
-    <section style={{ margin: '4px 0 0' }}>
+    <section className="chat-shell" style={{ margin: '4px 0 0' }}>
       {/* The "ask me anything" label + model info live in the artifact card's
        * sticky header now (see ArtifactCard isChatOnly branch). The only
        * floating control kept here is "clear", shown once there's history. */}
@@ -152,7 +152,7 @@ export function AiChat() {
       )}
 
       {/* No internal scroll — the artifact card scrolls. One context, not two. */}
-      <div style={{ padding: '4px 4px 8px' }}>
+      <div className="chat-log" style={{ padding: '4px 4px 8px' }}>
         {!hasHistory && !loading && (
           <div
             style={{

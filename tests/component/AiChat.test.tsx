@@ -14,7 +14,13 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  /* AiChat persists the transcript to localStorage, and jsdom shares one
+   * store across the file — without this, each test remounts into the
+   * previous test's conversation. */
+  localStorage.clear();
+});
 afterAll(() => server.close());
 
 describe('<AiChat />', () => {
