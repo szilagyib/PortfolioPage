@@ -83,7 +83,7 @@ export const doors: readonly Door[] = [
         href: 'https://github.com/szilagyib/GlassBoxRAG',
         stack: ['Python', 'Streamlit', 'LanceDB', 'DuckDB', 'SQLite', 'litellm'],
         preview: {
-          src: '/previews/placeholder.svg',
+          src: '/previews/rag.png',
           alt: 'GlassBox RAG interface showing retrieval chunks, scores, and citations',
         },
       },
