@@ -22,8 +22,12 @@
     </linearGradient>
   </defs>
 
-  <!-- Cosmic disc background -->
-  <circle cx="16" cy="16" r="15.5" fill="url(#bg-halo)"/>
+  <!-- Full-bleed cosmic background. A bare disc leaves the square's
+       corners transparent, which Google Search renders as a white frame
+       around the icon in its favicon chip. Filling to the edges removes
+       those transparent corners; the radial gradient's dark outer stop
+       (#06060f) means the corners just read as deep space. -->
+  <rect width="32" height="32" fill="url(#bg-halo)"/>
 
   <!-- Soft inner halo -->
   <circle cx="16" cy="16" r="13" fill="url(#star-glow)"/>
