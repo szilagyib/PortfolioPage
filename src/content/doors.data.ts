@@ -94,8 +94,8 @@ export const doors: readonly Door[] = [
         href: 'https://github.com/szilagyib/GitAgents',
         stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
-          src: '/previews/placeholder.svg',
-          alt: 'AI code-review agent dashboard with pull-request feedback',
+          src: '/previews/gitagents.png',
+          alt: 'GitAgents cost dashboard: per-run token spend, slowest actions, and agent telemetry',
         },
       },
       { kind: 'projectCard',
