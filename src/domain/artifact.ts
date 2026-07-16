@@ -39,6 +39,10 @@ export type ArtifactBlock =
       readonly name: string;
       readonly summary: string;
       readonly href: string;
+      /** Deployed site, when the project has one. Rendered as a separate
+       *  link under the tile — the tile itself is already an <a>, and an
+       *  anchor cannot nest inside another. */
+      readonly liveHref?: string;
       readonly stack?: readonly string[];
       readonly preview?: { readonly src: string; readonly alt: string };
     }

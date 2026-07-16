@@ -174,6 +174,11 @@ function contactDisplay(href: string): string {
                   </a>
                 </p>
                 <p>{block.summary}</p>
+                {block.liveHref && (
+                  <p class="plain-project-live">
+                    live · <a href={block.liveHref} target="_blank" rel="noopener noreferrer">{block.liveHref.replace(/^https?:\/\/(www\.)?/, '')}</a>
+                  </p>
+                )}
                 {block.stack && block.stack.length > 0 && (
                   <p class="plain-project-stack">{block.stack.join(' · ')}</p>
                 )}
@@ -411,6 +416,12 @@ function contactDisplay(href: string): string {
     font-size: 11px;
     color: var(--text-dim);
     letter-spacing: 0.04em;
+  }
+  .plain-project-live {
+    margin: 6px 0 0 !important;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
   }
   .plain-project-stack {
     margin: 6px 0 0 !important;
