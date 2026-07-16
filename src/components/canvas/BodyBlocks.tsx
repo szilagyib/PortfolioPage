@@ -327,93 +327,116 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
 
     case 'projectCard':
       return (
-        <a
-          key={i}
-          href={b.href}
-          target={isExternal(b.href) ? '_blank' : undefined}
-          rel={isExternal(b.href) ? 'noopener noreferrer' : undefined}
-          style={{
-            display: 'block',
-            border: '1px solid var(--tech-line)',
-            borderRadius: 6,
-            padding: 14,
-            textDecoration: 'none',
-            color: 'inherit',
-            background: 'rgba(13,18,48,0.35)',
-            transition:
-              'border-color var(--d-fast) var(--ease-out), ' +
-              'background var(--d-fast) var(--ease-out)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(178, 212, 229, 0.55)';
-            e.currentTarget.style.background = 'rgba(40, 52, 88, 0.5)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'var(--tech-line)';
-            e.currentTarget.style.background = 'rgba(13,18,48,0.35)';
-          }}
-        >
-          {b.preview && (
-            <img
-              src={b.preview.src}
-              alt={b.preview.alt}
-              loading="lazy"
-              style={{
-                display: 'block',
-                width: '100%',
-                aspectRatio: '16 / 9',
-                /* contain (not cover) so wide screenshots like the
-                 * portfolio one don't lose edge content to a crop.
-                 * The dark background blends any small letterbox
-                 * into the cosmic theme. */
-                objectFit: 'contain',
-                background: '#06060f',
-                borderRadius: 4,
-                marginBottom: 10,
-                border: '1px solid rgba(178, 212, 229, 0.12)',
-              }}
-            />
-          )}
-          <div
+        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+          <a
+            href={b.href}
+            target={isExternal(b.href) ? '_blank' : undefined}
+            rel={isExternal(b.href) ? 'noopener noreferrer' : undefined}
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'baseline',
-              gap: 8,
+              display: 'block',
+              border: '1px solid var(--tech-line)',
+              borderRadius: 6,
+              padding: 14,
+              textDecoration: 'none',
+              color: 'inherit',
+              background: 'rgba(13,18,48,0.35)',
+              transition:
+                'border-color var(--d-fast) var(--ease-out), ' +
+                'background var(--d-fast) var(--ease-out)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(178, 212, 229, 0.55)';
+              e.currentTarget.style.background = 'rgba(40, 52, 88, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--tech-line)';
+              e.currentTarget.style.background = 'rgba(13,18,48,0.35)';
             }}
           >
-            <strong style={{ color: 'var(--text-bright)' }}>{b.name}</strong>
-            <span
-              aria-hidden
+            {b.preview && (
+              <img
+                src={b.preview.src}
+                alt={b.preview.alt}
+                loading="lazy"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  aspectRatio: '16 / 9',
+                  /* contain (not cover) so wide screenshots like the
+                   * portfolio one don't lose edge content to a crop.
+                   * The dark background blends any small letterbox
+                   * into the cosmic theme. */
+                  objectFit: 'contain',
+                  background: '#06060f',
+                  borderRadius: 4,
+                  marginBottom: 10,
+                  border: '1px solid rgba(178, 212, 229, 0.12)',
+                }}
+              />
+            )}
+            <div
               style={{
-                color: 'var(--accent-cyan)',
-                fontFamily: 'var(--font-mono)',
-                fontSize: 'var(--fs-readout)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                gap: 8,
               }}
             >
-              ↗
-            </span>
-          </div>
-          <p style={{ margin: '6px 0 0', lineHeight: 1.55 }}>{b.summary}</p>
-          {b.stack && b.stack.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
-              {b.stack.map((s) => (
-                <span
-                  key={s}
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 10,
-                    padding: '2px 6px',
-                    border: '1px solid var(--tech-line)',
-                    borderRadius: 2,
-                  }}
-                >
-                  {s}
-                </span>
-              ))}
+              <strong style={{ color: 'var(--text-bright)' }}>{b.name}</strong>
+              <span
+                aria-hidden
+                style={{
+                  color: 'var(--accent-cyan)',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 'var(--fs-readout)',
+                }}
+              >
+                ↗
+              </span>
             </div>
+            <p style={{ margin: '6px 0 0', lineHeight: 1.55 }}>{b.summary}</p>
+            {b.stack && b.stack.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+                {b.stack.map((s) => (
+                  <span
+                    key={s}
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 10,
+                      padding: '2px 6px',
+                      border: '1px solid var(--tech-line)',
+                      borderRadius: 2,
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            )}
+          </a>
+          {b.liveHref && (
+            <a
+              href={b.liveHref}
+              target={isExternal(b.liveHref) ? '_blank' : undefined}
+              rel={isExternal(b.liveHref) ? 'noopener noreferrer' : undefined}
+              style={{
+                alignSelf: 'flex-start',
+                color: 'var(--accent-cyan)',
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                letterSpacing: '0.04em',
+                textDecoration: 'none',
+                borderBottom: '1px solid transparent',
+                paddingBottom: 1,
+                transition: 'border-color var(--d-fast) var(--ease-out)',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderBottomColor = 'var(--accent-cyan)')}
+              onMouseLeave={(e) => (e.currentTarget.style.borderBottomColor = 'transparent')}
+            >
+              live · {contactDisplay(b.liveHref)} ↗
+            </a>
           )}
-        </a>
+        </div>
       );
 
     case 'postCard':
