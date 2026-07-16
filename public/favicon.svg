@@ -1,4 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Sized for 16px. That is what a Chrome tab actually renders, and at
+       that size one device pixel is two units here — so anything thinner
+       than ~2 units disappears. The earlier 1-unit spikes and 0.7-unit rim
+       resolved to half a pixel and vanished, leaving a blurry glow. Every
+       element below is therefore at least 1.4 units, and the 8-point
+       diagonals are gone: at 16px they only ever added mush. -->
   <defs>
     <radialGradient id="bg-halo" cx="50%" cy="50%" r="55%">
       <stop offset="0%" stop-color="#1a1640"/>
@@ -6,48 +12,42 @@
       <stop offset="100%" stop-color="#06060f"/>
     </radialGradient>
     <radialGradient id="star-glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
-      <stop offset="35%" stop-color="#a8d8ff" stop-opacity="0.45"/>
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#a8d8ff" stop-opacity="0.22"/>
       <stop offset="100%" stop-color="rgba(168, 216, 255, 0)"/>
     </radialGradient>
+    <!-- Spikes hold solid white across the middle 40% instead of fading
+         from the very tip. A tip-to-tip fade leaves almost no opaque pixel
+         at 16px, which is why the star used to read as a soft cross. -->
     <linearGradient id="spike-v" x1="0" x2="0" y1="0" y2="1">
       <stop offset="0%" stop-color="rgba(255,255,255,0)"/>
-      <stop offset="50%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#ffffff"/>
       <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
     </linearGradient>
     <linearGradient id="spike-h" x1="0" x2="1" y1="0" y2="0">
       <stop offset="0%" stop-color="rgba(255,255,255,0)"/>
-      <stop offset="50%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#ffffff"/>
       <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
     </linearGradient>
   </defs>
 
-  <!-- Two layers, because the disc and the square each solve one problem.
-       A bare disc leaves the square's corners transparent, which Google
-       Search renders as a white frame in its favicon chip; a bare square
-       has no disc edge at all, so on a browser tab it reads as a dark
-       patch rather than an orb.
-       So: fill the corners with the gradient's own outer colour (opaque,
-       nothing for Google to whiten), then draw the disc on top. The disc
-       fades to that same colour, so its edge needs the rim to read — it
-       is what keeps the orb visible at tab size. -->
+  <!-- Opaque corners so Google Search has no transparency to render as a
+       white frame, with the disc on top. The disc fades to the same colour
+       as the corners, so the rim is what gives its edge back — without it
+       the orb reads as a flat square. -->
   <rect width="32" height="32" fill="#06060f"/>
   <circle cx="16" cy="16" r="15" fill="url(#bg-halo)"
-          stroke="rgba(168, 216, 255, 0.22)" stroke-width="0.7"/>
+          stroke="rgba(168, 216, 255, 0.4)" stroke-width="1.4"/>
 
-  <!-- Soft inner halo -->
-  <circle cx="16" cy="16" r="13" fill="url(#star-glow)"/>
+  <!-- Tight halo — a wide one washes the spikes out at small sizes. -->
+  <circle cx="16" cy="16" r="7" fill="url(#star-glow)"/>
 
-  <!-- Long 4-point diffraction spikes — vertical + horizontal -->
-  <rect x="15.5" y="2" width="1" height="28" fill="url(#spike-v)"/>
-  <rect x="2" y="15.5" width="28" height="1" fill="url(#spike-h)"/>
-
-  <!-- Shorter diagonal spikes for 8-point sparkle -->
-  <g transform="rotate(45 16 16)" opacity="0.55">
-    <rect x="15.6" y="7" width="0.8" height="18" fill="url(#spike-v)"/>
-    <rect x="7" y="15.6" width="18" height="0.8" fill="url(#spike-h)"/>
-  </g>
+  <!-- 4-point diffraction spikes -->
+  <rect x="15" y="3.5" width="2" height="25" fill="url(#spike-v)"/>
+  <rect x="3.5" y="15" width="25" height="2" fill="url(#spike-h)"/>
 
   <!-- Bright central core -->
-  <circle cx="16" cy="16" r="2.8" fill="#ffffff"/>
+  <circle cx="16" cy="16" r="3.4" fill="#ffffff"/>
 </svg>
