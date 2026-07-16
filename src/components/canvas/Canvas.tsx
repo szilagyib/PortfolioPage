@@ -6,8 +6,6 @@ import { SkipButton } from './SkipButton';
 import { YouStar } from './YouStar';
 import { Destination } from './Destination';
 import { Route } from './Route';
-import { ArtifactCard } from './ArtifactCard';
-import { AllDoorsStack } from './AllDoorsStack';
 import { FortuneStar } from './FortuneStar';
 import { ResetButton } from './ResetButton';
 import { Hint } from './Hint';
@@ -16,7 +14,6 @@ import { useCanvasStore } from '@/state/canvas.store';
 import { useBreakpoint, useReducedMotion } from '@/services/viewport.service';
 import { useReturningVisitorAutoSkip } from '@/services/visitor.service';
 import MobileCanvas from './MobileCanvas';
-import { ReducedMotionView } from './ReducedMotionView';
 import type { DoorId } from '@/domain/door';
 
 /*
@@ -27,6 +24,28 @@ import type { DoorId } from '@/domain/door';
  */
 const PuzzleHost = lazy(() =>
   import('@/components/puzzle/PuzzleHost').then((m) => ({ default: m.PuzzleHost })),
+);
+
+/*
+ * Also lazy, for the same reason: none of this is on the path to first
+ * paint. The pentagon renders without them, and each only appears after
+ * a deliberate click — a destination (ArtifactCard) or "see everything"
+ * (AllDoorsStack). Together they pull in the whole artifact-rendering
+ * tree (BodyBlocks) and the AI chat, which is the bulk of the canvas
+ * bundle and none of what a visitor first looks at.
+ *
+ * ReducedMotionView renders immediately for visitors who ask for it, so
+ * for them this trades one extra request against a much smaller bundle
+ * for everyone else. It shares AllDoorsStack's chunk either way.
+ */
+const ArtifactCard = lazy(() =>
+  import('./ArtifactCard').then((m) => ({ default: m.ArtifactCard })),
+);
+const AllDoorsStack = lazy(() =>
+  import('./AllDoorsStack').then((m) => ({ default: m.AllDoorsStack })),
+);
+const ReducedMotionView = lazy(() =>
+  import('./ReducedMotionView').then((m) => ({ default: m.ReducedMotionView })),
 );
 
 const ORBIT_RX = 43;
@@ -99,7 +118,11 @@ export default function Canvas() {
    * no orbit animation, no puzzles). Mobile users get the vertical-strip
    * canvas. Desktop falls through to the pentagon below. */
   if (reducedMotion) {
-    return <ReducedMotionView />;
+    return (
+      <Suspense fallback={null}>
+        <ReducedMotionView />
+      </Suspense>
+    );
   }
   if (bp === 'mobile') {
     return <MobileCanvas />;
@@ -245,21 +268,25 @@ export default function Canvas() {
       )}
 
       {cardDoor && cardOrigin && (
-        <ArtifactCard
-          door={cardDoor}
-          onClose={() => openCardFor(null)}
-          originXPercent={cardOrigin.xPercent}
-          originYPercent={cardOrigin.yPercent}
-        />
+        <Suspense fallback={null}>
+          <ArtifactCard
+            door={cardDoor}
+            onClose={() => openCardFor(null)}
+            originXPercent={cardOrigin.xPercent}
+            originYPercent={cardOrigin.yPercent}
+          />
+        </Suspense>
       )}
 
       {allDoorsOpen && (
-        <AllDoorsStack
-          doors={DOOR_ORDER
-            .map((id) => doors.find((d) => d.id === id))
-            .filter((d): d is import('@/domain/door').Door => d !== undefined)}
-          onClose={closeAll}
-        />
+        <Suspense fallback={null}>
+          <AllDoorsStack
+            doors={DOOR_ORDER
+              .map((id) => doors.find((d) => d.id === id))
+              .filter((d): d is import('@/domain/door').Door => d !== undefined)}
+            onClose={closeAll}
+          />
+        </Suspense>
       )}
     </div>
   );
