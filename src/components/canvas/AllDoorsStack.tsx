@@ -2,11 +2,7 @@ import { motion } from 'motion/react';
 import type { Door } from '@/domain/door';
 import { BodyBlocks } from './BodyBlocks';
 import { CvPill } from './CvPill';
-
-/* Baked in when the module first loads. Static-generated pages inline
- * it at build time; the client-side view reads whatever year the
- * visitor arrives in. Either way it's a small aliveness signal. */
-const LAST_UPDATED_YEAR = new Date().getFullYear();
+import { LAST_UPDATED_YEAR } from '@/content/site';
 
 interface AllDoorsStackProps {
   readonly doors: readonly Door[];

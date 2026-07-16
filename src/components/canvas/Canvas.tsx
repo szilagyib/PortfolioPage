@@ -10,6 +10,7 @@ import { FortuneStar } from './FortuneStar';
 import { ResetButton } from './ResetButton';
 import { Hint } from './Hint';
 import { doors } from '@/content/doors.data';
+import { LAST_UPDATED_YEAR } from '@/content/site';
 import { useCanvasStore } from '@/state/canvas.store';
 import { useBreakpoint, useReducedMotion } from '@/services/viewport.service';
 import { useReturningVisitorAutoSkip } from '@/services/visitor.service';
@@ -231,7 +232,10 @@ export default function Canvas() {
         </div>
       </div>
 
-      {/* Hint banner — visible only when nothing is powered and no puzzle/card is open */}
+      {/* Bottom bar — hint banner (only when nothing is powered and no
+       *   puzzle/card is open) stacked above the updated-year footer.
+       *   Column layout so the footer stays pinned to the bottom as the
+       *   hint mounts and unmounts above it. */}
       <div
         style={{
           position: 'absolute',
@@ -240,9 +244,11 @@ export default function Canvas() {
           bottom: 0,
           height: BOTTOM_BAR_HEIGHT,
           display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          padding: '0 24px 20px',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          gap: 12,
+          padding: '0 24px 14px',
           pointerEvents: 'none',
           zIndex: 4,
         }}
@@ -255,6 +261,7 @@ export default function Canvas() {
             !allDoorsOpen
           }
         />
+        {canvasIdle && <div className="canvas-footer">updated · {LAST_UPDATED_YEAR}</div>}
       </div>
 
       {puzzleDoor && (
