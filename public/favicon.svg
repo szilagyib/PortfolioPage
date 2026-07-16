@@ -22,12 +22,18 @@
     </linearGradient>
   </defs>
 
-  <!-- Full-bleed cosmic background. A bare disc leaves the square's
-       corners transparent, which Google Search renders as a white frame
-       around the icon in its favicon chip. Filling to the edges removes
-       those transparent corners; the radial gradient's dark outer stop
-       (#06060f) means the corners just read as deep space. -->
-  <rect width="32" height="32" fill="url(#bg-halo)"/>
+  <!-- Two layers, because the disc and the square each solve one problem.
+       A bare disc leaves the square's corners transparent, which Google
+       Search renders as a white frame in its favicon chip; a bare square
+       has no disc edge at all, so on a browser tab it reads as a dark
+       patch rather than an orb.
+       So: fill the corners with the gradient's own outer colour (opaque,
+       nothing for Google to whiten), then draw the disc on top. The disc
+       fades to that same colour, so its edge needs the rim to read — it
+       is what keeps the orb visible at tab size. -->
+  <rect width="32" height="32" fill="#06060f"/>
+  <circle cx="16" cy="16" r="15" fill="url(#bg-halo)"
+          stroke="rgba(168, 216, 255, 0.22)" stroke-width="0.7"/>
 
   <!-- Soft inner halo -->
   <circle cx="16" cy="16" r="13" fill="url(#star-glow)"/>
