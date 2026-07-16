@@ -72,7 +72,7 @@ export const doors: readonly Door[] = [
         href: 'https://github.com/szilagyib/PortfolioPage',
         stack: ['Astro', 'React', 'TypeScript', 'Cloudflare Pages'],
         preview: {
-          src: '/previews/portfolio.png',
+          src: '/previews/portfolio.webp',
           alt: 'Cosmic portfolio canvas with the pentagon of destinations around a central YOU star',
         },
       },
@@ -83,7 +83,7 @@ export const doors: readonly Door[] = [
         href: 'https://github.com/szilagyib/GlassBoxRAG',
         stack: ['Python', 'Streamlit', 'LanceDB', 'DuckDB', 'SQLite', 'litellm'],
         preview: {
-          src: '/previews/rag.png',
+          src: '/previews/rag.webp',
           alt: 'GlassBox RAG interface showing retrieval chunks, scores, and citations',
         },
       },
@@ -94,7 +94,7 @@ export const doors: readonly Door[] = [
         href: 'https://github.com/szilagyib/GitAgents',
         stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
-          src: '/previews/gitagents.png',
+          src: '/previews/gitagents.webp',
           alt: 'GitAgents cost dashboard: per-run token spend, slowest actions, and agent telemetry',
         },
       },
@@ -105,7 +105,7 @@ export const doors: readonly Door[] = [
         href: 'https://github.com/szilagyib/RAMSey',
         stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Yjs', 'Vercel AI SDK'],
         preview: {
-          src: '/previews/ramsey.png',
+          src: '/previews/ramsey.webp',
           alt: 'RAMSey collaborative diagram editor preview',
         },
       },
