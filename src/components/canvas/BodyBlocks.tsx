@@ -381,7 +381,7 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
                   rel={isExternal(b.liveHref) ? 'noopener noreferrer' : undefined}
                   className="project-card-live"
                 >
-                  live · {contactDisplay(b.liveHref)} ↗
+                  live · {contactDisplay(b.liveHref)}
                 </a>
               )}
             </div>
