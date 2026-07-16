@@ -294,6 +294,8 @@ export function FortuneStar() {
               <button
                 type="button"
                 onClick={close}
+                aria-label="close"
+                title="close"
                 style={{
                   color: 'var(--text-dim)',
                   fontFamily: 'var(--font-mono)',
@@ -301,7 +303,7 @@ export function FortuneStar() {
                   letterSpacing: '0.08em',
                 }}
               >
-                close
+                ✕
               </button>
             </div>
           </motion.div>

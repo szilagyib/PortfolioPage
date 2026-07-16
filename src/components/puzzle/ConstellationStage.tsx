@@ -195,7 +195,7 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
               letterSpacing: '0.05em',
             }}
           >
-            ✕ close
+            ✕
           </button>
         </div>
 

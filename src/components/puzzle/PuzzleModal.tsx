@@ -130,7 +130,7 @@ export function PuzzleModal({ door, onClose, onSolved, children }: PuzzleModalPr
                 letterSpacing: '0.05em',
               }}
             >
-              ✕ close
+              ✕
             </button>
           </div>
 
