@@ -2,8 +2,6 @@ import { lazy, Suspense, type CSSProperties } from 'react';
 import { motion } from 'motion/react';
 import { CosmicBackground } from './CosmicBackground';
 import { MobileDestination } from './MobileDestination';
-import { ArtifactCard } from './ArtifactCard';
-import { AllDoorsStack } from './AllDoorsStack';
 import { CvPill } from './CvPill';
 import { doors } from '@/content/doors.data';
 import { useCanvasStore } from '@/state/canvas.store';
@@ -12,6 +10,16 @@ import type { DoorId } from '@/domain/door';
 
 const PuzzleHost = lazy(() =>
   import('@/components/puzzle/PuzzleHost').then((m) => ({ default: m.PuzzleHost })),
+);
+
+/* Lazy for the same reason as on the desktop canvas — neither is needed
+ * until a visitor taps a destination or "see everything". Same chunks,
+ * so a visitor who switches orientation doesn't re-download them. */
+const ArtifactCard = lazy(() =>
+  import('./ArtifactCard').then((m) => ({ default: m.ArtifactCard })),
+);
+const AllDoorsStack = lazy(() =>
+  import('./AllDoorsStack').then((m) => ({ default: m.AllDoorsStack })),
 );
 
 const DOOR_ORDER: readonly DoorId[] =
@@ -337,17 +345,21 @@ export default function MobileCanvas() {
       )}
 
       {cardDoor && (
-        <ArtifactCard
-          door={cardDoor}
-          onClose={() => openCardFor(null)}
-        />
+        <Suspense fallback={null}>
+          <ArtifactCard
+            door={cardDoor}
+            onClose={() => openCardFor(null)}
+          />
+        </Suspense>
       )}
 
       {allDoorsOpen && (
         /* No onClose / onReset here: the mobile top bar (higher z-index)
          * already renders ✕ close and ↻ start-over. Passing them again
          * would render buttons hidden behind the top bar. */
-        <AllDoorsStack doors={orderedDoors} />
+        <Suspense fallback={null}>
+          <AllDoorsStack doors={orderedDoors} />
+        </Suspense>
       )}
     </div>
   );

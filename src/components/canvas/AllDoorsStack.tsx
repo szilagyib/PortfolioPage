@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import type { Door } from '@/domain/door';
-import { BodyBlocks } from './ArtifactCard';
+import { BodyBlocks } from './BodyBlocks';
 import { CvPill } from './CvPill';
 
 /* Baked in when the module first loads. Static-generated pages inline
