@@ -282,6 +282,46 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 .all-doors-card { padding: 24px 28px 28px; }
 
+/* Project tile. The box itself is not a link (a project can point at both a
+   repo and a live site, and anchors can't nest), so the lift is driven by
+   :has(a:hover) — the card only reacts where a real link is. */
+.project-card {
+  border: 1px solid var(--tech-line);
+  border-radius: 6px;
+  padding: 14px;
+  color: inherit;
+  background: rgba(13, 18, 48, 0.35);
+  transition:
+    border-color var(--d-fast) var(--ease-out),
+    background var(--d-fast) var(--ease-out);
+}
+.project-card:has(a:hover) {
+  border-color: rgba(178, 212, 229, 0.55);
+  background: rgba(40, 52, 88, 0.5);
+}
+.project-card-title {
+  color: var(--text-bright);
+  font-weight: 600;
+  text-decoration: none;
+}
+.project-card-arrow {
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: var(--fs-readout);
+  text-decoration: none;
+}
+.project-card-live {
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+  transition: border-color var(--d-fast) var(--ease-out);
+}
+.project-card-live:hover { border-bottom-color: var(--accent-cyan); }
+
 /* Same aliveness signal as .all-doors-footer, pinned to the bottom of the
    pentagon canvas instead of the end of a scrolling stack. */
 .canvas-footer {

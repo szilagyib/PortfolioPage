@@ -325,35 +325,24 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
         </div>
       );
 
-    case 'projectCard':
+    case 'projectCard': {
+      /* The card is a plain box, not one big link: a project can have two
+       * destinations (repo + deployed site) and an anchor cannot nest
+       * inside another. The preview, the title and the ↗ each link to the
+       * repo — three generous targets — and the live link sits beside the
+       * title. Only the title is exposed to assistive tech; the other two
+       * are the same href, so they'd just be noise.
+       * `.project-card` lights up via :has(a:hover) rather than a hover on
+       * the box itself, so it never looks clickable where it isn't. */
+      const repoLink = {
+        href: b.href,
+        target: isExternal(b.href) ? '_blank' : undefined,
+        rel: isExternal(b.href) ? 'noopener noreferrer' : undefined,
+      } as const;
       return (
-        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-          <a
-            href={b.href}
-            target={isExternal(b.href) ? '_blank' : undefined}
-            rel={isExternal(b.href) ? 'noopener noreferrer' : undefined}
-            style={{
-              display: 'block',
-              border: '1px solid var(--tech-line)',
-              borderRadius: 6,
-              padding: 14,
-              textDecoration: 'none',
-              color: 'inherit',
-              background: 'rgba(13,18,48,0.35)',
-              transition:
-                'border-color var(--d-fast) var(--ease-out), ' +
-                'background var(--d-fast) var(--ease-out)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(178, 212, 229, 0.55)';
-              e.currentTarget.style.background = 'rgba(40, 52, 88, 0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--tech-line)';
-              e.currentTarget.style.background = 'rgba(13,18,48,0.35)';
-            }}
-          >
-            {b.preview && (
+        <div key={i} className="project-card">
+          {b.preview && (
+            <a {...repoLink} tabIndex={-1} aria-hidden style={{ display: 'block' }}>
               <img
                 src={b.preview.src}
                 alt={b.preview.alt}
@@ -373,71 +362,55 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
                   border: '1px solid rgba(178, 212, 229, 0.12)',
                 }}
               />
-            )}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'baseline',
-                gap: 8,
-              }}
-            >
-              <strong style={{ color: 'var(--text-bright)' }}>{b.name}</strong>
-              <span
-                aria-hidden
-                style={{
-                  color: 'var(--accent-cyan)',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 'var(--fs-readout)',
-                }}
-              >
-                ↗
-              </span>
-            </div>
-            <p style={{ margin: '6px 0 0', lineHeight: 1.55 }}>{b.summary}</p>
-            {b.stack && b.stack.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
-                {b.stack.map((s) => (
-                  <span
-                    key={s}
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: 10,
-                      padding: '2px 6px',
-                      border: '1px solid var(--tech-line)',
-                      borderRadius: 2,
-                    }}
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-            )}
-          </a>
-          {b.liveHref && (
-            <a
-              href={b.liveHref}
-              target={isExternal(b.liveHref) ? '_blank' : undefined}
-              rel={isExternal(b.liveHref) ? 'noopener noreferrer' : undefined}
-              style={{
-                alignSelf: 'flex-start',
-                color: 'var(--accent-cyan)',
-                fontFamily: 'var(--font-mono)',
-                fontSize: 11,
-                letterSpacing: '0.04em',
-                textDecoration: 'none',
-                borderBottom: '1px solid transparent',
-                paddingBottom: 1,
-                transition: 'border-color var(--d-fast) var(--ease-out)',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderBottomColor = 'var(--accent-cyan)')}
-              onMouseLeave={(e) => (e.currentTarget.style.borderBottomColor = 'transparent')}
-            >
-              live · {contactDisplay(b.liveHref)} ↗
             </a>
+          )}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'baseline',
+              gap: 8,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+              <a {...repoLink} className="project-card-title">{b.name}</a>
+              {b.liveHref && (
+                <a
+                  href={b.liveHref}
+                  target={isExternal(b.liveHref) ? '_blank' : undefined}
+                  rel={isExternal(b.liveHref) ? 'noopener noreferrer' : undefined}
+                  className="project-card-live"
+                >
+                  live · {contactDisplay(b.liveHref)} ↗
+                </a>
+              )}
+            </div>
+            <a {...repoLink} tabIndex={-1} aria-hidden className="project-card-arrow">
+              ↗
+            </a>
+          </div>
+          <p style={{ margin: '6px 0 0', lineHeight: 1.55 }}>{b.summary}</p>
+          {b.stack && b.stack.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+              {b.stack.map((s) => (
+                <span
+                  key={s}
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 10,
+                    padding: '2px 6px',
+                    border: '1px solid var(--tech-line)',
+                    borderRadius: 2,
+                  }}
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
           )}
         </div>
       );
+    }
 
     case 'postCard':
       return (
