@@ -4,8 +4,8 @@ import { ChatBubble } from './ChatBubble';
 import { ChatComposer } from './ChatComposer';
 
 const SUGGESTIONS: readonly string[] = [
-  "What's the hardest part of being a team lead?",
   'How does she use AI in day-to-day coding?',
+  "What's the hardest part of being a team lead?",
   'Surprise me with a fun fact!',
 ];
 
@@ -166,8 +166,8 @@ export function AiChat() {
               I'm an AI grounded on Borbála's bio — ask anything about her work, leadership, or AI experience.
             </p>
             {/* Layout + typography driven by CSS classes (see global.css
-             *   .chat-suggestions) so mobile can switch to a stacked
-             *   column with nowrap — each question stays on one line. */}
+             *   .chat-suggestions) — chips size to their own text and wrap
+             *   onto the next line rather than sharing a width. */}
             <div className="chat-suggestions">
               {SUGGESTIONS.map((s) => (
                 <button

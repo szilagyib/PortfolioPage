@@ -451,13 +451,17 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 /* Ask-me suggestion pills. Three natural-width chips in a single row on
    desktop, mildly rounded (not full pill). Phones collapse to a single
    stacked column with ellipsized long questions. */
+/* Each chip hugs its own question rather than sharing a column width, and
+   wraps to the next line when the row runs out — so a long question and a
+   short one never get forced to the same size. */
 .chat-suggestions {
-  display: grid;
-  grid-template-columns: repeat(3, max-content);
-  justify-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 6px;
 }
 .chat-suggestion {
+  max-width: 100%;
   padding: 6px 12px;
   font-size: 12px;
   font-family: var(--font-mono);
@@ -474,14 +478,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   border-color: rgba(95, 184, 214, 0.6);
 }
 @media (max-width: 640px) {
-  .chat-suggestions {
-    grid-template-columns: 1fr;
-  }
   .chat-suggestion {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     font-size: 11px;
-    padding: 6px 12px;
   }
 }
