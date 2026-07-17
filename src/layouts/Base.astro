@@ -85,6 +85,11 @@ const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
         makes it a new icon as far as that store is concerned. Bump it
         whenever favicon.svg changes shape or colour. */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+    {/* iOS home-screen / share sheet — SVG favicons aren't used there, so
+        without a PNG fallback the saved icon is blank. Full-bleed (not the
+        transparent-corner tab icon): iOS masks the corners itself and sits
+        the tile on the wallpaper. */}
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#06060f" />
 
     {/* Open Graph — LinkedIn, Slack, iMessage, Discord, etc. */}
