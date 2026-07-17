@@ -20,7 +20,7 @@ export const doors: readonly Door[] = [
         'Owns the architectural calls across 4 products in active development — tech stack, integration boundaries, rewrite-vs-refactor decisions.',
         'Rolled out AI tooling (Claude Code, ChatGPT/Codex) on the team in 2025.',
         'Strengthening cross-team collaboration through recurring meetings with adjacent teams, shared working norms, and broader internal-tool adoption.',
-        'Supervising a Master\'s thesis. Mentoring interns.',
+        'Supervised a Master\'s thesis. Mentoring interns.',
       ]},
     ],
   },
@@ -90,7 +90,7 @@ export const doors: readonly Door[] = [
       { kind: 'projectCard',
         name: 'GitAgents',
         summary:
-          'Paired AI agents for GitLab and GitHub CI pipelines: one reviews PRs/MRs with inline comments and merge gating, the other applies safe auto-fixes back to the branch. Per-language rule configs and a telemetry dashboard.',
+          'Paired AI agents for GitLab and GitHub CI pipelines: one reviews PRs/MRs with inline comments and merge gating, verifying its own findings against the repo before posting; the other proposes one-click fix suggestions. Per-language rule configs and a live cost dashboard.',
         href: 'https://github.com/szilagyib/GitAgents',
         stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
