@@ -281,6 +281,8 @@ export function FortuneStar() {
                 type="button"
                 onClick={refresh}
                 disabled={loading}
+                aria-label="next fortune"
+                title="next"
                 style={{
                   color: loading ? 'var(--text-dim)' : 'var(--accent-cyan)',
                   fontFamily: 'var(--font-mono)',
@@ -289,7 +291,7 @@ export function FortuneStar() {
                   letterSpacing: '0.08em',
                 }}
               >
-                {loading ? 'loading…' : '↻ next'}
+                ↻
               </button>
               <button
                 type="button"
