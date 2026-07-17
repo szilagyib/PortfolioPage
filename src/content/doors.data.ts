@@ -11,7 +11,7 @@ export const doors: readonly Door[] = [
         'Team lead at Prolan since 2024, running a cross-functional Scrum team of 4 engineers across 4 products in a safety-critical environment. Still hands-on with code review and shipping.' },
       { kind: 'paragraph', text:
         'Beyond the delivery, what I care about is the atmosphere — a team people actually want to show up to. High trust, disagreements aired out loud, ownership on whoever is closest to the problem. Room for creativity, for new ideas, and for trying a technique that hasn\'t proved itself yet — that\'s where the best work comes from, and where new tools like AI-assisted development get an honest shot at production.' },
-      { kind: 'metric', value: '380+',  label: 'tickets resolved in 2025' },
+      { kind: 'metric', value: '~380',  label: 'tickets resolved in 2025' },
       { kind: 'metric', value: '<24h',  label: 'PR → merge cycle' },
       { kind: 'metric', value: '+30%',  label: 'delivery uplift from AI' },
       { kind: 'metric', value: '4',     label: 'products end-to-end' },
@@ -104,7 +104,7 @@ export const doors: readonly Door[] = [
           'Real-time collaborative web editor for RAMS diagrams — Markov chains, fault trees, FMEA, and more. Multi-user editing via Yjs CRDTs, AI-assisted diagram generation, an integrated analysis engine, and LaTeX/TikZ export.',
         href: 'https://github.com/szilagyib/RAMSey',
         liveHref: 'https://ramseytools.com',
-        stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Yjs', 'Vercel AI SDK', 'AWS'],
+        stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Redis', 'Yjs', 'AWS'],
         preview: {
           src: '/previews/ramsey.webp',
           alt: 'RAMSey collaborative diagram editor preview',
@@ -114,7 +114,7 @@ export const doors: readonly Door[] = [
       { kind: 'sectionLabel', text: 'Writings' },
       { kind: 'postCard',
         title: 'Building a Transparent RAG, Transparently',
-        date: 'Forthcoming',
+        date: 'July 2026',
         publication: 'Medium',
         quote:
           'The spec is the artifact. The code is the consequence.',
