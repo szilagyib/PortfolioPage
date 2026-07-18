@@ -198,4 +198,22 @@ describe('chat Pages Function guardrails', () => {
     const [url] = fetchMock.mock.calls[0] as unknown as [string];
     expect(String(url)).toBe('https://api.openai.com/v1/chat/completions');
   });
+
+  it('honours CHAT_BASE_URL (trailing slash stripped) for OpenAI-compatible endpoints', async () => {
+    const fetchMock = openAIOk();
+    vi.stubGlobal('fetch', fetchMock);
+    const ctx = context(request({
+      origin: 'https://borbalaszilagyi.com',
+      headers: { 'cf-connecting-ip': '203.0.113.11' },
+    }), {
+      CHAT_API_KEY: 'test-key',
+      CHAT_BASE_URL: 'https://openrouter.ai/api/v1/',
+      CHAT_LIMITS: mockKv(),
+    });
+
+    const res = await onRequestPost(ctx as never);
+    expect(res.status).toBe(200);
+    const [url] = fetchMock.mock.calls[0] as unknown as [string];
+    expect(String(url)).toBe('https://openrouter.ai/api/v1/chat/completions');
+  });
 });

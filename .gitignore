@@ -19,3 +19,6 @@ coverage/
 .DS_Store
 Thumbs.db
 *.log
+
+# --- Private working notes (never published) ----------------------------------
+docs/local/
