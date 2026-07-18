@@ -28,7 +28,7 @@ resume page:
 - **Cloudflare Pages** for hosting
 - **Cloudflare Pages Functions** for `/api/chat` and `/api/fortune`
 - **Cloudflare KV** for chat rate-limit and token-budget counters
-- **OpenAI or Anthropic** for the portfolio assistant (provider + model set via env)
+- **OpenAI-compatible or Anthropic** for the portfolio assistant — provider, model, and base URL set via env, so OpenRouter, Together, Groq, or a local Ollama work too
 - **Vitest 4**, Testing Library, and MSW for tests
 
 ## Architecture

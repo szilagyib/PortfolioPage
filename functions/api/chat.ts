@@ -6,6 +6,8 @@
  * chat model. Returns a single assistant turn — batch, not streaming.
  *
  * Provider is selected by the CHAT_PROVIDER env var ("openai" | "anthropic").
+ * The OpenAI adapter honours CHAT_BASE_URL, so any OpenAI-compatible endpoint
+ * (OpenRouter, Together, Groq, local Ollama/vLLM) works through it.
  * Swap models by env alone; no code change needed.
  */
 
@@ -25,6 +27,12 @@ interface Env {
   CHAT_LIMITS?: KVNamespace;
   /** Model id (provider-specific). Default: gpt-4o-mini. */
   CHAT_MODEL?: string;
+  /**
+   * Base URL for the OpenAI-compatible API. Default: https://api.openai.com/v1.
+   * Lets the same adapter reach OpenRouter, Together, Groq, or a local
+   * Ollama/vLLM. Ignored when CHAT_PROVIDER=anthropic.
+   */
+  CHAT_BASE_URL?: string;
   /** Cap on max_tokens per response. Default: 700. */
   CHAT_MAX_OUTPUT_TOKENS?: string;
   CHAT_RATE_LIMIT_PER_HOUR?: string;
@@ -72,6 +80,7 @@ const MAX_TOTAL_MESSAGE_CHARS = 5000;
 // --- Fallbacks for env-tunable values (when wrangler.toml isn't read) ----
 const DEFAULT_PROVIDER: Provider = 'openai';
 const DEFAULT_MODEL = 'gpt-4o-mini';
+const DEFAULT_OPENAI_BASE_URL = 'https://api.openai.com/v1';
 const DEFAULT_MAX_OUTPUT_TOKENS = 700;
 const DEFAULT_RATE_PER_HOUR = 10;
 const DEFAULT_RATE_PER_DAY = 30;
@@ -313,6 +322,7 @@ async function callOpenAI(
   model: string,
   maxOutputTokens: number,
   history: readonly ClientMessage[],
+  baseUrl: string,
 ): Promise<ProviderReply> {
   // `max_completion_tokens` supersedes `max_tokens` on OpenAI and is
   // accepted by both the older chat models and the newer reasoning ones
@@ -329,7 +339,7 @@ async function callOpenAI(
     ],
   };
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -360,12 +370,13 @@ function callProvider(
   model: string,
   maxOutputTokens: number,
   history: readonly ClientMessage[],
+  baseUrl: string,
 ): Promise<ProviderReply> {
   switch (provider) {
     case 'anthropic':
       return callAnthropic(apiKey, model, maxOutputTokens, history);
     case 'openai':
-      return callOpenAI(apiKey, model, maxOutputTokens, history);
+      return callOpenAI(apiKey, model, maxOutputTokens, history, baseUrl);
   }
 }
 
@@ -477,6 +488,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const provider = resolveProvider(env.CHAT_PROVIDER);
   const model = env.CHAT_MODEL?.trim() || DEFAULT_MODEL;
   const maxOutputTokens = parseIntOr(env.CHAT_MAX_OUTPUT_TOKENS, DEFAULT_MAX_OUTPUT_TOKENS);
+  const baseUrl =
+    env.CHAT_BASE_URL?.trim().replace(/\/+$/, '') || DEFAULT_OPENAI_BASE_URL;
 
   try {
     const { text, usageTokens } = await callProvider(
@@ -485,6 +498,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       model,
       maxOutputTokens,
       parsed.messages,
+      baseUrl,
     );
     if (env.CHAT_LIMITS && usageTokens > 0) {
       // Don't block the response on the bookkeeping write — context.waitUntil

@@ -11,6 +11,10 @@
 CHAT_API_KEY=""
 ALLOWED_ORIGIN="http://localhost:8788,http://127.0.0.1:8788"
 
+# Optional: point the OpenAI adapter at any OpenAI-compatible endpoint
+# (OpenRouter, Together, Groq, or a local Ollama/vLLM).
+# CHAT_BASE_URL="http://localhost:11434/v1"
+
 # Local development only. Production should bind CHAT_LIMITS to Cloudflare KV
 # instead of setting this flag.
 CHAT_ALLOW_UNLIMITED_WITHOUT_KV="true"
