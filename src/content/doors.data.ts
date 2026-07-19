@@ -95,7 +95,7 @@ export const doors: readonly Door[] = [
         stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
           src: '/previews/gitagents.webp',
-          alt: 'GitAgents cost dashboard: per-run token spend, slowest actions, and agent telemetry',
+          alt: 'GitAgents review bot posting an inline pull-request comment flagging a possible null dereference',
         },
       },
       { kind: 'projectCard',
@@ -107,7 +107,7 @@ export const doors: readonly Door[] = [
         stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Redis', 'Yjs', 'AWS'],
         preview: {
           src: '/previews/ramsey.webp',
-          alt: 'RAMSey collaborative diagram editor preview',
+          alt: 'RAMSey editor showing a Markov chain diagram alongside a steady-state availability analysis panel',
         },
       },
 
