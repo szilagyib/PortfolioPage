@@ -133,20 +133,20 @@ export function AiChat() {
             onClick={clear}
             disabled={loading}
             aria-label="clear conversation"
+            title="clear"
             style={{
               fontFamily: 'var(--font-mono)',
               fontSize: 11,
-              letterSpacing: '0.08em',
               color: 'var(--text-bright)',
               background: 'transparent',
               border: '1px solid rgba(178, 212, 229, 0.25)',
               borderRadius: 4,
-              padding: '3px 8px',
+              padding: '3px 7px',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.5 : 1,
             }}
           >
-            ↻ clear
+            ↻
           </button>
         </div>
       )}
