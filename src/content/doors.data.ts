@@ -117,7 +117,7 @@ export const doors: readonly Door[] = [
         date: 'July 2026',
         publication: 'Medium',
         quote:
-          'The spec is the artifact. The code is the consequence.',
+          'The dangerous part is that nothing looks broken. The numbers look scientific.',
         href: 'https://medium.com/@szilagyiborbala8/building-a-transparent-rag-transparently-5beb62db9e2d',
       },
       { kind: 'postCard',
