@@ -57,6 +57,18 @@ describe('<AiChat />', () => {
     expect((textarea as HTMLTextAreaElement).value).toBe('');
   });
 
+  it('blocks an over-length question with a nudge instead of sending', async () => {
+    render(<AiChat />);
+    const textarea = screen.getByLabelText(/ask me anything/i);
+    await userEvent.click(textarea);
+    await userEvent.paste('x'.repeat(260));
+
+    // The funny nudge shows and Enter must not fire a request.
+    expect(screen.getByText(/more essay than question/i)).toBeInTheDocument();
+    await userEvent.type(textarea, '{Enter}');
+    expect(screen.queryByText(/team of four at Prolan/i)).not.toBeInTheDocument();
+  });
+
   it('shows a retry button after a failed reply and replaces it on success', async () => {
     // First call → server error (failed reply).
     server.use(http.post(CHAT_URL, () => new HttpResponse(null, { status: 500 })));

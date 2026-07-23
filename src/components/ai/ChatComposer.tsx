@@ -1,7 +1,10 @@
 import { useState, type KeyboardEvent } from 'react';
 
-const MAX_LENGTH = 2000;
-const COUNTER_SHOWS_AT = 1500;
+// Hard cap on a single question. Mirrors MAX_USER_MESSAGE_CHARS in
+// functions/api/chat.ts — the server rejects anything longer, so keep the two
+// in sync. A bio Q&A question fits well inside this; it's here to stop pastes.
+const MAX_LENGTH = 250;
+const COUNTER_SHOWS_AT = 200;
 
 interface ChatComposerProps {
   readonly disabled: boolean;
@@ -11,9 +14,12 @@ interface ChatComposerProps {
 export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
   const [value, setValue] = useState('');
 
+  const trimmedLength = value.trim().length;
+  const over = trimmedLength > MAX_LENGTH;
+
   const submit = () => {
     const trimmed = value.trim();
-    if (trimmed.length === 0 || disabled) return;
+    if (trimmed.length === 0 || trimmed.length > MAX_LENGTH || disabled) return;
     onSend(trimmed);
     setValue('');
   };
@@ -31,9 +37,8 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
     }
   };
 
-  const sendDisabled = disabled || value.trim().length === 0;
-  const showCounter = value.length >= COUNTER_SHOWS_AT;
-  const atLimit = value.length >= MAX_LENGTH;
+  const sendDisabled = disabled || trimmedLength === 0 || over;
+  const showCounter = trimmedLength >= COUNTER_SHOWS_AT;
 
   return (
     <form
@@ -54,7 +59,6 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
           onKeyDown={handleKeyDown}
           placeholder="type a question…"
           disabled={disabled}
-          maxLength={MAX_LENGTH}
           className="chat-composer-input"
           style={{
             flex: 1,
@@ -98,19 +102,32 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
           send
         </button>
       </div>
-      {showCounter && (
+      {over ? (
         <div
           aria-live="polite"
           style={{
             alignSelf: 'flex-end',
             fontFamily: 'var(--font-mono)',
             fontSize: 11,
-            color: atLimit ? 'var(--accent-warm)' : 'var(--text-dim)',
+            color: 'var(--accent-warm)',
           }}
         >
-          {value.length} / {MAX_LENGTH}
+          That's more essay than question — trim {trimmedLength - MAX_LENGTH}{' '}
+          character{trimmedLength - MAX_LENGTH === 1 ? '' : 's'} and I'll take it.
         </div>
-      )}
+      ) : showCounter ? (
+        <div
+          aria-live="polite"
+          style={{
+            alignSelf: 'flex-end',
+            fontFamily: 'var(--font-mono)',
+            fontSize: 11,
+            color: 'var(--text-dim)',
+          }}
+        >
+          {trimmedLength} / {MAX_LENGTH}
+        </div>
+      ) : null}
     </form>
   );
 }
