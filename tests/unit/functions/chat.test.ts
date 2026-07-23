@@ -138,6 +138,42 @@ describe('chat Pages Function guardrails', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('rejects an over-long question before reaching the model', async () => {
+    const fetchMock = openAIOk();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const res = await onRequestPost(context(request({
+      origin: 'https://borbalaszilagyi.com',
+      body: { messages: [{ role: 'user', text: 'x'.repeat(251) }] },
+    }), {
+      CHAT_API_KEY: 'test-key',
+      CHAT_LIMITS: mockKv(),
+    }) as never);
+
+    expect(res.status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('still accepts a follow-up when a prior assistant reply is long', async () => {
+    const fetchMock = openAIOk();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const res = await onRequestPost(context(request({
+      origin: 'https://borbalaszilagyi.com',
+      body: { messages: [
+        { role: 'user', text: 'What does she do?' },
+        { role: 'assistant', text: 'A'.repeat(900) },
+        { role: 'user', text: 'Tell me more.' },
+      ] },
+    }), {
+      CHAT_API_KEY: 'test-key',
+      CHAT_ALLOW_UNLIMITED_WITHOUT_KV: 'true',
+    }) as never);
+
+    expect(res.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('records total OpenAI usage against the daily KV budget', async () => {
     const fetchMock = openAIOk();
     vi.stubGlobal('fetch', fetchMock);

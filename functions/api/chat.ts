@@ -72,8 +72,18 @@ const MAX_HISTORY_MESSAGES = 8;
 const MAX_RAW_MESSAGES = 24;
 /** Reject obviously oversized bodies before JSON parsing. */
 const MAX_REQUEST_BYTES = 16_384;
-/** Per-message text cap. Keeps prompt-injection spam and accidental pastes small. */
+/**
+ * Per-message text cap for assistant turns replayed from history. These are
+ * our own model's replies (up to a few hundred tokens), so they run longer
+ * than a question — the bound is just a defence against a forged giant turn.
+ */
 const MAX_MESSAGE_CHARS = 1200;
+/**
+ * Hard cap on a visitor question. Over-long questions are rejected here and
+ * never reach the model. Mirrors MAX_LENGTH in the client composer
+ * (src/components/ai/ChatComposer.tsx) — keep the two in sync.
+ */
+const MAX_USER_MESSAGE_CHARS = 250;
 /** Total cleaned conversation cap after trimming. */
 const MAX_TOTAL_MESSAGE_CHARS = 5000;
 
@@ -392,7 +402,8 @@ function validateBody(raw: unknown): RequestBody | null {
     if (m.role !== 'user' && m.role !== 'assistant') return null;
     if (typeof m.text !== 'string') return null;
     const text = m.text.trim();
-    if (text.length === 0 || text.length > MAX_MESSAGE_CHARS) return null;
+    const cap = m.role === 'user' ? MAX_USER_MESSAGE_CHARS : MAX_MESSAGE_CHARS;
+    if (text.length === 0 || text.length > cap) return null;
     cleaned.push({ role: m.role, text });
   }
   // Last message must come from the user — we're answering it.
