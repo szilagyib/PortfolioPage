@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion, type TargetAndTransition } from 'motion/react';
 import { fetchFortune, type Fortune } from '@/services/fortune.service';
 
 export function FortuneStar() {
@@ -7,6 +7,15 @@ export function FortuneStar() {
   const [fortune, setFortune] = useState<Fortune | null>(null);
   const [loading, setLoading] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const reducedMotion = useReducedMotion();
+
+  /* A visitor who's asked the OS for reduced motion shouldn't get the
+   * looping twinkle/comet pulse. Spreading this onto a motion element drops
+   * the `animate` loop entirely, leaving the static SVG (fully visible). */
+  const pulse = (animate: TargetAndTransition, duration: number) =>
+    reducedMotion
+      ? {}
+      : { animate, transition: { duration, repeat: Infinity, ease: 'easeInOut' as const } };
 
   async function open() {
     setIsOpen(true);
@@ -107,8 +116,7 @@ export function FortuneStar() {
             strokeWidth="2.2"
             strokeLinecap="round"
             fill="none"
-            animate={{ opacity: [0.65, 1, 0.65] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+            {...pulse({ opacity: [0.65, 1, 0.65] }, 3.2)}
           />
 
           {/* Soft halo behind the star — YOU-style cosmic halo */}
@@ -117,17 +125,13 @@ export function FortuneStar() {
             cy="12"
             r="18"
             fill="url(#fortuneCore)"
-            animate={{ opacity: [0.85, 1, 0.85], scale: [1, 1.04, 1] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+            {...pulse({ opacity: [0.85, 1, 0.85], scale: [1, 1.04, 1] }, 3.2)}
             style={{ transformOrigin: '138px 12px', transformBox: 'fill-box' }}
           />
 
           {/* Diffraction spikes — same approach as the YOU star: long
            *   vertical + horizontal cross, shorter diagonal sparkle. */}
-          <motion.g
-            animate={{ opacity: [0.92, 1, 0.92] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-          >
+          <motion.g {...pulse({ opacity: [0.92, 1, 0.92] }, 3.2)}>
             <rect x="137.5" y="-4" width="1" height="32" fill="url(#fortuneSpikeV)" />
             <rect x="122" y="11.5" width="32" height="1" fill="url(#fortuneSpikeH)" />
             <g transform="rotate(45 138 12)" opacity="0.5">
@@ -148,28 +152,23 @@ export function FortuneStar() {
           >
             <motion.circle
               cx="122" cy="4" r="1.1" fill="#ffffff"
-              animate={{ opacity: [0.25, 1, 0.25] }}
-              transition={{ duration: 1.3, repeat: Infinity, ease: 'easeInOut' }}
+              {...pulse({ opacity: [0.25, 1, 0.25] }, 1.3)}
             />
             <motion.circle
               cx="156" cy="6" r="0.9" fill="#ffffff"
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+              {...pulse({ opacity: [1, 0.3, 1] }, 1.1)}
             />
             <motion.circle
               cx="148" cy="26" r="0.8" fill="#a8d8ff"
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}
+              {...pulse({ opacity: [0.4, 1, 0.4] }, 1.7)}
             />
             <motion.circle
               cx="128" cy="22" r="0.7" fill="#ffffff"
-              animate={{ opacity: [1, 0.35, 1] }}
-              transition={{ duration: 0.95, repeat: Infinity, ease: 'easeInOut' }}
+              {...pulse({ opacity: [1, 0.35, 1] }, 0.95)}
             />
             <motion.circle
               cx="164" cy="18" r="0.6" fill="#a8d8ff"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              {...pulse({ opacity: [0.3, 1, 0.3] }, 1.5)}
             />
           </motion.g>
         </svg>
@@ -328,6 +327,7 @@ function FortuneSkeleton() {
 }
 
 function SkeletonLine({ widthPct }: { widthPct: number }) {
+  const reducedMotion = useReducedMotion();
   return (
     <motion.div
       style={{
@@ -338,8 +338,12 @@ function SkeletonLine({ widthPct }: { widthPct: number }) {
         backgroundSize: '200% 100%',
         borderRadius: 3,
       }}
-      animate={{ backgroundPosition: ['200% 0%', '-100% 0%'] }}
-      transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+      {...(reducedMotion
+        ? {}
+        : {
+            animate: { backgroundPosition: ['200% 0%', '-100% 0%'] },
+            transition: { duration: 1.2, repeat: Infinity, ease: 'linear' as const },
+          })}
     />
   );
 }
