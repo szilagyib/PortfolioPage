@@ -14,6 +14,18 @@ body {
 button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
 
+/* Honour prefers-reduced-motion for CSS-driven animation (starfield twinkle,
+   chat thinking-dots) and transitions. Framer Motion animations are guarded
+   separately in JS via useReducedMotion(), since this rule can't reach them. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Starfield twinkle — driven by the compositor, not JS. */
 @keyframes star-twinkle {
   0%, 100% { opacity: var(--star-op-max, 1); }

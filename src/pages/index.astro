@@ -8,4 +8,45 @@ import '@/styles/global.css';
        before React picks the right breakpoint. Users see the body gradient
        (cosmic background) until React mounts. -->
   <Canvas client:only="react" />
+  <!-- No-JS / non-rendering-crawler fallback. The canvas is a client:only
+       island, so without JS the body is just the gradient. Point humans and
+       bots at the static plain-text page, which carries the full CV. -->
+  <noscript>
+    <div class="noscript-fallback">
+      <h1>Borbála Szilágyi</h1>
+      <p class="noscript-role">Software Engineering Team Lead — Budapest, Hungary</p>
+      <p>
+        This portfolio is an interactive canvas that needs JavaScript.
+        For a plain-text version of the CV and projects:
+      </p>
+      <p><a href="/plain">View the plain-text version →</a></p>
+      <p class="noscript-links">
+        <a href="https://github.com/szilagyib">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/szilagyiborbala8">LinkedIn</a> ·
+        <a href="mailto:szilagyiborbala8@gmail.com">Email</a>
+      </p>
+    </div>
+  </noscript>
 </Base>
+
+<style>
+  /* Only ever visible when JS is off, so it can safely sit in normal flow.
+     Body has overflow:hidden for the canvas; the block is short enough to
+     fit a viewport without needing scroll. */
+  .noscript-fallback {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    color: var(--text-bright);
+    line-height: 1.6;
+  }
+  .noscript-fallback h1 { font-size: 1.6rem; margin: 0 0 0.25rem; }
+  .noscript-fallback p { margin: 0 0 1rem; }
+  .noscript-role { color: var(--text-dim); }
+  .noscript-fallback a { color: var(--accent-cyan); }
+  .noscript-links {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+</style>
