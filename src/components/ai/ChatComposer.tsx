@@ -68,7 +68,7 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
             maxHeight: 240,
             padding: '12px 14px',
             fontFamily: 'var(--font-sans)',
-            fontSize: 15,
+            fontSize: 'var(--fs-input)',
             lineHeight: 1.55,
             color: 'var(--text-bright)',
             background: 'rgba(6, 8, 24, 0.7)',
