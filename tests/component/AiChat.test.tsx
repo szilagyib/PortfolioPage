@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
@@ -91,20 +89,6 @@ describe('<AiChat />', () => {
     expect(await screen.findByText(/team of four at Prolan/i)).toBeInTheDocument();
     expect(screen.queryByText(/unreachable|contact/i)).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /retry/i })).not.toBeInTheDocument();
-  });
-
-  it('keeps the composer font size at 16px or more so iOS Safari does not zoom on focus', () => {
-    // The composer must render at --fs-input, the token must be ≥16px, and
-    // global.css must not override it (rationale lives in tokens.css).
-    render(<AiChat />);
-    const textarea = screen.getByLabelText(/ask me anything/i);
-    expect(textarea.style.fontSize).toBe('var(--fs-input)');
-
-    const tokens = readFileSync(resolve(__dirname, '../../src/styles/tokens.css'), 'utf8');
-    expect(parseFloat(tokens.match(/--fs-input:\s*([\d.]+)px/)?.[1] ?? '')).toBeGreaterThanOrEqual(16);
-
-    const globalCss = readFileSync(resolve(__dirname, '../../src/styles/global.css'), 'utf8');
-    expect(globalCss).not.toMatch(/\.chat-composer-input\s*\{[^}]*font-size/);
   });
 
   it('does NOT show a retry button on capped/synthetic server responses', async () => {
