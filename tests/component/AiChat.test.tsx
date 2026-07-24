@@ -139,6 +139,12 @@ describe('<AiChat />', () => {
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
+  it('scrolls the composer into view when the input gains focus', async () => {
+    render(<AiChat />);
+    await userEvent.click(screen.getByLabelText(/ask me anything/i));
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
+  });
+
   it('does NOT show a retry button on capped/synthetic server responses', async () => {
     server.use(
       http.post(CHAT_URL, () =>

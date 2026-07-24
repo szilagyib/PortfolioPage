@@ -9,9 +9,10 @@ const COUNTER_SHOWS_AT = 200;
 interface ChatComposerProps {
   readonly disabled: boolean;
   readonly onSend: (text: string) => void;
+  readonly onFocus: () => void;
 }
 
-export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
+export function ChatComposer({ disabled, onSend, onFocus }: ChatComposerProps) {
   const [value, setValue] = useState('');
 
   const trimmedLength = value.trim().length;
@@ -77,7 +78,10 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
             outline: 'none',
             transition: 'border-color var(--d-fast) var(--ease-out)',
           }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(95, 184, 214, 0.55)')}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(95, 184, 214, 0.55)';
+            onFocus();
+          }}
           onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(178, 212, 229, 0.22)')}
         />
         <button
