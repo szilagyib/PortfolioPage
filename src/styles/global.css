@@ -62,15 +62,9 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 
 /* Artifact card body — tighter side padding on phones so pills,
    metrics, and titles have breathing room. Header spacing lives with
-   .artifact-panel-header-inner just below.
-   Chat-only cards drop the bottom padding on desktop: the sticky
-   composer supplies the panel's bottom edge itself, and the padding
-   would otherwise leave dead scroll space beneath it. Mobile has no
-   sticky composer, so the padding has to come back — without it the
-   send button sits flush in the panel's rounded corner and reads as
-   clipped. */
+   .artifact-panel-header-inner just below. Chat cards sit a touch
+   tighter above the panel's bottom edge on phones. */
 .artifact-body { padding: 8px 32px 28px; }
-.artifact-body-chat { padding-bottom: 0; }
 @media (max-width: 640px) {
   .artifact-body { padding: 6px 16px 24px; }
   .artifact-body-chat { padding-bottom: 16px; }
@@ -458,35 +452,17 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   .profile-header-contact { width: 34px; height: 34px; border-radius: 6px; }
 }
 
-/* Chat composer — sticks to the bottom of the scroll container so it
-   stays reachable while bubbles scroll above. Solid opaque for the
-   bottom 85% (so scrolled bubbles are fully hidden behind it) with a
-   short top-edge fade as the continuity hint. will-change forces
-   compositing on iOS Safari, which otherwise leaves ghost frames of
-   the sticky element during momentum scroll. */
+/* Chat composer — flows with the conversation on all sizes. It was sticky
+   on desktop once; don't bring that back — a composer pinned over scrolled
+   history reads as broken, and the auto-scroll in AiChat already keeps it
+   in view when it matters. */
 .chat-composer-form {
-  position: sticky;
-  bottom: 0;
   padding: 12px 0 6px;
   margin-top: 12px;
-  background: linear-gradient(
-    to top,
-    rgb(6, 6, 15) 0%,
-    rgb(6, 6, 15) 85%,
-    rgba(6, 6, 15, 0) 100%
-  );
-  will-change: transform;
-  z-index: 1;
 }
 @media (max-width: 640px) {
-  /* Drop sticky on mobile. iOS Safari leaves ghost frames of the
-   * sticky element during momentum scroll (the "stacking" effect);
-   * letting the composer flow with content sidesteps the bug and
-   * matches how mobile chat surfaces usually behave. */
   .chat-composer-form {
-    position: static;
     margin-top: 8px;
-    background: none;
     padding-bottom: 0;
   }
   /* Never override font-size here — it must stay --fs-input (see tokens.css). */

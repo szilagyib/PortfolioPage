@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AiChat } from '@/components/ai/AiChat';
 
@@ -15,9 +15,15 @@ const server = setupServer(
   ),
 );
 
+/* jsdom doesn't implement scrollIntoView; the auto-scroll effect calls it
+ * on every exchange, so every test in this file needs the stub. */
+const scrollIntoView = vi.fn();
+Element.prototype.scrollIntoView = scrollIntoView;
+
 beforeAll(() => server.listen());
 afterEach(() => {
   server.resetHandlers();
+  scrollIntoView.mockClear();
   /* AiChat persists the transcript to localStorage, and jsdom shares one
    * store across the file — without this, each test remounts into the
    * previous test's conversation. */
@@ -105,6 +111,32 @@ describe('<AiChat />', () => {
 
     const globalCss = readFileSync(resolve(__dirname, '../../src/styles/global.css'), 'utf8');
     expect(globalCss).not.toMatch(/\.chat-composer-input\s*\{[^}]*font-size/);
+  });
+
+  it('auto-scrolls to the newest message on reopen and after each exchange', async () => {
+    localStorage.setItem(
+      'pf.chat.v1',
+      JSON.stringify({
+        messages: [
+          { role: 'user', text: 'earlier question' },
+          { role: 'assistant', text: 'earlier answer' },
+        ],
+        savedAt: Date.now(),
+      }),
+    );
+    render(<AiChat />);
+    // Reopening with restored history lands on the newest message.
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
+
+    scrollIntoView.mockClear();
+    await userEvent.type(screen.getByLabelText(/ask me anything/i), 'tell me more{Enter}');
+    await screen.findByText(/team of four at Prolan/i);
+    expect(scrollIntoView).toHaveBeenCalled();
+  });
+
+  it('does not auto-scroll an empty chat on first open', () => {
+    render(<AiChat />);
+    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
   it('does NOT show a retry button on capped/synthetic server responses', async () => {
