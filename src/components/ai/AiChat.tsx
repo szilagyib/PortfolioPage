@@ -64,20 +64,25 @@ export function AiChat() {
   }, [messages]);
 
   const endRef = useRef<HTMLDivElement>(null);
+  /* True once the visitor sends (or retries) a message in this mount.
+   * History restored from localStorage must NOT scroll: the chat renders
+   * inline in the stacked view, so a mount-time scroll would yank a fresh
+   * page load down to this section. */
+  const messagingStartedRef = useRef(false);
 
-  const scrollToEnd = () => endRef.current?.scrollIntoView({ block: 'end' });
-
-  /* The artifact card owns scrolling (see .chat-log below), so bring our
-   * bottom anchor into its view on reopen-with-history and after every
-   * exchange — the newest message and the composer stay visible without
-   * manual scrolling. Instant (non-smooth) scroll, so no reduced-motion
-   * guard is needed. */
+  /* The chat has no scroll container of its own (see .chat-log below), so
+   * bring the bottom anchor into the ancestor's view after every exchange —
+   * the newest message and the composer stay visible without manual
+   * scrolling. Instant (non-smooth) scroll, so no reduced-motion guard is
+   * needed. */
   useEffect(() => {
+    if (!messagingStartedRef.current) return;
     if (messages.length === 0 && !loading) return;
-    scrollToEnd();
+    endRef.current?.scrollIntoView({ block: 'end' });
   }, [messages, loading]);
 
   const handleSend = async (text: string) => {
+    messagingStartedRef.current = true;
     const userMessage: ChatMessage = { role: 'user', text };
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
@@ -108,6 +113,7 @@ export function AiChat() {
     if (last.role !== 'assistant' || !last.failed) return;
     if (prev.role !== 'user') return;
 
+    messagingStartedRef.current = true;
     const trimmedHistory = messages.slice(0, -1);
     const historyBeforeUser = messages.slice(0, -2);
 

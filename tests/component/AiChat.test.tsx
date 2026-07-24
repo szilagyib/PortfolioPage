@@ -113,7 +113,7 @@ describe('<AiChat />', () => {
     expect(globalCss).not.toMatch(/\.chat-composer-input\s*\{[^}]*font-size/);
   });
 
-  it('auto-scrolls to the newest message on reopen and after each exchange', async () => {
+  it('does not scroll on mount with restored history, only once messaging starts', async () => {
     localStorage.setItem(
       'pf.chat.v1',
       JSON.stringify({
@@ -125,13 +125,15 @@ describe('<AiChat />', () => {
       }),
     );
     render(<AiChat />);
-    // Reopening with restored history lands on the newest message.
-    await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
+    // Restoring history must not move the page — the chat renders inline in
+    // the stacked view, and a refresh has to stay at the top of the page.
+    await screen.findByText(/earlier answer/i);
+    expect(scrollIntoView).not.toHaveBeenCalled();
 
-    scrollIntoView.mockClear();
+    // The first actual exchange scrolls to the newest message.
     await userEvent.type(screen.getByLabelText(/ask me anything/i), 'tell me more{Enter}');
     await screen.findByText(/team of four at Prolan/i);
-    expect(scrollIntoView).toHaveBeenCalled();
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
   });
 
   it('does not auto-scroll an empty chat on first open', () => {
