@@ -65,6 +65,8 @@ export function AiChat() {
 
   const endRef = useRef<HTMLDivElement>(null);
 
+  const scrollToEnd = () => endRef.current?.scrollIntoView({ block: 'end' });
+
   /* The artifact card owns scrolling (see .chat-log below), so bring our
    * bottom anchor into its view on reopen-with-history and after every
    * exchange — the newest message and the composer stay visible without
@@ -72,8 +74,13 @@ export function AiChat() {
    * guard is needed. */
   useEffect(() => {
     if (messages.length === 0 && !loading) return;
-    endRef.current?.scrollIntoView({ block: 'end' });
+    scrollToEnd();
   }, [messages, loading]);
+
+  /* On phones the keyboard opening resizes the viewport and can leave the
+   * focused composer half-hidden; scroll once it has settled (~250ms
+   * keyboard animation on iOS). */
+  const handleComposerFocus = () => setTimeout(scrollToEnd, 300);
 
   const handleSend = async (text: string) => {
     const userMessage: ChatMessage = { role: 'user', text };
@@ -250,7 +257,7 @@ export function AiChat() {
         )}
       </div>
 
-      <ChatComposer disabled={loading} onSend={handleSend} />
+      <ChatComposer disabled={loading} onSend={handleSend} onFocus={handleComposerFocus} />
       <div ref={endRef} aria-hidden />
     </section>
   );
