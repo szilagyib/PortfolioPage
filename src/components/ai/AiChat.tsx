@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useBreakpoint } from '@/services/viewport.service';
 import { sendChatMessage, type ChatMessage } from '@/services/chat.service';
 import { ChatBubble } from './ChatBubble';
 import { ChatComposer } from './ChatComposer';
@@ -77,16 +76,6 @@ export function AiChat() {
     if (messages.length === 0 && !loading) return;
     scrollToEnd();
   }, [messages, loading]);
-
-  /* On phones the keyboard opening resizes the viewport and can leave the
-   * focused composer half-hidden; scroll once it has settled (~250ms
-   * keyboard animation on iOS). No keyboard resize on larger screens —
-   * focusing there must not move the page. */
-  const breakpoint = useBreakpoint();
-  const handleComposerFocus = () => {
-    if (breakpoint !== 'mobile') return;
-    setTimeout(scrollToEnd, 300);
-  };
 
   const handleSend = async (text: string) => {
     const userMessage: ChatMessage = { role: 'user', text };
@@ -263,7 +252,7 @@ export function AiChat() {
         )}
       </div>
 
-      <ChatComposer disabled={loading} onSend={handleSend} onFocus={handleComposerFocus} />
+      <ChatComposer disabled={loading} onSend={handleSend} />
       <div ref={endRef} aria-hidden />
     </section>
   );

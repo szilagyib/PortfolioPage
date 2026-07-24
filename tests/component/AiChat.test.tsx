@@ -139,24 +139,18 @@ describe('<AiChat />', () => {
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
-  it('scrolls the composer into view on focus on mobile, where the keyboard opens over it', async () => {
+  it('never scrolls on input focus — the log settles only after messages', async () => {
     const originalWidth = window.innerWidth;
     Object.defineProperty(window, 'innerWidth', { value: 500, configurable: true, writable: true });
     try {
       render(<AiChat />);
       await userEvent.click(screen.getByLabelText(/ask me anything/i));
-      await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
+      // Wait long enough for any delayed focus-scroll to have fired.
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      expect(scrollIntoView).not.toHaveBeenCalled();
     } finally {
       Object.defineProperty(window, 'innerWidth', { value: originalWidth, configurable: true, writable: true });
     }
-  });
-
-  it('does not scroll on desktop when the input gains focus', async () => {
-    render(<AiChat />);
-    await userEvent.click(screen.getByLabelText(/ask me anything/i));
-    // Longer than the mobile keyboard-settle delay, so a scheduled scroll would have fired.
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
   it('does NOT show a retry button on capped/synthetic server responses', async () => {
