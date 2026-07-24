@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { sendChatMessage, type ChatMessage } from '@/services/chat.service';
 import { ChatBubble } from './ChatBubble';
 import { ChatComposer } from './ChatComposer';
@@ -62,6 +62,18 @@ export function AiChat() {
       /* private mode or storage full — silently give up on persistence */
     }
   }, [messages]);
+
+  const endRef = useRef<HTMLDivElement>(null);
+
+  /* The artifact card owns scrolling (see .chat-log below), so bring our
+   * bottom anchor into its view on reopen-with-history and after every
+   * exchange — the newest message and the composer stay visible without
+   * manual scrolling. Instant (non-smooth) scroll, so no reduced-motion
+   * guard is needed. */
+  useEffect(() => {
+    if (messages.length === 0 && !loading) return;
+    endRef.current?.scrollIntoView({ block: 'end' });
+  }, [messages, loading]);
 
   const handleSend = async (text: string) => {
     const userMessage: ChatMessage = { role: 'user', text };
@@ -239,6 +251,7 @@ export function AiChat() {
       </div>
 
       <ChatComposer disabled={loading} onSend={handleSend} />
+      <div ref={endRef} aria-hidden />
     </section>
   );
 }
