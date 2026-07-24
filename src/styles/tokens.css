@@ -25,6 +25,9 @@
   --fs-readout: 10px;
   --fs-label:   11px;
   --fs-body:    15px;
+  /* Text inputs must stay ≥16px: iOS Safari zooms the page when focusing a
+   * smaller input and never zooms back out on blur. */
+  --fs-input:   16px;
   --fs-h2:      22px;
   --fs-h1:      32px;
 
