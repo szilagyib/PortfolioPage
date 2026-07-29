@@ -90,9 +90,9 @@ export const doors: readonly Door[] = [
       { kind: 'projectCard',
         name: 'GitAgents',
         summary:
-          'Paired AI agents for GitLab and GitHub CI pipelines: one reviews PRs/MRs with inline comments and merge gating, verifying its own findings against the repo before posting; the other proposes one-click fix suggestions. Per-language rule configs and a live cost dashboard.',
+          'Paired AI agents for GitLab and GitHub CI: one reviews PRs/MRs inline and gates merges, verifying its own findings against the repo before posting; the other proposes one-click fixes. Runs on OpenAI or Anthropic behind one adapter. Per-language rule configs and a live cost dashboard.',
         href: 'https://github.com/szilagyib/GitAgents',
-        stack: ['TypeScript', 'Node.js', 'Claude API', 'GitLab CI / GitHub Actions', 'Postgres'],
+        stack: ['TypeScript', 'Node.js', 'OpenAI / Anthropic API', 'GitLab CI / GitHub Actions', 'Postgres'],
         preview: {
           src: '/previews/gitagents.webp',
           alt: 'GitAgents review bot posting an inline pull-request comment flagging a possible null dereference',
@@ -101,7 +101,7 @@ export const doors: readonly Door[] = [
       { kind: 'projectCard',
         name: 'RAMSey',
         summary:
-          'Real-time collaborative web editor for RAMS diagrams — Markov chains, fault trees, FMEA, and more. Multi-user editing via Yjs CRDTs, AI-assisted diagram generation, an integrated analysis engine, and LaTeX/TikZ export.',
+          'Real-time collaborative web editor for RAMS diagrams — Markov chains, fault trees, FMEA, and more. Multi-user editing via Yjs CRDTs, AI-assisted diagram generation, and LaTeX/TikZ export. Solvers run in a Web Worker: steady-state availability, MTTF, minimal cut sets, and importance measures.',
         href: 'https://github.com/szilagyib/RAMSey',
         liveHref: 'https://ramseytools.com',
         stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Redis', 'Yjs', 'AWS'],
