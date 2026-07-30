@@ -64,6 +64,14 @@ In 2025 Borbála rolled out Claude Code on her team. Tooling, prompts, and code-
 - Prompt and review workflows that hold up under real scrutiny — including the categories of change that never go through an AI in the first place.
 - A company-wide talk on AI tooling for engineering teams is in preparation.
 
+# Side projects
+
+Built outside work, all public on GitHub (github.com/szilagyib). One idea runs through all three: if a system hands you an answer, you should be able to check how it got there.
+
+- GitAgents (AI code review for GitLab and GitHub): Reviews merge requests and pull requests inline, against rules kept in the repository itself. Its defining feature is self-verification — a second adversarial pass tries to refute every finding against the code, and anything it cannot demonstrate is dropped, so the bot stays quiet unless it has something worth saying. What survives is posted as inline comments with one-click fix suggestions; it does not push commits by default, and the merge gate is advisory. Review threads run through GitHub's GraphQL API. Stack: TypeScript, Node.js, OpenAI / Anthropic API, GitLab CI / GitHub Actions, Postgres.
+- RAMSey (live at ramseytools.com): Real-time collaborative editor for RAMS diagrams — six types, among them Markov chains, fault trees and FMEA — with solvers for minimal cut sets, steady-state availability, MTTF and importance measures. Results carry their provenance (solver, method, assumptions, warnings), so any number traces back to how it was produced. Multi-user editing over Yjs CRDTs; diagrams can also be edited in natural language via tool calling, where a whole AI turn counts as one undo step. Exports to LaTeX/TikZ. She built it, deployed it, and operates it. Stack: TypeScript, React, Fastify, Postgres, Redis, Yjs, Docker on AWS EC2, Vitest, Playwright.
+- GlassBox RAG (document Q&A): The model may answer only from the retrieved chunks, and says so when the corpus has no answer rather than inventing one. Each citation maps back to the exact sentence supporting that claim, with its file and page, and every query keeps a full trace — what was retrieved and at what score, what context actually reached the model, and where the milliseconds went. Hybrid retrieval fuses vector search with BM25 by reciprocal rank fusion, which rescues the exact codes and rare terms that embeddings blur. A built-in evaluation lab settles pipeline arguments by measurement instead of opinion. Stack: Python, Streamlit, LanceDB, DuckDB, SQLite, litellm.
+
 # Looking next
 
 Casually open to new roles. Remote-first or fully remote. Most interested in international teams and AI-focused work — writing agents, or leading AI adoption inside engineering teams.
@@ -72,7 +80,10 @@ Casually open to new roles. Remote-first or fully remote. Most interested in int
 
 Open to speaking at meetups and conferences, particularly on AI in engineering leadership. A company-wide talk on AI tooling for engineering teams is already in preparation.
 
-She publishes on Medium; links are listed in the ELSEWHERE section of this portfolio site.
+She publishes on Medium; the links are in the ELSEWHERE section of this portfolio site. Two essays so far:
+
+- "The AI Era Needs Smarter Failure" (May 2026): AI does not fix engineering culture, it scales whatever culture it enters — so when code becomes easier to produce, leadership has to become more precise. Her line from it: "AI makes both learning and failure faster. Leadership decides which one scales."
+- "Building a Transparent RAG, Transparently" (July 2026): the case for retrieval you can audit, written alongside GlassBox RAG. Her line from it: "The dangerous part is that nothing looks broken. The numbers look scientific."
 
 # Personality and approach
 

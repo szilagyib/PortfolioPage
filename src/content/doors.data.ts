@@ -87,7 +87,7 @@ export const doors: readonly Door[] = [
           'Real-time collaborative web editor for RAMS diagrams — Markov chains, fault trees, FMEA, and more. Multi-user editing via Yjs CRDTs, AI-assisted diagram generation, and LaTeX/TikZ export. Solvers run in a Web Worker: steady-state availability, MTTF, minimal cut sets, and importance measures.',
         href: 'https://github.com/szilagyib/RAMSey',
         liveHref: 'https://ramseytools.com',
-        stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Redis', 'Yjs', 'AWS'],
+        stack: ['TypeScript', 'React', 'Fastify', 'Postgres', 'Redis', 'Yjs', 'Docker', 'AWS EC2'],
         preview: {
           src: '/previews/ramsey.webp',
           alt: 'RAMSey editor showing a Markov chain diagram alongside a steady-state availability analysis panel',
