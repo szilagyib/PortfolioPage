@@ -6,7 +6,10 @@ import { http, HttpResponse } from 'msw';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AiChat } from '@/components/ai/AiChat';
-import { publishChatPrefill } from '@/services/chat-prefill';
+import {
+  publishChatPrefill,
+  publishChatSubmit,
+} from '@/services/chat-prefill';
 
 const CHAT_URL = '*/api/chat';
 
@@ -78,6 +81,29 @@ describe('<AiChat />', () => {
       expect(textarea).toHaveFocus();
     });
     expect(sessionStorage.getItem('pf.chat.prefill.v1')).toBeNull();
+  });
+
+  it('directly sends a hero question only when the plain-page handoff is enabled', async () => {
+    render(<AiChat acceptExternalSubmit />);
+
+    act(() => publishChatSubmit('What has she owned end-to-end?'));
+
+    expect(await screen.findByText('What has she owned end-to-end?')).toBeInTheDocument();
+    expect(await screen.findByText(/team of four at Prolan/i)).toBeInTheDocument();
+    expect(screen.getAllByText('What has she owned end-to-end?')).toHaveLength(1);
+    expect(sessionStorage.getItem('pf.chat.submit.v1')).toBeNull();
+  });
+
+  it('does not consume the plain-page submit handoff on the interactive chat', async () => {
+    render(<AiChat />);
+
+    act(() => publishChatSubmit('This must stay queued for the plain page.'));
+    await Promise.resolve();
+
+    expect(screen.queryByText('This must stay queued for the plain page.')).not.toBeInTheDocument();
+    expect(sessionStorage.getItem('pf.chat.submit.v1')).toBe(
+      'This must stay queued for the plain page.',
+    );
   });
 
   it('blocks an over-length question with a nudge instead of sending', async () => {

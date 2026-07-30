@@ -108,37 +108,55 @@ function orderedMetrics(
           <span class="plain-brand-role">Software Engineer · Team Lead</span>
         </a>
 
-        <nav class="plain-nav" aria-label="Page sections">
-          {sections.map((section) => (
-            <a class="plain-nav-section" href={`#${section.id}`}>
-              {toTitle(section.name)}
-            </a>
-          ))}
+        <nav class="plain-nav" aria-label="Primary">
           <a class="plain-nav-action plain-nav-ai" href="#ask-me">
             <span class="plain-nav-ai-dot" aria-hidden="true"></span>
-            ask AI
+            ASK ME
           </a>
           <CvPill
             client:load
             className="all-doors-header-cv plain-nav-cv"
           />
           <a class="plain-nav-action plain-nav-interactive" href="/">
-            interactive page ↗
+            interactive ↗
           </a>
         </nav>
       </div>
     </header>
 
+    <nav
+      class="plain-progress"
+      aria-label="Profile sections"
+      data-plain-progress
+    >
+      {sections.map((section) => (
+        <a
+          href={`#${section.id}`}
+          data-plain-progress-link={section.id}
+        >
+          <span class="plain-progress-dot" aria-hidden="true"></span>
+          <span>{toTitle(section.name)}</span>
+        </a>
+      ))}
+    </nav>
+
     <main class="plain-main">
       <section class="plain-hero" aria-labelledby="plain-title">
         <div class="plain-hero-copy">
-          <h1 id="plain-title">Engineering systems.<br />Growing engineers.</h1>
+          <h1 id="plain-title">
+            <span>Engineering systems.</span>
+            <span>Growing engineers.</span>
+          </h1>
           <p class="plain-hero-deck">
             Software engineer and team lead working across production systems,
             team delivery, and applied AI.
           </p>
 
-          <form class="plain-hero-ask" data-hero-chat-jump>
+          <form
+            class="plain-hero-ask"
+            data-hero-chat-submit
+            aria-label="Ask the portfolio assistant"
+          >
             <label for="plain-hero-question">
               <span>ASK ME</span>
             </label>
@@ -152,7 +170,10 @@ function orderedMetrics(
                 placeholder="Ask about engineering, leadership, or AI…"
                 required
               />
-              <button type="submit">open chat ↓</button>
+              <button type="submit">
+                <span>send</span>
+                <span aria-hidden="true">↘</span>
+              </button>
             </div>
           </form>
 
@@ -191,10 +212,6 @@ function orderedMetrics(
       <section class="plain-ai-spotlight" id="ask-me" aria-labelledby="plain-ai-title">
         <div class="plain-ai-intro">
           <p class="plain-ai-kicker">
-            <span class="plain-ai-live">
-              <span aria-hidden="true"></span>
-              live
-            </span>
             portfolio assistant
           </p>
           <h2 id="plain-ai-title">Skip the CV.<br />Ask the source.</h2>
@@ -207,14 +224,10 @@ function orderedMetrics(
         <div class="plain-ai-console">
           <header class="plain-ai-console-header">
             <span class="plain-ai-console-title">ASK ME</span>
-            <span class="plain-ai-console-status">
-              <span aria-hidden="true"></span>
-              ready
-            </span>
           </header>
 
           <div class="plain-ai-console-body">
-            <AiChat client:load />
+            <AiChat client:load acceptExternalSubmit />
           </div>
 
         </div>
@@ -309,8 +322,20 @@ function orderedMetrics(
                 }
 
                 if (block.kind === 'projectCard') {
+                  const projectIndex = section.artifact
+                    .slice(0, blockIndex)
+                    .filter((candidate) => candidate.kind === 'projectCard')
+                    .length;
+                  const projectClass = [
+                    'plain-project',
+                    projectIndex === 0 ? 'plain-project-featured' : '',
+                    projectIndex > 0 && projectIndex % 2 === 0
+                      ? 'plain-project-reverse'
+                      : '',
+                  ].filter(Boolean).join(' ');
+
                   return (
-                    <article class="plain-project">
+                    <article class={projectClass}>
                       {block.preview && (
                         <a
                           class="plain-project-preview"
@@ -415,10 +440,10 @@ function orderedMetrics(
 </Base>
 
 <script>
-  import { publishChatPrefill } from '@/services/chat-prefill';
+  import { publishChatSubmit } from '@/services/chat-prefill';
 
   const heroChatForm =
-    document.querySelector<HTMLFormElement>('[data-hero-chat-jump]');
+    document.querySelector<HTMLFormElement>('[data-hero-chat-submit]');
 
   heroChatForm?.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -430,19 +455,79 @@ function orderedMetrics(
     const question = rawQuestion.trim();
     if (!question) return;
 
+    const input = heroChatForm.elements.namedItem('question');
+    const submit = heroChatForm.querySelector<HTMLButtonElement>('button[type="submit"]');
     const target = document.querySelector<HTMLElement>('#ask-me');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    heroChatForm.classList.remove('is-sending');
+    void heroChatForm.offsetWidth;
+    heroChatForm.classList.add('is-sending');
+    heroChatForm.setAttribute('aria-busy', 'true');
+    if (input instanceof HTMLInputElement) {
+      input.disabled = true;
+      input.value = '';
+    }
+    if (submit) submit.disabled = true;
+
+    publishChatSubmit(question);
     target?.scrollIntoView({
       behavior: reduceMotion ? 'auto' : 'smooth',
       block: 'start',
     });
 
-    window.setTimeout(
-      () => publishChatPrefill(question),
-      reduceMotion ? 0 : 420,
-    );
+    window.setTimeout(() => {
+      heroChatForm.classList.remove('is-sending');
+      heroChatForm.removeAttribute('aria-busy');
+      if (input instanceof HTMLInputElement) input.disabled = false;
+      if (submit) submit.disabled = false;
+    }, reduceMotion ? 0 : 900);
   });
+
+  const progress = document.querySelector<HTMLElement>('[data-plain-progress]');
+  const profile = document.querySelector<HTMLElement>('#profile');
+  const progressLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('[data-plain-progress-link]'),
+  );
+
+  if (progress && profile && 'IntersectionObserver' in window) {
+    const profileObserver = new IntersectionObserver(([entry]) => {
+      progress.classList.toggle('is-visible', entry?.isIntersecting ?? false);
+    });
+    profileObserver.observe(profile);
+
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        const activeEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const activeId = activeEntry?.target.id;
+        if (!activeId) return;
+
+        progressLinks.forEach((link) => {
+          const isActive = link.dataset.plainProgressLink === activeId;
+          link.classList.toggle('is-active', isActive);
+          if (isActive) {
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      },
+      {
+        rootMargin: '-24% 0px -58% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      },
+    );
+
+    progressLinks.forEach((link) => {
+      const sectionId = link.dataset.plainProgressLink;
+      const section = sectionId
+        ? document.getElementById(sectionId)
+        : null;
+      if (section) sectionObserver.observe(section);
+    });
+  }
 </script>
 
 <style>
@@ -563,10 +648,6 @@ function orderedMetrics(
       background var(--d-fast) var(--ease-out);
   }
 
-  .plain-nav-section {
-    padding: 6px 8px;
-  }
-
   .plain-nav a:hover {
     color: var(--text-bright);
   }
@@ -633,6 +714,10 @@ function orderedMetrics(
     background: #83cbe3;
   }
 
+  .plain-progress {
+    display: none;
+  }
+
   .plain-main {
     width: min(100% - 40px, 1200px);
     margin: 0 auto;
@@ -662,6 +747,11 @@ function orderedMetrics(
     text-shadow: 0 0 36px rgba(178, 212, 229, 0.12);
   }
 
+  .plain-hero h1 span {
+    display: block;
+    white-space: nowrap;
+  }
+
   .plain-hero-deck {
     max-width: 650px;
     margin: 22px 0 0;
@@ -674,55 +764,74 @@ function orderedMetrics(
   .plain-hero-ask {
     max-width: 660px;
     margin: 22px 0 0;
-    padding: 10px;
-    border: 1px solid rgba(236, 200, 117, 0.38);
-    border-radius: 9px;
+  }
+
+  .plain-hero-ask > label {
+    display: block;
+    margin: 0 0 8px 2px;
+    color: var(--accent-warm);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+
+  .plain-hero-ask-row {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid rgba(178, 212, 229, 0.3);
+    border-radius: 10px;
     background:
-      linear-gradient(135deg, rgba(236, 200, 117, 0.08), rgba(13, 18, 48, 0.68));
+      linear-gradient(110deg, rgba(8, 11, 31, 0.92), rgba(13, 18, 48, 0.8));
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.04),
-      0 0 24px rgba(236, 200, 117, 0.07);
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 18px 48px rgba(0, 0, 0, 0.26),
+      0 0 28px rgba(95, 184, 214, 0.06);
     transition:
       border-color var(--d-fast) var(--ease-out),
       box-shadow var(--d-fast) var(--ease-out);
   }
 
-  .plain-hero-ask:focus-within {
-    border-color: rgba(236, 200, 117, 0.82);
+  .plain-hero-ask-row::after {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    bottom: 0;
+    left: -42%;
+    width: 34%;
+    opacity: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent, rgba(236, 200, 117, 0.5), transparent);
+    transform: skewX(-18deg);
+  }
+
+  .plain-hero-ask:focus-within .plain-hero-ask-row {
+    border-color: rgba(236, 200, 117, 0.76);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 0 0 1px rgba(236, 200, 117, 0.08),
-      0 0 32px rgba(236, 200, 117, 0.14);
+      0 0 0 1px rgba(236, 200, 117, 0.07),
+      0 20px 52px rgba(0, 0, 0, 0.3),
+      0 0 34px rgba(236, 200, 117, 0.12);
   }
 
-  .plain-hero-ask > label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 0 4px 8px;
-    color: var(--accent-warm);
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.1em;
-  }
-
-  .plain-hero-ask-row {
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
+  .plain-hero-ask.is-sending .plain-hero-ask-row::after {
+    animation: plain-send-pulse 780ms var(--ease-out) both;
   }
 
   .plain-hero-ask input {
+    position: relative;
+    z-index: 1;
     min-width: 0;
-    min-height: 48px;
+    min-height: 56px;
     flex: 1 1 auto;
-    padding: 10px 12px;
-    border: 1px solid rgba(178, 212, 229, 0.18);
-    border-radius: 6px;
+    padding: 13px 18px;
+    border: 0;
     outline: none;
     color: var(--text-bright);
-    background: rgba(6, 8, 24, 0.76);
+    background: transparent;
     font-family: var(--font-sans);
     font-size: var(--fs-input);
     line-height: 1.4;
@@ -733,24 +842,45 @@ function orderedMetrics(
   }
 
   .plain-hero-ask button {
+    position: relative;
+    z-index: 1;
     flex: 0 0 auto;
-    padding: 10px 14px;
-    border: 1px solid var(--accent-warm);
-    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 104px;
+    padding: 10px 16px;
+    border: 0;
+    border-left: 1px solid rgba(236, 200, 117, 0.58);
     color: #181204;
-    background: var(--accent-warm);
+    background:
+      linear-gradient(135deg, #f7d887, var(--accent-warm));
     font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     transition:
       background var(--d-fast) var(--ease-out),
-      transform var(--d-fast) var(--ease-out);
+      box-shadow var(--d-fast) var(--ease-out);
   }
 
-  .plain-hero-ask button:hover {
-    transform: translateY(-1px);
-    background: #ffe09a;
+  .plain-hero-ask button span:last-child {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .plain-hero-ask button:hover:not(:disabled) {
+    background:
+      linear-gradient(135deg, #ffe7aa, #f5cf70);
+    box-shadow: -8px 0 26px rgba(236, 200, 117, 0.18);
+  }
+
+  .plain-hero-ask input:disabled,
+  .plain-hero-ask button:disabled {
+    cursor: wait;
+    opacity: 0.72;
   }
 
   .plain-hero-contacts {
@@ -805,18 +935,34 @@ function orderedMetrics(
     filter: blur(28px);
   }
 
+  .plain-portrait-orbit::after {
+    content: '';
+    position: absolute;
+    z-index: 4;
+    inset: 9%;
+    border-top: 1px solid rgba(236, 200, 117, 0.78);
+    border-right: 1px solid rgba(95, 184, 214, 0.5);
+    border-radius: 50%;
+    clip-path: polygon(46% 0, 100% 0, 100% 58%, 76% 51%, 58% 20%);
+    filter: drop-shadow(0 0 7px rgba(236, 200, 117, 0.28));
+    pointer-events: none;
+    transform: rotate(-9deg);
+  }
+
   .plain-portrait-orbit img {
     position: relative;
     z-index: 2;
-    width: 56%;
-    height: 56%;
+    width: 64%;
+    height: 64%;
     object-fit: cover;
     border: 1px solid rgba(178, 212, 229, 0.7);
     border-radius: 50%;
+    transform: translate(4%, -2%);
     box-shadow:
       0 0 0 8px rgba(13, 18, 48, 0.8),
       0 0 0 9px rgba(95, 184, 214, 0.18),
-      0 0 46px rgba(95, 184, 214, 0.24);
+      -12px 18px 54px rgba(0, 0, 0, 0.42),
+      0 0 52px rgba(95, 184, 214, 0.26);
   }
 
   .plain-orbit {
@@ -929,30 +1075,20 @@ function orderedMetrics(
   .plain-ai-kicker {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     margin: 0 0 16px;
-    color: var(--tech-label);
+    color: var(--accent-warm);
     font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.13em;
     text-transform: uppercase;
   }
 
-  .plain-ai-live {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 7px;
-    border: 1px solid rgba(236, 200, 117, 0.45);
-    border-radius: 3px;
-    color: var(--accent-warm);
-    background: rgba(236, 200, 117, 0.07);
-  }
-
-  .plain-ai-live > span {
+  .plain-ai-kicker::before {
+    content: '';
     width: 5px;
     height: 5px;
+    flex: 0 0 auto;
     border-radius: 50%;
     background: var(--accent-warm);
     box-shadow: 0 0 8px var(--accent-warm);
@@ -989,11 +1125,9 @@ function orderedMetrics(
   }
 
   .plain-ai-console-header {
-    min-height: 58px;
+    min-height: 50px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
     padding: 12px 18px;
     border-bottom: 1px solid rgba(178, 212, 229, 0.13);
     background:
@@ -1005,25 +1139,6 @@ function orderedMetrics(
     color: var(--accent-cyan);
     font-size: 11px;
     letter-spacing: 0.11em;
-  }
-
-  .plain-ai-console-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    flex: 0 0 auto;
-    color: var(--accent-warm);
-    font-size: 8px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .plain-ai-console-status > span {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--accent-warm);
-    box-shadow: 0 0 8px var(--accent-warm);
   }
 
   .plain-ai-console-body {
@@ -1369,10 +1484,26 @@ function orderedMetrics(
 
   .plain-project {
     display: grid;
-    grid-template-columns: minmax(300px, 1.25fr) minmax(260px, 0.75fr);
-    gap: 32px;
-    padding: 28px 0;
+    grid-template-columns: minmax(300px, 1.12fr) minmax(280px, 0.88fr);
+    gap: clamp(28px, 4vw, 52px);
+    align-items: center;
+    padding: 34px 0;
     border-top: 1px solid rgba(178, 212, 229, 0.12);
+  }
+
+  .plain-project-featured {
+    grid-template-columns: minmax(380px, 1.5fr) minmax(280px, 0.7fr);
+    padding: 40px 0 46px;
+  }
+
+  .plain-project-reverse .plain-project-preview {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .plain-project-reverse .plain-project-copy {
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .plain-project-preview {
@@ -1383,12 +1514,23 @@ function orderedMetrics(
     background: #06060f;
     transition:
       border-color var(--d-fast) var(--ease-out),
-      transform var(--d-fast) var(--ease-out);
+      transform var(--d-fast) var(--ease-out),
+      box-shadow var(--d-fast) var(--ease-out);
+  }
+
+  .plain-project-featured .plain-project-preview {
+    border-color: rgba(236, 200, 117, 0.25);
+    box-shadow:
+      0 22px 58px rgba(0, 0, 0, 0.32),
+      0 0 32px rgba(236, 200, 117, 0.06);
   }
 
   .plain-project-preview:hover {
     transform: translateY(-2px);
     border-color: rgba(178, 212, 229, 0.5);
+    box-shadow:
+      0 26px 64px rgba(0, 0, 0, 0.36),
+      0 0 36px rgba(95, 184, 214, 0.08);
   }
 
   .plain-project-preview img {
@@ -1397,6 +1539,15 @@ function orderedMetrics(
     aspect-ratio: 16 / 9;
     display: block;
     object-fit: contain;
+    transition: transform 500ms var(--ease-out);
+  }
+
+  .plain-project-preview:hover img {
+    transform: scale(1.012);
+  }
+
+  .plain-project-copy {
+    min-width: 0;
   }
 
   .plain-project-heading {
@@ -1409,7 +1560,12 @@ function orderedMetrics(
 
   .plain-project h4 {
     margin: 0;
-    font-size: 17px;
+    font-size: clamp(19px, 2vw, 24px);
+    letter-spacing: -0.025em;
+  }
+
+  .plain-project-featured h4 {
+    font-size: clamp(26px, 3.1vw, 38px);
   }
 
   .plain-project h4 a {
@@ -1434,19 +1590,24 @@ function orderedMetrics(
   .plain-stack {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin: 15px 0 0;
+    gap: 5px 8px;
+    margin: 17px 0 0;
     padding: 0;
     list-style: none;
   }
 
   .plain-stack li {
-    padding: 3px 7px;
-    border: 1px solid var(--tech-line);
-    border-radius: 3px;
+    padding: 0;
     color: var(--text-dim);
     font-family: var(--font-mono);
     font-size: 9px;
+    line-height: 1.5;
+  }
+
+  .plain-stack li:not(:last-child)::after {
+    content: '·';
+    margin-left: 8px;
+    color: rgba(95, 184, 214, 0.58);
   }
 
   .plain-post {
@@ -1526,11 +1687,126 @@ function orderedMetrics(
     to { transform: rotate(360deg); }
   }
 
-  @media (max-width: 980px) {
-    .plain-nav-section {
-      display: none;
+  @keyframes plain-send-pulse {
+    0% {
+      opacity: 0;
+      transform: translateX(0) skewX(-18deg);
+    }
+    18% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(430%) skewX(-18deg);
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .plain-progress {
+      position: fixed;
+      z-index: 12;
+      top: 50%;
+      left: max(18px, calc((100vw - 1200px) / 2 - 94px));
+      width: 88px;
+      display: flex;
+      flex-direction: column;
+      gap: 19px;
+      padding: 10px 0;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(calc(-50% + 10px));
+      transition:
+        opacity 260ms var(--ease-out),
+        transform 260ms var(--ease-out);
     }
 
+    .plain-progress::before {
+      content: '';
+      position: absolute;
+      top: 17px;
+      bottom: 17px;
+      right: 4px;
+      width: 1px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(95, 184, 214, 0.08),
+          rgba(95, 184, 214, 0.42),
+          rgba(236, 200, 117, 0.32),
+          rgba(95, 184, 214, 0.08)
+        );
+      box-shadow: 0 0 10px rgba(95, 184, 214, 0.12);
+    }
+
+    .plain-progress.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(-50%);
+    }
+
+    .plain-progress a {
+      position: relative;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      text-transform: lowercase;
+      transition: color var(--d-fast) var(--ease-out);
+    }
+
+    .plain-progress a > span:last-child {
+      opacity: 0.68;
+      transform: translateX(2px);
+      transition:
+        opacity var(--d-fast) var(--ease-out),
+        transform var(--d-fast) var(--ease-out);
+    }
+
+    .plain-progress-dot {
+      position: relative;
+      z-index: 1;
+      width: 9px;
+      height: 9px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(95, 184, 214, 0.42);
+      border-radius: 50%;
+      background: #090b1c;
+      box-shadow: 0 0 0 3px rgba(6, 6, 15, 0.86);
+      transition:
+        border-color var(--d-fast) var(--ease-out),
+        background var(--d-fast) var(--ease-out),
+        box-shadow var(--d-fast) var(--ease-out),
+        transform var(--d-fast) var(--ease-out);
+    }
+
+    .plain-progress a:hover,
+    .plain-progress a.is-active {
+      color: var(--text-bright);
+    }
+
+    .plain-progress a:hover > span:last-child,
+    .plain-progress a.is-active > span:last-child {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .plain-progress a.is-active .plain-progress-dot {
+      border-color: var(--accent-warm);
+      background: var(--accent-warm);
+      box-shadow:
+        0 0 0 3px rgba(6, 6, 15, 0.86),
+        0 0 13px rgba(236, 200, 117, 0.72);
+      transform: scale(1.12);
+    }
+  }
+
+  @media (max-width: 980px) {
     .plain-hero {
       grid-template-columns: minmax(0, 1fr) 260px;
       gap: 40px;
@@ -1541,8 +1817,10 @@ function orderedMetrics(
       gap: 32px;
     }
 
-    .plain-project {
-      grid-template-columns: minmax(280px, 1.1fr) minmax(240px, 0.9fr);
+    .plain-project,
+    .plain-project-featured {
+      grid-template-columns: minmax(280px, 1.15fr) minmax(240px, 0.85fr);
+      gap: 26px;
     }
   }
 
@@ -1569,12 +1847,13 @@ function orderedMetrics(
     .plain-hero {
       min-height: calc(100svh - 62px);
       grid-template-columns: 1fr;
-      gap: clamp(18px, 3svh, 30px);
-      padding: clamp(28px, 5svh, 48px) 6px;
+      gap: clamp(12px, 2.2svh, 22px);
+      align-content: center;
+      padding: clamp(20px, 3.5svh, 34px) 6px;
     }
 
     .plain-portrait-orbit {
-      width: min(42vw, 22svh, 170px);
+      width: min(36vw, 17svh, 136px);
       justify-self: center;
       grid-row: 2;
     }
@@ -1584,17 +1863,31 @@ function orderedMetrics(
     }
 
     .plain-hero h1 {
-      font-size: clamp(38px, min(12vw, 8.5svh), 64px);
+      font-size: clamp(30px, min(9.6vw, 7.4svh), 56px);
     }
 
     .plain-hero-deck {
-      margin-top: 18px;
-      font-size: clamp(15px, 4vw, 18px);
-      line-height: 1.55;
+      margin-top: 14px;
+      font-size: clamp(14px, 3.8vw, 17px);
+      line-height: 1.5;
     }
 
     .plain-hero-ask {
-      margin-top: 18px;
+      margin-top: 14px;
+    }
+
+    .plain-hero-ask input {
+      min-height: 52px;
+      padding-inline: 14px;
+    }
+
+    .plain-hero-ask button {
+      min-width: 92px;
+      padding-inline: 13px;
+    }
+
+    .plain-hero-contacts {
+      margin-top: 12px;
     }
 
     .plain-ai-spotlight {
@@ -1654,9 +1947,28 @@ function orderedMetrics(
       padding: 18px;
     }
 
-    .plain-project {
+    .plain-project,
+    .plain-project-featured {
       grid-template-columns: 1fr;
       gap: 16px;
+      padding: 28px 0 32px;
+    }
+
+    .plain-project-reverse .plain-project-preview,
+    .plain-project-reverse .plain-project-copy {
+      grid-column: 1;
+    }
+
+    .plain-project-reverse .plain-project-preview {
+      grid-row: 1;
+    }
+
+    .plain-project-reverse .plain-project-copy {
+      grid-row: 2;
+    }
+
+    .plain-project-featured h4 {
+      font-size: clamp(24px, 8vw, 32px);
     }
 
     .plain-post {
@@ -1699,14 +2011,6 @@ function orderedMetrics(
       gap: 8px;
     }
 
-    .plain-hero-ask {
-      padding: 8px;
-    }
-
-    .plain-hero-ask-row {
-      gap: 6px;
-    }
-
     .plain-hero-ask input {
       padding-inline: 10px;
     }
@@ -1741,7 +2045,8 @@ function orderedMetrics(
   @media (prefers-reduced-motion: reduce) {
     .plain-orbit,
     .plain-nav-ai-dot,
-    .plain-ai-live > span {
+    .plain-ai-kicker::before,
+    .plain-hero-ask.is-sending .plain-hero-ask-row::after {
       animation: none;
     }
   }
@@ -1749,6 +2054,7 @@ function orderedMetrics(
   @media print {
     .plain-space,
     .plain-topbar,
+    .plain-progress,
     .plain-hero-ask,
     .plain-hero-contacts,
     .plain-portrait-orbit,

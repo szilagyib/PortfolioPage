@@ -1,5 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { sendChatMessage, type ChatMessage } from '@/services/chat.service';
+import {
+  CHAT_SUBMIT_EVENT,
+  consumeChatSubmit,
+} from '@/services/chat-prefill';
 import { ChatBubble } from './ChatBubble';
 import { ChatComposer } from './ChatComposer';
 
@@ -41,13 +45,19 @@ function readStoredChat(): readonly ChatMessage[] | null {
   }
 }
 
-export function AiChat() {
+interface AiChatProps {
+  readonly acceptExternalSubmit?: boolean;
+}
+
+export function AiChat({ acceptExternalSubmit = false }: AiChatProps) {
   const [messages, setMessages] = useState<readonly ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [historyRestored, setHistoryRestored] = useState(false);
 
   useEffect(() => {
     const restored = readStoredChat();
     if (restored && restored.length > 0) setMessages(restored);
+    setHistoryRestored(true);
   }, []);
 
   useEffect(() => {
@@ -69,6 +79,7 @@ export function AiChat() {
    * inline in the stacked view, so a mount-time scroll would yank a fresh
    * page load down to this section. */
   const messagingStartedRef = useRef(false);
+  const suppressNextAutoScrollRef = useRef(false);
 
   /* The chat has no scroll container of its own (see .chat-log below), so
    * bring the bottom anchor into the ancestor's view after every exchange —
@@ -78,11 +89,20 @@ export function AiChat() {
   useEffect(() => {
     if (!messagingStartedRef.current) return;
     if (messages.length === 0 && !loading) return;
+    if (suppressNextAutoScrollRef.current) {
+      suppressNextAutoScrollRef.current = false;
+      return;
+    }
     endRef.current?.scrollIntoView({ block: 'end' });
   }, [messages, loading]);
 
-  const handleSend = async (text: string) => {
+  const handleSend = useCallback(async (
+    text: string,
+    suppressInitialScroll = false,
+  ) => {
+    if (loading) return;
     messagingStartedRef.current = true;
+    suppressNextAutoScrollRef.current = suppressInitialScroll;
     const userMessage: ChatMessage = { role: 'user', text };
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
@@ -92,7 +112,31 @@ export function AiChat() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading, messages]);
+
+  useEffect(() => {
+    if (!acceptExternalSubmit || !historyRestored) return;
+
+    const submitPendingQuestion = (fallbackQuestion?: unknown) => {
+      if (loading) return;
+
+      const storedQuestion = consumeChatSubmit();
+      const rawQuestion =
+        storedQuestion ?? (typeof fallbackQuestion === 'string' ? fallbackQuestion : null);
+      const question = rawQuestion?.trim();
+      if (!question) return;
+
+      void handleSend(question, true);
+    };
+
+    const onExternalSubmit = (event: Event) => {
+      submitPendingQuestion((event as CustomEvent<unknown>).detail);
+    };
+
+    submitPendingQuestion();
+    window.addEventListener(CHAT_SUBMIT_EVENT, onExternalSubmit);
+    return () => window.removeEventListener(CHAT_SUBMIT_EVENT, onExternalSubmit);
+  }, [acceptExternalSubmit, handleSend, historyRestored, loading]);
 
   const clear = () => {
     if (loading) return;
