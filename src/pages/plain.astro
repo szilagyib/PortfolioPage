@@ -75,9 +75,8 @@ function contactDisplay(href: string): string {
         </a>
 
         <nav class="plain-nav" aria-label="Page sections">
-          {sections.map((section, index) => (
+          {sections.map((section) => (
             <a class="plain-nav-section" href={`#${section.id}`}>
-              <span>{String(index + 1).padStart(2, '0')}</span>
               {toTitle(section.name)}
             </a>
           ))}
@@ -145,10 +144,10 @@ function contactDisplay(href: string): string {
       <article class="plain-document" id="profile" aria-label="Professional profile">
         <div class="plain-document-readout" aria-hidden="true">
           <span>PROFILE / CONTINUOUS VIEW</span>
-          <span>04 SECTORS · LIVE DATA</span>
+          <span>FULL PROFILE · LIVE DATA</span>
         </div>
 
-        {sections.map((section, sectionIndex) => (
+        {sections.map((section) => (
           <section
             class="plain-section"
             id={section.id}
@@ -156,9 +155,6 @@ function contactDisplay(href: string): string {
           >
             <header class="plain-section-rail">
               <div class="plain-section-rail-inner">
-                <span class="plain-section-number">
-                  {String(sectionIndex + 1).padStart(2, '0')}
-                </span>
                 <h2 id={`plain-h-${section.id}`}>{toTitle(section.name)}</h2>
                 <p>{section.tagline}</p>
               </div>
@@ -458,12 +454,6 @@ function contactDisplay(href: string): string {
     padding: 6px 8px;
   }
 
-  .plain-nav-section span {
-    margin-right: 5px;
-    color: var(--tech-label);
-    font-size: 8px;
-  }
-
   .plain-nav a:hover {
     color: var(--text-bright);
   }
@@ -756,15 +746,6 @@ function contactDisplay(href: string): string {
   .plain-section-rail-inner {
     position: sticky;
     top: 102px;
-  }
-
-  .plain-section-number {
-    display: block;
-    margin-bottom: 16px;
-    color: var(--tech-muted);
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
   }
 
   .plain-section-rail h2 {
@@ -1179,15 +1160,6 @@ function contactDisplay(href: string): string {
 
     .plain-section-rail-inner {
       position: static;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      column-gap: 12px;
-      align-items: baseline;
-    }
-
-    .plain-section-number {
-      grid-row: 1 / span 2;
-      margin: 0;
     }
 
     .plain-section-rail p {
