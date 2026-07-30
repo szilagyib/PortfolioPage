@@ -10,6 +10,7 @@ import Base from '@/layouts/Base.astro';
 import { CosmicBackground } from '@/components/canvas/CosmicBackground';
 import { CV_PDF_PATH } from '@/config/cv';
 import { doors } from '@/content/doors.data';
+import { LAST_UPDATED_YEAR } from '@/content/site';
 import type { ArtifactBlock } from '@/domain/artifact';
 import type { DoorId } from '@/domain/door';
 import '@/styles/global.css';
@@ -84,7 +85,7 @@ function contactDisplay(href: string): string {
             CV ↗
           </a>
           <a class="plain-nav-action plain-nav-interactive" href="/">
-            interactive ↗
+            interactive page ↗
           </a>
         </nav>
       </div>
@@ -104,7 +105,8 @@ function contactDisplay(href: string): string {
           </p>
 
           <div class="plain-hero-actions">
-            <a class="plain-primary-action" href="#profile">Read the profile ↓</a>
+            <a class="plain-primary-action" href="/">Enter the interactive page ↗</a>
+            <a href="#profile">Read the profile ↓</a>
             <a href={CV_PDF_PATH} target="_blank" rel="noopener noreferrer">View CV ↗</a>
           </div>
 
@@ -325,7 +327,7 @@ function contactDisplay(href: string): string {
       </article>
 
       <footer class="plain-footer">
-        <span>END OF TRANSMISSION · 2026</span>
+        <span>updated · {LAST_UPDATED_YEAR}</span>
         <a href="/">Enter the interactive orbit ↗</a>
       </footer>
     </main>
@@ -470,6 +472,20 @@ function contactDisplay(href: string): string {
   .plain-nav-action:hover {
     border-color: rgba(178, 212, 229, 0.72);
     background: rgba(40, 52, 88, 0.66);
+  }
+
+  .plain-nav-interactive {
+    color: #06131b !important;
+    border-color: var(--accent-cyan);
+    background: var(--accent-cyan);
+    box-shadow: 0 0 18px rgba(95, 184, 214, 0.22);
+    font-weight: 600;
+  }
+
+  .plain-nav-interactive:hover {
+    color: #06131b !important;
+    border-color: #a6e2f4;
+    background: #83cbe3;
   }
 
   .plain-main {
@@ -1119,7 +1135,7 @@ function contactDisplay(href: string): string {
       display: none;
     }
 
-    .plain-nav-interactive {
+    .plain-nav-action:not(.plain-nav-interactive) {
       display: none;
     }
 
