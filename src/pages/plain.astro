@@ -42,6 +42,33 @@ function isExternal(href: string): boolean {
 function contactDisplay(href: string): string {
   return href.replace(/^(https?:\/\/(www\.)?|mailto:)/, '');
 }
+
+type MetricBlock = Extract<ArtifactBlock, { kind: 'metric' }>;
+
+const LEADERSHIP_METRIC_ORDER = new Map<string, number>([
+  ['+30%', 0],
+  ['~380', 1],
+  ['0', 2],
+  ['<24h', 3],
+  ['4', 4],
+]);
+
+function orderedMetrics(
+  sectionId: DoorId,
+  blocks: readonly ArtifactBlock[],
+): readonly MetricBlock[] {
+  const metrics = blocks.filter(
+    (block): block is MetricBlock => block.kind === 'metric',
+  );
+
+  if (sectionId !== 'leadership') return metrics;
+
+  return metrics.sort(
+    (a, b) =>
+      (LEADERSHIP_METRIC_ORDER.get(a.value) ?? Number.MAX_SAFE_INTEGER)
+      - (LEADERSHIP_METRIC_ORDER.get(b.value) ?? Number.MAX_SAFE_INTEGER),
+  );
+}
 ---
 <Base
   title="Borbála Szilágyi — Software Engineer · Team Lead"
@@ -214,7 +241,7 @@ function contactDisplay(href: string): string {
             </header>
 
             <div class="plain-section-content">
-              {section.artifact.map((block: ArtifactBlock) => {
+              {section.artifact.map((block: ArtifactBlock, blockIndex) => {
                 if (
                   block.kind === 'aiChat'
                   || block.kind === 'profileHeader'
@@ -240,10 +267,19 @@ function contactDisplay(href: string): string {
                 }
 
                 if (block.kind === 'metric') {
+                  const firstMetricIndex = section.artifact.findIndex(
+                    (candidate) => candidate.kind === 'metric',
+                  );
+                  if (blockIndex !== firstMetricIndex) return null;
+
                   return (
-                    <div class="plain-metric">
-                      <strong>{block.value}</strong>
-                      <span>{block.label}</span>
+                    <div class="plain-metric-grid" aria-label={`${toTitle(section.name)} metrics`}>
+                      {orderedMetrics(section.id, section.artifact).map((metric, metricIndex) => (
+                        <div class={`plain-metric plain-metric-${metricIndex + 1}`}>
+                          <strong>{metric.value}</strong>
+                          <span>{metric.label}</span>
+                        </div>
+                      ))}
                     </div>
                   );
                 }
@@ -1090,8 +1126,8 @@ function contactDisplay(href: string): string {
   .plain-section {
     display: grid;
     grid-template-columns: minmax(170px, 240px) minmax(0, 1fr);
-    gap: clamp(30px, 6vw, 90px);
-    padding: clamp(46px, 7vw, 88px) clamp(24px, 5vw, 70px);
+    gap: clamp(28px, 5vw, 70px);
+    padding: clamp(36px, 5vw, 64px) clamp(24px, 5vw, 70px);
     border-top: 1px solid rgba(178, 212, 229, 0.13);
   }
 
@@ -1168,21 +1204,54 @@ function contactDisplay(href: string): string {
     font-family: var(--font-mono);
   }
 
+  .plain-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: minmax(108px, auto);
+    gap: 10px;
+    margin: 24px 0 0;
+  }
+
   .plain-metric {
-    width: calc(33.333% - 10px);
-    min-width: 176px;
-    min-height: 102px;
-    display: inline-flex;
+    min-width: 0;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
-    vertical-align: top;
-    margin: 16px 6px 0 0;
     padding: 16px;
     border: 1px solid rgba(178, 212, 229, 0.14);
     border-radius: 9px;
     background:
       linear-gradient(145deg, rgba(95, 184, 214, 0.07), rgba(13, 18, 48, 0.28));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .plain-metric-1 {
+    grid-column: span 5;
+    grid-row: span 2;
+    padding: 22px;
+    border-color: rgba(236, 200, 117, 0.36);
+    background:
+      radial-gradient(circle at 90% 12%, rgba(236, 200, 117, 0.13), transparent 38%),
+      linear-gradient(145deg, rgba(236, 200, 117, 0.1), rgba(13, 18, 48, 0.38));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 0 28px rgba(236, 200, 117, 0.07);
+  }
+
+  .plain-metric-2 {
+    grid-column: span 4;
+  }
+
+  .plain-metric-3 {
+    grid-column: span 3;
+  }
+
+  .plain-metric-4 {
+    grid-column: span 3;
+  }
+
+  .plain-metric-5 {
+    grid-column: span 4;
   }
 
   .plain-metric strong {
@@ -1199,6 +1268,17 @@ function contactDisplay(href: string): string {
     font-size: 10px;
     letter-spacing: 0.04em;
     line-height: 1.4;
+  }
+
+  .plain-metric-1 strong {
+    color: var(--accent-warm);
+    font-size: clamp(42px, 5vw, 62px);
+  }
+
+  .plain-metric-1 span {
+    max-width: 16ch;
+    color: #c9b97e;
+    font-size: 11px;
   }
 
   .plain-quote {
@@ -1542,8 +1622,8 @@ function contactDisplay(href: string): string {
 
     .plain-section {
       grid-template-columns: 1fr;
-      gap: 28px;
-      padding: 46px 20px 54px;
+      gap: 22px;
+      padding: 34px 20px 40px;
     }
 
     .plain-section-rail-inner {
@@ -1554,10 +1634,26 @@ function contactDisplay(href: string): string {
       margin-top: 5px;
     }
 
-    .plain-metric {
-      width: calc(50% - 8px);
-      min-width: 0;
-      margin-right: 4px;
+    .plain-metric-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: minmax(94px, auto);
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .plain-metric-1,
+    .plain-metric-2,
+    .plain-metric-3,
+    .plain-metric-4,
+    .plain-metric-5 {
+      grid-column: span 1;
+      grid-row: auto;
+    }
+
+    .plain-metric-1 {
+      grid-column: 1 / -1;
+      min-height: 130px;
+      padding: 18px;
     }
 
     .plain-project {
@@ -1642,9 +1738,8 @@ function contactDisplay(href: string): string {
     }
 
     .plain-metric {
-      width: 100%;
-      min-height: 88px;
-      margin-right: 0;
+      min-height: 84px;
+      padding: 13px;
     }
 
   }
