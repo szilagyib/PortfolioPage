@@ -128,10 +128,10 @@ function orderedMetrics(
     <main class="plain-main">
       <section class="plain-hero" aria-labelledby="plain-title">
         <div class="plain-hero-copy">
-          <h1 id="plain-title">Engineering systems.<br />Leading humans.</h1>
+          <h1 id="plain-title">Engineering systems.<br />Leading teams.</h1>
           <p class="plain-hero-deck">
-            Software engineer and team lead building production systems,
-            strong teams, and an honest place for AI-assisted development.
+            Software engineer and team lead working across production systems,
+            team delivery, and applied AI.
           </p>
 
           <form class="plain-hero-ask" data-hero-chat-jump>
@@ -204,10 +204,7 @@ function orderedMetrics(
 
         <div class="plain-ai-console">
           <header class="plain-ai-console-header">
-            <div>
-              <span class="plain-ai-console-title">ASK BORBÁLA_AI</span>
-              <span class="plain-ai-console-model">context-aware profile assistant</span>
-            </div>
+            <span class="plain-ai-console-title">ASK BORBÁLA_AI</span>
             <span class="plain-ai-console-status">
               <span aria-hidden="true"></span>
               ready
@@ -222,11 +219,6 @@ function orderedMetrics(
       </section>
 
       <article class="plain-document" id="profile" aria-label="Professional profile">
-        <div class="plain-document-readout" aria-hidden="true">
-          <span>PROFILE / CONTINUOUS VIEW</span>
-          <span>FULL PROFILE · LIVE DATA</span>
-        </div>
-
         {sections.map((section) => (
           <section
             class="plain-section"
@@ -1013,23 +1005,10 @@ function orderedMetrics(
     font-family: var(--font-mono);
   }
 
-  .plain-ai-console-header > div {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-  }
-
   .plain-ai-console-title {
     color: var(--accent-cyan);
     font-size: 11px;
     letter-spacing: 0.11em;
-  }
-
-  .plain-ai-console-model {
-    color: var(--text-dim);
-    font-size: 8px;
-    letter-spacing: 0.05em;
   }
 
   .plain-ai-console-status {
@@ -1118,21 +1097,6 @@ function orderedMetrics(
     box-shadow: 0 0 18px rgba(95, 184, 214, 0.7);
   }
 
-  .plain-document-readout {
-    min-height: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 12px 28px;
-    border-bottom: 1px solid rgba(178, 212, 229, 0.12);
-    color: var(--text-dim);
-    background: rgba(6, 6, 15, 0.36);
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.13em;
-  }
-
   .plain-section {
     display: grid;
     grid-template-columns: minmax(170px, 240px) minmax(0, 1fr);
@@ -1141,7 +1105,7 @@ function orderedMetrics(
     border-top: 1px solid rgba(178, 212, 229, 0.13);
   }
 
-  .plain-document-readout + .plain-section {
+  .plain-document > .plain-section:first-child {
     border-top: 0;
   }
 
@@ -1644,14 +1608,6 @@ function orderedMetrics(
       padding: 12px 14px 14px;
     }
 
-    .plain-document-readout {
-      padding-inline: 18px;
-    }
-
-    .plain-document-readout span:last-child {
-      display: none;
-    }
-
     .plain-section {
       grid-template-columns: 1fr;
       gap: 22px;
@@ -1791,7 +1747,6 @@ function orderedMetrics(
     .plain-hero-contacts,
     .plain-portrait-orbit,
     .plain-ai-spotlight,
-    .plain-document-readout,
     .plain-footer {
       display: none !important;
     }
