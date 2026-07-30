@@ -10,6 +10,7 @@
  * `plain.`) at Cloudflare edge without any code changes.
  */
 import Base from '@/layouts/Base.astro';
+import { CV_PDF_PATH } from '@/config/cv';
 import { doors } from '@/content/doors.data';
 import type { ArtifactBlock } from '@/domain/artifact';
 import type { DoorId } from '@/domain/door';
@@ -96,9 +97,13 @@ function contactDisplay(href: string): string {
           <li>
             <a
               class="plain-cv"
-              href="/SzilagyiBorbala_CV_EN_2026_NoPhoto.pdf"
-              download
+              href={CV_PDF_PATH}
+              target="_blank"
+              rel="noopener noreferrer"
             >
+              View CV (PDF)
+            </a>
+            <a class="plain-cv" href={CV_PDF_PATH} download>
               ↓ Download CV (PDF)
             </a>
           </li>
