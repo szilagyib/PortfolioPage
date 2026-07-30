@@ -65,28 +65,11 @@ export const doors: readonly Door[] = [
       { kind: 'paragraph', text:
         'Side projects and recent writings — where I experiment with new tools and ideas on my own time.' },
       { kind: 'sectionLabel', text: 'Projects' },
-      { kind: 'projectCard',
-        name: 'This portfolio',
-        summary:
-          'The site you\'re on. A cosmic single-page canvas with a constellation-drawing puzzle and a server-side AI chat. Astro static build with React islands; deployed on Cloudflare Pages, written end-to-end with Claude Code.',
-        href: 'https://github.com/szilagyib/PortfolioPage',
-        stack: ['Astro', 'React', 'TypeScript', 'Cloudflare Pages', 'OpenAI / Anthropic API'],
-        preview: {
-          src: '/previews/portfolio.webp',
-          alt: 'Cosmic portfolio canvas with the pentagon of destinations around a central YOU star',
-        },
-      },
-      { kind: 'projectCard',
-        name: 'GlassBox RAG',
-        summary:
-          'Document Q&A with full pipeline transparency — every chunk, similarity score, rerank, and citation exposed alongside the answer. Built-in evaluation lab with LLM-judged quality metrics, and multi-provider model support via litellm.',
-        href: 'https://github.com/szilagyib/GlassBoxRAG',
-        stack: ['Python', 'Streamlit', 'LanceDB', 'DuckDB', 'SQLite', 'litellm'],
-        preview: {
-          src: '/previews/rag.webp',
-          alt: 'GlassBox RAG interface showing retrieval chunks, scores, and citations',
-        },
-      },
+      /* Order is deliberate: the two strongest lead — the CI agents, then
+       * the shipped product with a public URL — followed by the RAG lab.
+       * "This portfolio" sits last; the site is evidence by existing, so it
+       * earns a mention rather than the lead slot. AgentsSquad slots in at
+       * the top once it demos. */
       { kind: 'projectCard',
         name: 'GitAgents',
         summary:
@@ -108,6 +91,28 @@ export const doors: readonly Door[] = [
         preview: {
           src: '/previews/ramsey.webp',
           alt: 'RAMSey editor showing a Markov chain diagram alongside a steady-state availability analysis panel',
+        },
+      },
+      { kind: 'projectCard',
+        name: 'GlassBox RAG',
+        summary:
+          'Document Q&A with full pipeline transparency — every chunk, similarity score, rerank, and citation exposed alongside the answer. Built-in evaluation lab with LLM-judged quality metrics, and multi-provider model support via litellm.',
+        href: 'https://github.com/szilagyib/GlassBoxRAG',
+        stack: ['Python', 'Streamlit', 'LanceDB', 'DuckDB', 'SQLite', 'litellm'],
+        preview: {
+          src: '/previews/rag.webp',
+          alt: 'GlassBox RAG interface showing retrieval chunks, scores, and citations',
+        },
+      },
+      { kind: 'projectCard',
+        name: 'This portfolio',
+        summary:
+          'The site you\'re on. A cosmic single-page canvas with a constellation-drawing puzzle and a server-side AI chat. Astro static build with React islands; deployed on Cloudflare Pages, written end-to-end with Claude Code.',
+        href: 'https://github.com/szilagyib/PortfolioPage',
+        stack: ['Astro', 'React', 'TypeScript', 'Cloudflare Pages', 'OpenAI / Anthropic API'],
+        preview: {
+          src: '/previews/portfolio.webp',
+          alt: 'Cosmic portfolio canvas with the pentagon of destinations around a central YOU star',
         },
       },
 
