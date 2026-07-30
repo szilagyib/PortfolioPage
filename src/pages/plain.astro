@@ -141,7 +141,6 @@ function orderedMetrics(
           <form class="plain-hero-ask" data-hero-chat-jump>
             <label for="plain-hero-question">
               <span>ASK BORBÁLA_AI</span>
-              <span id="plain-hero-question-hint">opens the live assistant</span>
             </label>
             <div class="plain-hero-ask-row">
               <input
@@ -151,7 +150,6 @@ function orderedMetrics(
                 maxlength="250"
                 autocomplete="off"
                 placeholder="Ask about engineering, leadership, or AI…"
-                aria-describedby="plain-hero-question-hint"
                 required
               />
               <button type="submit">open chat ↓</button>
@@ -707,12 +705,6 @@ function orderedMetrics(
     font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
-  }
-
-  .plain-hero-ask > label span:last-child {
-    color: var(--text-dim);
-    font-size: 8px;
-    letter-spacing: 0.05em;
   }
 
   .plain-hero-ask-row {
@@ -1695,10 +1687,6 @@ function orderedMetrics(
 
     .plain-hero-ask {
       padding: 8px;
-    }
-
-    .plain-hero-ask > label span:last-child {
-      display: none;
     }
 
     .plain-hero-ask-row {
