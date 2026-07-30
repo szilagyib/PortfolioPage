@@ -51,7 +51,7 @@ She has said: "What I enjoy most is helping a team deliver consistently — and 
 Full-stack with model-driven engineering where the domain calls for it. Tech: Java/Spring on the backend, React/TypeScript on the frontend, EMF/Xtext for model-driven parts. Across all four products, the aim is the same: code the next engineer can actually maintain.
 
 Products at Prolan:
-- Titanium (web): Component and inventory management for manufacturing — used daily across the production floor to keep parts, builds, and traceability in one system. Stack: Java, Spring, Postgres, Vaadin, React, TypeScript, Docker.
+- Titanium (web): Component and inventory management for manufacturing — used daily across the production floor to keep parts, builds, and traceability in one system. Stack: Java, Spring, Postgres, Vaadin, Docker.
 - WebDiag (web): Real-time diagnostics and fault analysis for railway signalling stations. Operators see an anomaly the moment the system does. Stack: Java, Spring, Postgres, React, TypeScript, Docker.
 - ProrisCAD (desktop): Visual designer for railway safety systems. Engineers model interlocking logic graphically; the model generates the configuration that runs on real signalling hardware. Stack: Java, EMF, Maven, Ecore/Xcore, Xtext/Xtend, Graphiti.
 - DisCom (desktop + web): Cross-border driver-to-dispatcher communication for international rail routes — translates the operational phrasebook between national networks. Stack: Java, Swing, Node.js, Express, React, Postgres, Docker.

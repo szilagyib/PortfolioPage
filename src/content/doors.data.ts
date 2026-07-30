@@ -36,7 +36,7 @@ export const doors: readonly Door[] = [
         {
           name: 'Titanium', type: 'Web',
           summary: 'End-to-end component and inventory management for manufacturing and production environments. Took over a half-finished modernization, retired the legacy alongside it, and reworked the permission model.',
-          stack: ['Java','Spring','Postgres','Vaadin','Maven','Docker','React','TypeScript'],
+          stack: ['Java','Spring','Postgres','Vaadin','Maven','Docker'],
         },
         {
           name: 'WebDiag', type: 'Web',
