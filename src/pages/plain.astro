@@ -197,7 +197,7 @@ function orderedMetrics(
             </span>
             portfolio assistant
           </p>
-          <h2 id="plain-ai-title">Skip the résumé.<br />Ask the source.</h2>
+          <h2 id="plain-ai-title">Skip the CV.<br />Ask the source.</h2>
           <p>
             Ask about my engineering work, leadership decisions, or how I use
             AI in production. Answers are grounded in this portfolio.
@@ -1033,6 +1033,14 @@ function orderedMetrics(
 
   .plain-ai-console-body :global(.chat-shell) {
     margin: 0 !important;
+  }
+
+  .plain-ai-console-body :global(.chat-log p:has(+ .chat-suggestions)) {
+    display: none;
+  }
+
+  .plain-ai-console-body :global(.chat-log > div:has(> .chat-suggestions)) {
+    padding-top: 4px !important;
   }
 
   .plain-ai-console-body :global(.chat-suggestion) {
