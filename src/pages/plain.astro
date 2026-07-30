@@ -38,7 +38,11 @@ function contactDisplay(href: string): string {
   return href.replace(/^(https?:\/\/(www\.)?|mailto:)/, '');
 }
 ---
-<Base title="Borbála Szilágyi — Software Engineer · Team Lead">
+<Base
+  title="Borbála Szilágyi — Software Engineer · Team Lead"
+  noindex
+  canonicalPath="/"
+>
   {/* Override the interactive site's body overflow so this document
       scrolls normally like any content page. */}
   <style is:global>

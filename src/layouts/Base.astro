@@ -15,14 +15,18 @@ import '@fontsource/jetbrains-mono/latin-ext-500.css';
 // `noindex` keeps error / duplicate routes (the 404) out of search
 // results and out of the structured-data graph. Content pages leave it
 // at the default so they index normally.
-interface Props { title: string; noindex?: boolean }
-const { title, noindex = false } = Astro.props;
+interface Props {
+  title: string;
+  noindex?: boolean;
+  canonicalPath?: string;
+}
+const { title, noindex = false, canonicalPath } = Astro.props;
 
 const description =
   'Borbála Szilágyi — Software Engineering Team Lead. Cosmic interactive CV.';
 // Absolute URLs so link unfurls on LinkedIn, Slack, Twitter etc.
 // resolve correctly. Astro.site is set in astro.config.mjs.
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
 // Dedicated 1200x630 card so Messenger / LinkedIn / Facebook unfurl
 // at their target aspect (1.91:1) without cropping the site screenshot.
 const ogImage = new URL('/previews/og-card.png', Astro.site).href;
