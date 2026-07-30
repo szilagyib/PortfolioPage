@@ -328,6 +328,25 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 .project-card-live:hover { border-bottom-color: var(--accent-cyan); }
 
+/* Project cards sit two-up at desktop widths and collapse to one
+   full-width column on mobile. min(100%, 460px) is what keeps them to two
+   across: the preview images stay large instead of shrinking to four.
+
+   An odd number of cards would leave a hole in the last row, so the first
+   card spans the full width and becomes the feature — the lead project
+   gets the biggest preview, and the even remainder fills tidy pairs. At an
+   even count (four, once AgentsSquad lands) nothing spans and the grid is
+   a clean 2x2, so this self-heals as projects are added. */
+.project-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+  gap: 14px;
+  margin: 12px 0;
+}
+.project-card-grid > :first-child:nth-last-child(odd) {
+  grid-column: 1 / -1;
+}
+
 /* Same aliveness signal as .all-doors-footer, pinned to the bottom of the
    pentagon canvas instead of the end of a scrolling stack. */
 .canvas-footer {

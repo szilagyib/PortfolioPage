@@ -485,20 +485,11 @@ export function BodyBlocks({ door }: BodyBlocksProps) {
         group.push(renderBlock(blocks[i], i));
         i++;
       }
+      /* Layout lives in `.project-card-grid` (global.css) because it needs a
+       * pseudo-selector: at an odd card count the first card spans the row
+       * so the last one isn't left beside a hole. */
       out.push(
-        <div
-          key={`group-${startedAt}`}
-          style={{
-            display: 'grid',
-            /* min(100%, 460px) — mobile collapses to a single full-width
-             * column (never overflows sideways), and on wider containers
-             * only 2 columns can fit at typical desktop widths so the
-             * preview images stay big instead of shrinking to 4-across. */
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))',
-            gap: 14,
-            margin: '12px 0',
-          }}
-        >
+        <div key={`group-${startedAt}`} className="project-card-grid">
           {group}
         </div>,
       );

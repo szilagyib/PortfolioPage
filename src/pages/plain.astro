@@ -1357,8 +1357,14 @@ function orderedMetrics(
     margin: 0;
   }
 
+  /* Wider than the 850px reading measure of the text sections, because a
+     project row is copy plus a preview side by side and the preview needs
+     room. Still capped: unbounded rows stretched the summaries past a
+     comfortable line length on large monitors and left the section looking
+     sparse. At 1100px the copy reads normally and the preview lands around
+     400px wide. */
   .plain-section#elsewhere .plain-section-content {
-    max-width: none;
+    max-width: 1100px;
   }
 
   .plain-project {

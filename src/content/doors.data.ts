@@ -63,13 +63,14 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Side projects and recent writings — where I experiment with new tools and ideas on my own time.' },
+        'Side projects and recent writings — where I experiment with new tools and ideas on my own time. This site is one of them: Astro with React islands, a constellation puzzle, and a server-side AI chat, written end-to-end with Claude Code.' },
       { kind: 'sectionLabel', text: 'Projects' },
       /* Order is deliberate: the two strongest lead — the CI agents, then
        * the shipped product with a public URL — followed by the RAG lab.
-       * "This portfolio" sits last; the site is evidence by existing, so it
-       * earns a mention rather than the lead slot. AgentsSquad slots in at
-       * the top once it demos. */
+       * The site itself is mentioned in the paragraph above rather than
+       * carded: it's evidence by existing, and listing the page you're
+       * reading as a peer project weakened the set. AgentsSquad takes the
+       * top slot once it demos. */
       { kind: 'projectCard',
         name: 'GitAgents',
         summary:
@@ -102,17 +103,6 @@ export const doors: readonly Door[] = [
         preview: {
           src: '/previews/rag.webp',
           alt: 'GlassBox RAG interface showing retrieval chunks, scores, and citations',
-        },
-      },
-      { kind: 'projectCard',
-        name: 'This portfolio',
-        summary:
-          'The site you\'re on. A cosmic single-page canvas with a constellation-drawing puzzle and a server-side AI chat. Astro static build with React islands; deployed on Cloudflare Pages, written end-to-end with Claude Code.',
-        href: 'https://github.com/szilagyib/PortfolioPage',
-        stack: ['Astro', 'React', 'TypeScript', 'Cloudflare Pages', 'OpenAI / Anthropic API'],
-        preview: {
-          src: '/previews/portfolio.webp',
-          alt: 'Cosmic portfolio canvas with the pentagon of destinations around a central YOU star',
         },
       },
 
