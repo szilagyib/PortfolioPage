@@ -24,6 +24,10 @@ const DISPLAY_ORDER: readonly DoorId[] = [
   'elsewhere',
 ];
 
+const PLAIN_TAGLINE_OVERRIDES: Partial<Record<DoorId, string>> = {
+  about: 'background · approach',
+};
+
 const sections = DISPLAY_ORDER
   .map((id) => doors.find((door) => door.id === id))
   .filter((door): door is NonNullable<typeof door> => door !== undefined);
@@ -128,7 +132,7 @@ function orderedMetrics(
     <main class="plain-main">
       <section class="plain-hero" aria-labelledby="plain-title">
         <div class="plain-hero-copy">
-          <h1 id="plain-title">Engineering systems.<br />Leading teams.</h1>
+          <h1 id="plain-title">Engineering systems.<br />Growing engineers.</h1>
           <p class="plain-hero-deck">
             Software engineer and team lead working across production systems,
             team delivery, and applied AI.
@@ -228,7 +232,7 @@ function orderedMetrics(
             <header class="plain-section-rail">
               <div class="plain-section-rail-inner">
                 <h2 id={`plain-h-${section.id}`}>{toTitle(section.name)}</h2>
-                <p>{section.tagline}</p>
+                <p>{PLAIN_TAGLINE_OVERRIDES[section.id] ?? section.tagline}</p>
               </div>
             </header>
 
