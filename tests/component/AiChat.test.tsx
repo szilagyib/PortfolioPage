@@ -3,9 +3,10 @@ import { resolve } from 'node:path';
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AiChat } from '@/components/ai/AiChat';
+import { publishChatPrefill } from '@/services/chat-prefill';
 
 const CHAT_URL = '*/api/chat';
 
@@ -28,6 +29,7 @@ afterEach(() => {
    * store across the file — without this, each test remounts into the
    * previous test's conversation. */
   localStorage.clear();
+  sessionStorage.clear();
 });
 afterAll(() => server.close());
 
@@ -63,6 +65,19 @@ describe('<AiChat />', () => {
     await userEvent.type(textarea, 'tell me more{Enter}');
     expect(await screen.findByText(/team of four at Prolan/i)).toBeInTheDocument();
     expect((textarea as HTMLTextAreaElement).value).toBe('');
+  });
+
+  it('accepts a question handed off from the hero and focuses the composer', async () => {
+    render(<AiChat />);
+    const textarea = screen.getByLabelText(/ask me anything/i);
+
+    act(() => publishChatPrefill('What has she owned end-to-end?'));
+
+    await waitFor(() => {
+      expect(textarea).toHaveValue('What has she owned end-to-end?');
+      expect(textarea).toHaveFocus();
+    });
+    expect(sessionStorage.getItem('pf.chat.prefill.v1')).toBeNull();
   });
 
   it('blocks an over-length question with a nudge instead of sending', async () => {

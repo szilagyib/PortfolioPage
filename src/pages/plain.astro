@@ -109,6 +109,26 @@ function contactDisplay(href: string): string {
             strong teams, and an honest place for AI-assisted development.
           </p>
 
+          <form class="plain-hero-ask" data-hero-chat-jump>
+            <label for="plain-hero-question">
+              <span>ASK BORBÁLA_AI</span>
+              <span id="plain-hero-question-hint">opens the live assistant</span>
+            </label>
+            <div class="plain-hero-ask-row">
+              <input
+                id="plain-hero-question"
+                name="question"
+                type="text"
+                maxlength="250"
+                autocomplete="off"
+                placeholder="Ask about engineering, leadership, or AI…"
+                aria-describedby="plain-hero-question-hint"
+                required
+              />
+              <button type="submit">open chat ↓</button>
+            </div>
+          </form>
+
           <div class="plain-hero-actions">
             <a class="plain-primary-action" href="/">Enter the interactive page ↗</a>
             <a class="plain-ai-action" href="#ask-me">Ask my AI ↓</a>
@@ -385,6 +405,37 @@ function contactDisplay(href: string): string {
   </div>
 </Base>
 
+<script>
+  import { publishChatPrefill } from '@/services/chat-prefill';
+
+  const heroChatForm =
+    document.querySelector<HTMLFormElement>('[data-hero-chat-jump]');
+
+  heroChatForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const data = new FormData(heroChatForm);
+    const rawQuestion = data.get('question');
+    if (typeof rawQuestion !== 'string') return;
+
+    const question = rawQuestion.trim();
+    if (!question) return;
+
+    const target = document.querySelector<HTMLElement>('#ask-me');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    target?.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
+
+    window.setTimeout(
+      () => publishChatPrefill(question),
+      reduceMotion ? 0 : 420,
+    );
+  });
+</script>
+
 <style>
   .plain-page {
     position: relative;
@@ -623,6 +674,94 @@ function contactDisplay(href: string): string {
     font-size: clamp(16px, 2vw, 21px);
     line-height: 1.65;
     text-wrap: balance;
+  }
+
+  .plain-hero-ask {
+    max-width: 660px;
+    margin: 28px 0 0;
+    padding: 10px;
+    border: 1px solid rgba(236, 200, 117, 0.38);
+    border-radius: 9px;
+    background:
+      linear-gradient(135deg, rgba(236, 200, 117, 0.08), rgba(13, 18, 48, 0.68));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 0 24px rgba(236, 200, 117, 0.07);
+    transition:
+      border-color var(--d-fast) var(--ease-out),
+      box-shadow var(--d-fast) var(--ease-out);
+  }
+
+  .plain-hero-ask:focus-within {
+    border-color: rgba(236, 200, 117, 0.82);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 0 0 1px rgba(236, 200, 117, 0.08),
+      0 0 32px rgba(236, 200, 117, 0.14);
+  }
+
+  .plain-hero-ask > label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 4px 8px;
+    color: var(--accent-warm);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+
+  .plain-hero-ask > label span:last-child {
+    color: var(--text-dim);
+    font-size: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .plain-hero-ask-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .plain-hero-ask input {
+    min-width: 0;
+    min-height: 48px;
+    flex: 1 1 auto;
+    padding: 10px 12px;
+    border: 1px solid rgba(178, 212, 229, 0.18);
+    border-radius: 6px;
+    outline: none;
+    color: var(--text-bright);
+    background: rgba(6, 8, 24, 0.76);
+    font-family: var(--font-sans);
+    font-size: var(--fs-input);
+    line-height: 1.4;
+  }
+
+  .plain-hero-ask input::placeholder {
+    color: #62708d;
+  }
+
+  .plain-hero-ask button {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    border: 1px solid var(--accent-warm);
+    border-radius: 6px;
+    color: #181204;
+    background: var(--accent-warm);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition:
+      background var(--d-fast) var(--ease-out),
+      transform var(--d-fast) var(--ease-out);
+  }
+
+  .plain-hero-ask button:hover {
+    transform: translateY(-1px);
+    background: #ffe09a;
   }
 
   .plain-hero-actions {
@@ -1482,13 +1621,13 @@ function contactDisplay(href: string): string {
     }
 
     .plain-portrait-orbit {
-      width: min(80vw, 320px);
+      width: min(72vw, 280px);
       justify-self: center;
-      grid-row: 1;
+      grid-row: 2;
     }
 
     .plain-hero-copy {
-      grid-row: 2;
+      grid-row: 1;
     }
 
     .plain-hero h1 {
@@ -1602,6 +1741,26 @@ function contactDisplay(href: string): string {
       gap: 8px 12px;
     }
 
+    .plain-hero-ask {
+      padding: 8px;
+    }
+
+    .plain-hero-ask > label span:last-child {
+      display: none;
+    }
+
+    .plain-hero-ask-row {
+      gap: 6px;
+    }
+
+    .plain-hero-ask input {
+      padding-inline: 10px;
+    }
+
+    .plain-hero-ask button {
+      padding-inline: 10px;
+    }
+
     .plain-ai-spotlight {
       padding-inline: 14px;
     }
@@ -1648,6 +1807,7 @@ function contactDisplay(href: string): string {
   @media print {
     .plain-space,
     .plain-topbar,
+    .plain-hero-ask,
     .plain-hero-actions,
     .plain-hero-contacts,
     .plain-portrait-orbit,

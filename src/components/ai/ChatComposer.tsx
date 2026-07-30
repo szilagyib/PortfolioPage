@@ -1,4 +1,8 @@
-import { useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import {
+  CHAT_PREFILL_EVENT,
+  consumeChatPrefill,
+} from '@/services/chat-prefill';
 
 // Hard cap on a single question. Mirrors MAX_USER_MESSAGE_CHARS in
 // functions/api/chat.ts — the server rejects anything longer, so keep the two
@@ -13,6 +17,36 @@ interface ChatComposerProps {
 
 export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
   const [value, setValue] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const applyPrefill = (question: string) => {
+      const trimmed = question.trim();
+      if (!trimmed) return;
+
+      setValue(trimmed.slice(0, MAX_LENGTH));
+      requestAnimationFrame(() => {
+        textareaRef.current?.focus();
+        textareaRef.current?.setSelectionRange(
+          textareaRef.current.value.length,
+          textareaRef.current.value.length,
+        );
+      });
+    };
+
+    const pending = consumeChatPrefill();
+    if (pending) applyPrefill(pending);
+
+    const onPrefill = (event: Event) => {
+      const question = (event as CustomEvent<unknown>).detail;
+      if (typeof question !== 'string') return;
+      consumeChatPrefill();
+      applyPrefill(question);
+    };
+
+    window.addEventListener(CHAT_PREFILL_EVENT, onPrefill);
+    return () => window.removeEventListener(CHAT_PREFILL_EVENT, onPrefill);
+  }, []);
 
   const trimmedLength = value.trim().length;
   const over = trimmedLength > MAX_LENGTH;
@@ -52,6 +86,7 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
     >
       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
         <textarea
+          ref={textareaRef}
           aria-label="ask me anything"
           rows={3}
           value={value}
