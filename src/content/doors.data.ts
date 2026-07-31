@@ -54,6 +54,18 @@ export const doors: readonly Door[] = [
     artifact: [
       { kind: 'paragraph', text:
         '4 active products across rail and manufacturing. Java on the backend, React on the frontend.' },
+      /* One product opened up before the list. The four cards below say what
+       * exists; none of them show the judgment involved, which is the part
+       * that actually reads as senior. Titanium is the right one to open:
+       * inherited rather than greenfield, real users, real release risk. */
+      { kind: 'sectionLabel', text: 'A closer look: Titanium' },
+      { kind: 'paragraph', text:
+        'Titanium tracks components and inventory for manufacturing, and the production floor uses it daily. I inherited a modernisation that was already half-built — the new stack running in parallel with the system it was meant to replace, and neither one finished.' },
+      { kind: 'paragraph', text:
+        'Running both was the real problem: every change had to land twice, and the longer it lasted the more the two drifted apart. So the work was to make the new path complete enough to stand alone — migrating persistence off an in-house database layer onto Hibernate, fixing thread-pool limits that only showed up under production load, and replacing scattered admin rights with one scoped super-user role.' },
+      { kind: 'paragraph', text:
+        'It runs on a single modern stack now, with the legacy path retired and no pause in daily use. The part I would point to is not the code: it was deciding what the half-finished rebuild still needed, and what could be cut.' },
+      { kind: 'sectionLabel', text: 'Products' },
       { kind: 'productList', products: [
         {
           name: 'Titanium', type: 'Web',
@@ -174,7 +186,7 @@ export const doors: readonly Door[] = [
         ],
       },
       { kind: 'paragraph', text:
-        'I moved from engineering into leadership in 2024 and kept the code — I still ship features on the products my team owns, which is the only way I know to stay useful in a technical argument. Three things shape how I work: building real teams where people are partners, not just coworkers; picking up new tools by making something with them; and figuring out where AI-assisted development actually earns its place in production code.' },
+        'I moved from engineering into leadership in 2024 without stepping away from the code — I still ship features on the products my team owns, which is the only way I know to stay useful in a technical argument. Three things shape how I work: building real teams where people are partners, not just coworkers; picking up new tools by making something with them; and figuring out where AI-assisted development actually earns its place in production code.' },
       { kind: 'paragraph', text:
         'Most of my curiosity goes into that last one at the moment: building the harness that lets an agent do a whole piece of work, then checking whether it actually did.' },
       { kind: 'paragraph', text:
