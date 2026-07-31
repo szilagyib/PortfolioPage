@@ -4,14 +4,10 @@ import {
   CHAT_SUBMIT_EVENT,
   consumeChatSubmit,
 } from '@/services/chat-prefill';
+import { CHAT_SUGGESTIONS } from '@/content/chat-suggestions';
 import { ChatBubble } from './ChatBubble';
 import { ChatComposer } from './ChatComposer';
 
-const SUGGESTIONS: readonly string[] = [
-  'How does she use AI in day-to-day coding?',
-  "What's the hardest part of being a team lead?",
-  'Surprise me with a fun fact!',
-];
 
 /* LocalStorage key + 24h retention. A visitor who reads Leadership,
  * closes it, and pops back into the chat within the day expects to
@@ -233,7 +229,7 @@ export function AiChat({ acceptExternalSubmit = false }: AiChatProps) {
              *   .chat-suggestions) — chips size to their own text and wrap
              *   onto the next line rather than sharing a width. */}
             <div className="chat-suggestions">
-              {SUGGESTIONS.map((s) => (
+              {CHAT_SUGGESTIONS.map((s) => (
                 <button
                   key={s}
                   type="button"

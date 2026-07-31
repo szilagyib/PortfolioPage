@@ -10,8 +10,15 @@ import {
   publishChatPrefill,
   publishChatSubmit,
 } from '@/services/chat-prefill';
+import { CHAT_SUGGESTIONS } from '@/content/chat-suggestions';
 
 const CHAT_URL = '*/api/chat';
+
+/* Read the prompt copy from the content module rather than repeating it.
+ * These tests care that a suggestion sends, not what it says — hardcoding
+ * the wording meant every copy change broke five unrelated assertions. */
+const firstSuggestion = () =>
+  screen.getByRole('button', { name: CHAT_SUGGESTIONS[0] });
 
 const server = setupServer(
   http.post(CHAT_URL, () =>
@@ -39,19 +46,21 @@ afterAll(() => server.close());
 describe('<AiChat />', () => {
   it('renders empty-state suggestions on first mount', () => {
     render(<AiChat />);
-    expect(screen.getByRole('button', { name: /hardest part of being a team lead/i })).toBeInTheDocument();
+    for (const suggestion of CHAT_SUGGESTIONS) {
+      expect(screen.getByRole('button', { name: suggestion })).toBeInTheDocument();
+    }
     expect(screen.queryByRole('button', { name: /clear conversation/i })).not.toBeInTheDocument();
   });
 
   it('sends a message when a suggestion is clicked and shows the reply', async () => {
     render(<AiChat />);
-    await userEvent.click(screen.getByRole('button', { name: /hardest part of being a team lead/i }));
+    await userEvent.click(firstSuggestion());
     expect(await screen.findByText(/team of four at Prolan/i)).toBeInTheDocument();
   });
 
   it('shows a clear button after the first exchange and resets state when clicked', async () => {
     render(<AiChat />);
-    await userEvent.click(screen.getByRole('button', { name: /hardest part of being a team lead/i }));
+    await userEvent.click(firstSuggestion());
     await screen.findByText(/team of four at Prolan/i);
 
     const clearButton = screen.getByRole('button', { name: /clear conversation/i });
@@ -59,7 +68,7 @@ describe('<AiChat />', () => {
 
     // After clear, the empty state returns and history bubbles are gone.
     expect(screen.queryByText(/team of four at Prolan/i)).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /hardest part of being a team lead/i })).toBeInTheDocument();
+    expect(firstSuggestion()).toBeInTheDocument();
   });
 
   it('sends typed input on Enter and clears the composer', async () => {
@@ -123,7 +132,7 @@ describe('<AiChat />', () => {
     server.use(http.post(CHAT_URL, () => new HttpResponse(null, { status: 500 })));
 
     render(<AiChat />);
-    await userEvent.click(screen.getByRole('button', { name: /hardest part of being a team lead/i }));
+    await userEvent.click(firstSuggestion());
     expect(await screen.findByText(/unreachable|contact/i)).toBeInTheDocument();
 
     // Retry now resolves successfully.
@@ -203,7 +212,7 @@ describe('<AiChat />', () => {
       ),
     );
     render(<AiChat />);
-    await userEvent.click(screen.getByRole('button', { name: /hardest part of being a team lead/i }));
+    await userEvent.click(firstSuggestion());
     expect(await screen.findByText(/daily cap hit/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /retry/i })).not.toBeInTheDocument();
   });
