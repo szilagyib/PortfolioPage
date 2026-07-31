@@ -142,7 +142,7 @@ export const doors: readonly Door[] = [
     artifact: [
       {
         kind: 'profileHeader',
-        photo: { src: '/profile-studio-v2.webp', alt: 'Portrait of Borbála Szilágyi' },
+        photo: { src: '/profile.jpg', alt: 'Portrait of Borbála Szilágyi' },
         name: 'Borbála Szilágyi',
         location: 'Budapest, Hungary',
         contacts: [
