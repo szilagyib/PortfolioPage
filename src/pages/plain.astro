@@ -170,8 +170,7 @@ function orderedMetrics(
                 placeholder="Ask about engineering, leadership, or AI…"
                 required
               />
-              <button type="submit">
-                <span>send</span>
+              <button type="submit" aria-label="Send question to the assistant">
                 <span aria-hidden="true">↘</span>
               </button>
             </div>
@@ -845,40 +844,46 @@ function orderedMetrics(
     color: #62708d;
   }
 
+  /* A round send key sitting inside the field, rather than a slab welded to
+     its edge. The control is a chat composer, so it should look like one —
+     and the old 104px block was the loudest element in the hero, competing
+     with the headline. Icon-only keeps the arrow's meaning (the answer
+     appears further down the page) and hands ~70px back to the input on
+     phones. */
   .plain-hero-ask button {
     position: relative;
     z-index: 1;
     flex: 0 0 auto;
+    align-self: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    min-width: 104px;
-    padding: 10px 16px;
-    border: 0;
-    border-left: 1px solid rgba(236, 200, 117, 0.58);
-    color: #181204;
-    background:
-      linear-gradient(135deg, #f7d887, var(--accent-warm));
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    width: 38px;
+    height: 38px;
+    margin-right: 9px;
+    padding: 0;
+    border: 1px solid rgba(236, 200, 117, 0.55);
+    border-radius: 50%;
+    color: var(--accent-warm);
+    background: rgba(236, 200, 117, 0.1);
+    font-size: 15px;
+    line-height: 1;
     transition:
+      color var(--d-fast) var(--ease-out),
+      border-color var(--d-fast) var(--ease-out),
       background var(--d-fast) var(--ease-out),
       box-shadow var(--d-fast) var(--ease-out);
   }
 
-  .plain-hero-ask button span:last-child {
-    font-size: 14px;
-    line-height: 1;
-  }
-
-  .plain-hero-ask button:hover:not(:disabled) {
+  /* Solid only on intent — the field stays calm until the visitor engages
+     with it, then the key reads as the obvious next step. */
+  .plain-hero-ask button:hover:not(:disabled),
+  .plain-hero-ask:focus-within button:not(:disabled) {
+    color: #181204;
+    border-color: transparent;
     background:
-      linear-gradient(135deg, #ffe7aa, #f5cf70);
-    box-shadow: -8px 0 26px rgba(236, 200, 117, 0.18);
+      linear-gradient(135deg, #f7d887, var(--accent-warm));
+    box-shadow: 0 0 20px rgba(236, 200, 117, 0.28);
   }
 
   .plain-hero-ask input:disabled,
@@ -1897,8 +1902,9 @@ function orderedMetrics(
     }
 
     .plain-hero-ask button {
-      min-width: 92px;
-      padding-inline: 13px;
+      width: 34px;
+      height: 34px;
+      margin-right: 7px;
     }
 
     .plain-hero-contacts {

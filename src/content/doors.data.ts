@@ -152,9 +152,11 @@ export const doors: readonly Door[] = [
         ],
       },
       { kind: 'paragraph', text:
-        '10 years writing code, 4+ in industry, and 2+ leading an engineering team. I moved from engineering into leadership in 2024, bringing the technical grounding with me and the same focus on people. Three things shape how I work: building real teams where people are partners, not just coworkers; picking up new tools by making something with them; and figuring out where AI-assisted development actually earns its place in production code.' },
+        'I moved from engineering into leadership in 2024 and kept the code — I still ship features on the products my team owns, which is the only way I know to stay useful in a technical argument. Three things shape how I work: building real teams where people are partners, not just coworkers; picking up new tools by making something with them; and figuring out where AI-assisted development actually earns its place in production code.' },
       { kind: 'paragraph', text:
-        'BSc + MSc Computer Science and Engineering at BME (2017–2023). MBA in Finance and Management at ELTE (2023–2025). Teaching Assistant for Formal Methods at BME, Spring 2022.' },
+        'Most of my curiosity goes into that last one at the moment: building the harness that lets an agent do a whole piece of work, then checking whether it actually did.' },
+      { kind: 'paragraph', text:
+        'I studied Computer Science and Engineering at BME, BSc through MSc, specialising in critical systems — the kind where you design for the failure case before the happy path. I taught Formal Methods there as a teaching assistant in 2022, then took an MBA at ELTE in Finance and Management, largely to understand the business decisions the software ends up serving. All three with highest honours.' },
     ],
   },
   {
