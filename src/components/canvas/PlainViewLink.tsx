@@ -6,9 +6,16 @@ interface PlainViewLinkProps {
 }
 
 /**
- * Way out of the canvas. The plain page links back here from its top bar;
- * without this the trip was one-way — a visitor who wanted the content
- * without the puzzle had no route to it.
+ * Way out of the canvas, to the written profile at "/". That page links
+ * back here from its top bar; without this the trip was one-way — a visitor
+ * who wanted the content without the puzzle had no route to it.
+ *
+ * "written profile" rather than "full profile": the canvas already offers
+ * "see everything", and two controls both promising everything is a coin
+ * toss for the visitor. Naming the format says what actually differs —
+ * one expands the canvas in place, this one leaves for a page you read.
+ * "plain" was the other option and undersells it; that page is the fuller
+ * of the two.
  *
  * Deliberately gold. It's the one piece of canvas chrome pointing at the
  * other surface, so the accent that carries the plain page reads as "the
@@ -50,7 +57,7 @@ export function PlainViewLink({ style }: PlainViewLinkProps) {
         ...style,
       }}
     >
-      full profile ↗
+      written profile ↗
     </motion.a>
   );
 }
