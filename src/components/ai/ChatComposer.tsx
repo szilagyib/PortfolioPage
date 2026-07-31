@@ -92,7 +92,7 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="type a question…"
+          placeholder="ask about my work…"
           disabled={disabled}
           className="chat-composer-input"
           style={{

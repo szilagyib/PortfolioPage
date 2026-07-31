@@ -53,7 +53,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        '4 active products across rail and manufacturing, desktop and web. Java throughout; React and TypeScript where the product is browser-first, model-driven tooling where the domain calls for it.' },
+        '4 active products across rail and manufacturing, desktop and web. Java on every backend. On top of that: Vaadin and React front ends, a Swing desktop client, and model-driven tooling — EMF, Xtext, Graphiti — for ProrisCAD.' },
       /* One product opened up before the list. The four cards below say what
        * exists; none of them show the judgment involved, which is the part
        * that actually reads as senior. Titanium is the right one to open:
@@ -108,7 +108,11 @@ export const doors: readonly Door[] = [
         summary:
           'Paired AI agents for GitLab and GitHub CI: one reviews PRs/MRs inline and gates merges, verifying its own findings against the repo before posting; the other proposes one-click fixes. Runs on OpenAI or Anthropic behind one adapter. Per-language rule configs and a live cost dashboard.',
         href: 'https://github.com/szilagyib/GitAgents',
-        stack: ['TypeScript', 'Node.js', 'OpenAI / Anthropic API', 'GitLab CI / GitHub Actions', 'Postgres'],
+        /* Four chips, not five: this row wrapped to a second line on the
+           canvas and left the card taller than RAMSey's beside it. Node.js
+           goes (TypeScript already implies the runtime) and the CI chip
+           loses its product names, which were the longest string here. */
+        stack: ['TypeScript', 'OpenAI / Anthropic API', 'GitLab / GitHub CI', 'Postgres'],
         preview: {
           src: '/previews/gitagents.webp',
           alt: 'GitAgents review bot posting an inline pull-request comment flagging a possible null dereference',
@@ -176,7 +180,11 @@ export const doors: readonly Door[] = [
         kind: 'profileHeader',
         photo: { src: '/profile.jpg', alt: 'Portrait of Borbála Szilágyi' },
         name: 'Borbála Szilágyi',
-        location: 'Budapest, Hungary',
+        /* Same string the written profile carries under its hero. The canvas
+           used to give only the city, so the two surfaces answered "where
+           is she" differently — and the city alone is the half that reads as
+           a filter. */
+        location: 'Budapest, Hungary · remote, timezone flexible',
         contacts: [
           { icon: 'github',   label: 'GitHub',   href: 'https://github.com/szilagyib' },
           { icon: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/szilagyiborbala8' },
