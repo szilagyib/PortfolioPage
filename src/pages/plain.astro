@@ -1541,11 +1541,13 @@ function orderedMetrics(
       box-shadow var(--d-fast) var(--ease-out);
   }
 
+  /* No gold on the lead card. Nothing on the page labels it "featured", so
+     a single differently-tinted border read as an inconsistency rather than
+     emphasis — and gold now carries a job on both surfaces (the assistant
+     here, the cross-surface link on the canvas). Spending it on "this is
+     the first one" dilutes that. The wider column still does the ranking. */
   .plain-project-featured .plain-project-preview {
-    border-color: rgba(236, 200, 117, 0.25);
-    box-shadow:
-      0 22px 58px rgba(0, 0, 0, 0.32),
-      0 0 32px rgba(236, 200, 117, 0.06);
+    box-shadow: 0 22px 58px rgba(0, 0, 0, 0.32);
   }
 
   .plain-project-preview:hover {
@@ -1556,12 +1558,16 @@ function orderedMetrics(
       0 0 36px rgba(95, 184, 214, 0.08);
   }
 
+  /* No forced aspect ratio. The frame used to be locked to 16/9 with
+     object-fit: contain, which suited the two wide screenshots but pillar-
+     boxed the taller one — it rendered at roughly 85% of the frame width
+     with empty bars either side, and read as the small picture. Letting
+     each preview keep its own proportions means every one fills the column
+     edge to edge; rows are centre-aligned, so differing heights sit fine. */
   .plain-project-preview img {
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 9;
     display: block;
-    object-fit: contain;
     transition: transform 500ms var(--ease-out);
   }
 

@@ -53,7 +53,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        '4 active products across rail and manufacturing. Java on the backend, React on the frontend.' },
+        '4 active products across rail and manufacturing, desktop and web. Java throughout; React and TypeScript where the product is browser-first, model-driven tooling where the domain calls for it.' },
       /* One product opened up before the list. The four cards below say what
        * exists; none of them show the judgment involved, which is the part
        * that actually reads as senior. Titanium is the right one to open:
@@ -62,9 +62,7 @@ export const doors: readonly Door[] = [
       { kind: 'paragraph', text:
         'Titanium tracks components and inventory for manufacturing, and the production floor uses it daily. I inherited a modernisation that was already half-built — the new stack running in parallel with the system it was meant to replace, and neither one finished.' },
       { kind: 'paragraph', text:
-        'Running both was the real problem: every change had to land twice, and the longer it lasted the more the two drifted apart. So the work was to make the new path complete enough to stand alone — migrating persistence off an in-house database layer onto Hibernate, fixing thread-pool limits that only showed up under production load, and replacing scattered admin rights with one scoped super-user role.' },
-      { kind: 'paragraph', text:
-        'It runs on a single modern stack now, with the legacy path retired and no pause in daily use. The part I would point to is not the code: it was deciding what the half-finished rebuild still needed, and what could be cut.' },
+        'Running both was the real problem: every change had to land twice, and the longer it lasted the more the two drifted apart. Getting onto one stack meant migrating persistence off an in-house database layer onto Hibernate, fixing thread-pool limits that only showed up under production load, and replacing scattered admin rights with one scoped super-user role. The legacy path is retired now, with no pause in daily use.' },
       { kind: 'sectionLabel', text: 'Products' },
       { kind: 'productList', products: [
         {

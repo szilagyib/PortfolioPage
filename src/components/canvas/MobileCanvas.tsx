@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { CosmicBackground } from './CosmicBackground';
 import { MobileDestination } from './MobileDestination';
 import { CvPill } from './CvPill';
+import { PlainViewLink } from './PlainViewLink';
 import { doors } from '@/content/doors.data';
 import { LAST_UPDATED_YEAR } from '@/content/site';
 import { useCanvasStore } from '@/state/canvas.store';
@@ -43,6 +44,16 @@ const MOBILE_PILL: CSSProperties = {
   background: 'rgba(13,18,48,0.55)',
   whiteSpace: 'nowrap',
   flex: '0 0 auto',
+};
+
+/* Gold, matching the desktop link: the one warm control on the canvas is
+ * the one that leaves it for the plain page. */
+const MOBILE_PILL_PLAIN: CSSProperties = {
+  color: 'var(--accent-warm)',
+  borderColor: 'rgba(236, 200, 117, 0.45)',
+  textDecoration: 'none',
+  fontSize: 10,
+  padding: '5px 8px',
 };
 
 const MOBILE_PILL_CV: CSSProperties = {
@@ -166,6 +177,10 @@ export default function MobileCanvas() {
               Borbála Szilágyi
             </div>
             <CvPill style={MOBILE_PILL_CV} />
+            {/* Sits with the CV rather than in the action row below: both are
+              * "take me to the content", where see-all and start-over are
+              * about the canvas itself. The name truncates, so it fits. */}
+            <PlainViewLink style={{ ...MOBILE_PILL, ...MOBILE_PILL_PLAIN }} />
           </div>
           <div
             style={{

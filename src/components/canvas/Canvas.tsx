@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { CosmicBackground } from './CosmicBackground';
 import { SystemReadout } from './SystemReadout';
 import { CvDownload } from './CvDownload';
+import { PlainViewLink } from './PlainViewLink';
 import { SkipButton } from './SkipButton';
 import { YouStar } from './YouStar';
 import { Destination } from './Destination';
@@ -147,6 +148,7 @@ export default function Canvas() {
         <>
           <SystemReadout />
           <CvDownload />
+          <PlainViewLink style={{ position: 'absolute', top: 100, left: 22 }} />
           <SkipButton
             onClick={openAll}
             highlight={poweredDoors.length === 0}

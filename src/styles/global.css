@@ -343,8 +343,15 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   gap: 14px;
   margin: 12px 0;
 }
-.project-card-grid > :first-child:nth-last-child(odd) {
+/* Odd count leaves the last card beside a hole. Rather than blowing one
+   card up to fill the row — which made the lead project dominate everything
+   under it — the orphan spans the row but keeps a single column's width and
+   centres. Cards stay one size; the row just doesn't look broken. Capped at
+   the column minimum so it degrades to full width in a one-column layout. */
+.project-card-grid > :last-child:nth-child(odd) {
   grid-column: 1 / -1;
+  max-width: 460px;
+  justify-self: center;
 }
 
 /* Same aliveness signal as .all-doors-footer, pinned to the bottom of the
