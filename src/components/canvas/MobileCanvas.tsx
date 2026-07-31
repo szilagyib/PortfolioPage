@@ -343,8 +343,15 @@ export default function MobileCanvas() {
           * canvas was the one view that never showed when the site was last
           * touched. Inside <main> so it scrolls with the strip rather than
           * floating over the destination rows. */}
+        {/* The shared footer class only reserves 4px above itself, which
+          * left this sitting almost against the last destination row. On the
+          * stack view that's fine — cards end with their own padding — but
+          * the mobile strip needs the gap to read as the end of the page
+          * rather than another item in the list. */}
         {canvasIdle && (
-          <div className="all-doors-footer">updated · {LAST_UPDATED_YEAR}</div>
+          <div className="all-doors-footer" style={{ marginTop: 56 }}>
+            updated · {LAST_UPDATED_YEAR}
+          </div>
         )}
       </motion.main>
 
