@@ -85,9 +85,19 @@ function orderedMetrics(
       scroll-padding-top: 92px;
     }
 
+    /* `clip`, not `hidden`. Any overflow value except visible/clip turns
+       body into a scroll container, and a sticky descendant then scrolls
+       within *that* — which never scrolls, since body is as tall as its
+       content. That silently killed the sticky section headers: the markup
+       was there the whole time, it just never stuck. `clip` still contains
+       horizontal overflow but leaves scrolling on the document, where the
+       headers can travel.
+
+       The overflow-y override is gone with it: the canvas that needed
+       body-level overflow control lives on /interactive now, and it pins
+       itself with position: fixed rather than locking the body. */
     body {
-      overflow-x: hidden !important;
-      overflow-y: auto !important;
+      overflow-x: clip;
       min-height: 100dvh;
       background: #06060f;
     }
