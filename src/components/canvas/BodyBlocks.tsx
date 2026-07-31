@@ -131,7 +131,10 @@ function renderBlock(b: ArtifactBlock, i: number): ReactNode {
           key={i}
           style={{
             borderLeft: '2px solid var(--accent-violet)',
-            margin: '20px 0',
+            /* Tighter than a lone pull-quote wants, because these arrive in
+             * a short stack — the Leadership card carries four. Loose margins
+             * made them read as four separate flourishes. */
+            margin: '14px 0',
             paddingLeft: 16,
             color: 'var(--text-bright)',
             fontStyle: 'italic',

@@ -22,6 +22,3 @@ Thumbs.db
 
 # --- Private working notes (never published) ----------------------------------
 docs/local/
-
-# Local working notes — plans and drafts stay off the public repo
-docs/*-plan.md

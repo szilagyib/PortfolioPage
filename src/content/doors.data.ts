@@ -22,6 +22,28 @@ export const doors: readonly Door[] = [
         'Strengthening cross-team collaboration through recurring meetings with adjacent teams, shared working norms, and broader internal-tool adoption.',
         'Supervised a Master\'s thesis. Mentoring interns.',
       ]},
+      /* Third-party proof lives here rather than in its own content module:
+       * the `quote` block already exists in the artifact schema and both
+       * renderers handle it, so the canvas card and the linear page pick
+       * these up with no extra wiring and no second source to keep in sync.
+       *
+       * Sitting at the end of Leadership puts them after the claims they
+       * back and ahead of the project detail. Attribution is by relationship,
+       * never by inflated title — the manager said two of these, so both
+       * carry the same label rather than one being promoted. */
+      { kind: 'sectionLabel', text: 'What people say' },
+      { kind: 'quote',
+        text: 'Proactive, takes ownership, and can be counted on.',
+        attribution: 'Direct manager' },
+      { kind: 'quote',
+        text: 'Handles engineering and leadership work with responsibility and care.',
+        attribution: 'Direct manager' },
+      { kind: 'quote',
+        text: 'Always finds a good solution; nothing gets bounced back.',
+        attribution: 'Senior stakeholder' },
+      { kind: 'quote',
+        text: 'Thanks for your help and for the advice on my merge requests.',
+        attribution: 'Junior engineer' },
     ],
   },
   {

@@ -1395,14 +1395,17 @@ function orderedMetrics(
     white-space: nowrap;
   }
 
+  /* Sized for a short stack rather than one big pull-quote: four of these
+     sit together, so the type is smaller and the margins tight enough that
+     they read as one block of evidence instead of four decorations. */
   .plain-quote {
-    margin: 26px 0;
-    padding: 4px 0 4px 20px;
+    margin: 14px 0;
+    padding: 2px 0 2px 18px;
     border-left: 2px solid var(--accent-violet);
     color: #bed2e8;
-    font-size: 17px;
+    font-size: 15px;
     font-style: italic;
-    line-height: 1.7;
+    line-height: 1.65;
   }
 
   .plain-quote footer {
@@ -2059,6 +2062,21 @@ function orderedMetrics(
     .plain-metric {
       min-height: 84px;
       padding: 13px;
+    }
+
+    /* On a 360px screen the longer quotes wrap to three lines, so the rule
+       moves in and the leading opens up slightly — four stacked quotes stay
+       legible instead of turning into a dense italic column. The attribution
+       keeps its own line rather than crowding the last words. */
+    .plain-quote {
+      margin: 12px 0;
+      padding-left: 14px;
+      font-size: 14.5px;
+      line-height: 1.7;
+    }
+
+    .plain-quote footer {
+      margin-top: 6px;
     }
 
   }
