@@ -17,11 +17,18 @@ const SEGMENT: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 4,
-  padding: '0 4px',
+  /* Padding belongs to the segments, not the pill: it is what makes each
+   * half its own hit target rather than two labels sharing one button. */
+  padding: '2px 6px',
   color: 'inherit',
   textDecoration: 'none',
   whiteSpace: 'nowrap',
 };
+
+const SEGMENT_HOVER = {
+  background: 'rgba(95, 184, 214, 0.16)',
+  color: 'var(--text-bright)',
+} as const;
 
 /**
  * Compact CV pill used in the see-all sticky header (via
@@ -45,33 +52,43 @@ export function CvPill({ className, style }: CvPillProps) {
       layout
       animate={{ boxShadow: clicked ? PEAK_SHADOW : REST_SHADOW }}
       transition={{ boxShadow: { duration: 0.35, ease: 'easeOut' } }}
-      style={{ display: 'inline-flex', alignItems: 'center', ...style }}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'stretch',
+        ...style,
+        /* After the spread: the hover wash on a segment has to be clipped to
+         * the pill's rounded corners, and the caller never needs to override
+         * this. Padding stays the caller's, so the mobile bar keeps its
+         * shared pill height. */
+        overflow: 'hidden',
+      }}
     >
-      <a
+      <motion.a
         href={CV_PDF_PATH}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="view CV"
+        whileHover={SEGMENT_HOVER}
         style={SEGMENT}
       >
         CV
-      </a>
+      </motion.a>
 
       <span
         aria-hidden
         style={{
           width: 1,
           alignSelf: 'stretch',
-          margin: '1px 2px',
           background: 'rgba(95, 184, 214, 0.32)',
         }}
       />
 
-      <a
+      <motion.a
         href={CV_PDF_PATH}
         download
         aria-label="download CV"
         onClick={onClick}
+        whileHover={SEGMENT_HOVER}
         style={SEGMENT}
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -97,7 +114,7 @@ export function CvPill({ className, style }: CvPillProps) {
             </motion.span>
           )}
         </AnimatePresence>
-      </a>
+      </motion.a>
     </motion.span>
   );
 }
