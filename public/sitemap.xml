@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Canonical URLs only. /interactive is a real, linkable route but it
+     canonicals to "/" (its HTML is a client-only island presenting the same
+     content), and listing a non-canonical URL just invites "Google chose a
+     different canonical" noise in Search Console. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://borbalaszilagyi.com/</loc>

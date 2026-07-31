@@ -25,8 +25,8 @@ const HOVER_BORDER = 'rgba(236, 200, 117, 0.8)';
 export function PlainViewLink({ style }: PlainViewLinkProps) {
   return (
     <motion.a
-      href="/plain"
-      aria-label="View the plain text version of this portfolio"
+      href="/"
+      aria-label="View the full written profile"
       whileHover={{
         borderColor: HOVER_BORDER,
         background: 'rgba(236, 200, 117, 0.12)',
@@ -50,7 +50,7 @@ export function PlainViewLink({ style }: PlainViewLinkProps) {
         ...style,
       }}
     >
-      plain view ↗
+      full profile ↗
     </motion.a>
   );
 }
