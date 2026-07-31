@@ -63,7 +63,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        'Side projects and recent writings — where I experiment with new tools and ideas on my own time. This site is one of them: Astro with React islands, a constellation puzzle, and a server-side AI chat, written end-to-end with Claude Code.' },
+        'Side projects and recent writings — where I experiment with new tools and ideas on my own time. This site is one of them: Astro with React islands, a constellation puzzle, and a server-side AI chat, written end to end with Claude Code and Codex.' },
       { kind: 'sectionLabel', text: 'Projects' },
       /* Order is deliberate: the two strongest lead — the CI agents, then
        * the shipped product with a public URL — followed by the RAG lab.

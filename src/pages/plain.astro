@@ -177,6 +177,10 @@ function orderedMetrics(
             </div>
           </form>
 
+          <p class="plain-hero-where">
+            Budapest, Hungary · open to remote, timezone flexible
+          </p>
+
           {profile?.kind === 'profileHeader' && (
             <div class="plain-hero-contacts" aria-label="Contact links">
               {profile.contacts.map((contact) => (
@@ -216,8 +220,8 @@ function orderedMetrics(
           </p>
           <h2 id="plain-ai-title">Skip the CV.<br />Ask the source.</h2>
           <p>
-            Ask about my engineering work, leadership decisions, or how I use
-            AI in production. Answers are grounded in this portfolio.
+            Ask about my engineering work, leadership, or how I use AI in
+            production — answers are grounded in this portfolio.
           </p>
         </div>
 
@@ -883,11 +887,22 @@ function orderedMetrics(
     opacity: 0.72;
   }
 
+  /* Where she is and whether she's reachable remotely is the first thing a
+     recruiter checks after the role, so it sits with the contact cluster
+     rather than buried in the profile section. */
+  .plain-hero-where {
+    margin: 16px 0 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+  }
+
   .plain-hero-contacts {
     display: flex;
     flex-wrap: wrap;
     gap: 9px;
-    margin-top: 16px;
+    margin-top: 10px;
   }
 
   .plain-hero-contacts a {
