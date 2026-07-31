@@ -122,6 +122,22 @@ function orderedMetrics(
           <span class="plain-brand-role">Software Engineer · Team Lead</span>
         </a>
 
+        <nav
+          class="plain-progress"
+          aria-label="Profile sections"
+          data-plain-progress
+        >
+          {sections.map((section) => (
+            <a
+              href={`#${section.id}`}
+              data-plain-progress-link={section.id}
+            >
+              <span class="plain-progress-dot" aria-hidden="true"></span>
+              <span>{toTitle(section.name)}</span>
+            </a>
+          ))}
+        </nav>
+
         <nav class="plain-nav" aria-label="Primary">
           <a class="plain-nav-action plain-nav-ai" href="#ask-me">
             <span class="plain-nav-ai-dot" aria-hidden="true"></span>
@@ -137,22 +153,6 @@ function orderedMetrics(
         </nav>
       </div>
     </header>
-
-    <nav
-      class="plain-progress"
-      aria-label="Profile sections"
-      data-plain-progress
-    >
-      {sections.map((section) => (
-        <a
-          href={`#${section.id}`}
-          data-plain-progress-link={section.id}
-        >
-          <span class="plain-progress-dot" aria-hidden="true"></span>
-          <span>{toTitle(section.name)}</span>
-        </a>
-      ))}
-    </nav>
 
     <main class="plain-main">
       <section class="plain-hero" aria-labelledby="plain-title">
@@ -504,18 +504,14 @@ function orderedMetrics(
     }, reduceMotion ? 0 : 900);
   });
 
-  const progress = document.querySelector<HTMLElement>('[data-plain-progress]');
-  const profile = document.querySelector<HTMLElement>('#profile');
   const progressLinks = Array.from(
     document.querySelectorAll<HTMLAnchorElement>('[data-plain-progress-link]'),
   );
 
-  if (progress && profile && 'IntersectionObserver' in window) {
-    const profileObserver = new IntersectionObserver(([entry]) => {
-      progress.classList.toggle('is-visible', entry?.isIntersecting ?? false);
-    });
-    profileObserver.observe(profile);
-
+  /* Only the active-section highlight is observed now. The nav used to fade
+     itself in once the profile scrolled into view — it lived in the margin
+     and had to announce itself. In the header it is simply always there. */
+  if (progressLinks.length > 0 && 'IntersectionObserver' in window) {
     const sectionObserver = new IntersectionObserver(
       (entries) => {
         const activeEntry = entries
@@ -628,14 +624,16 @@ function orderedMetrics(
     -webkit-backdrop-filter: blur(16px);
   }
 
+  /* Three groups now — brand, section jumps, actions — so the gap is smaller
+     than it was for two, and the section nav takes the slack instead of one
+     wide void in the middle. */
   .plain-topbar-inner {
     width: min(100% - 40px, 1200px);
     min-height: 68px;
     margin: 0 auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 28px;
+    gap: 18px;
   }
 
   .plain-brand {
@@ -646,19 +644,22 @@ function orderedMetrics(
     text-decoration: none;
   }
 
+  /* Sized to match .all-doors-header-name / -title on the canvas — the same
+     identity block rendered at two different scales read as two different
+     sites. */
   .plain-brand-name {
     font-family: var(--font-mono);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     letter-spacing: 0.03em;
   }
 
   .plain-brand-role {
-    margin-top: 3px;
+    margin-top: 4px;
     color: var(--text-dim);
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.08em;
+    font-size: 11px;
+    letter-spacing: 0.06em;
   }
 
   .plain-nav {
@@ -666,6 +667,9 @@ function orderedMetrics(
     align-items: center;
     justify-content: flex-end;
     gap: 6px;
+    /* Holds the actions against the right edge whether or not the section
+       nav is rendered at this width. */
+    margin-left: auto;
     font-family: var(--font-mono);
   }
 
@@ -746,8 +750,62 @@ function orderedMetrics(
     background: #83cbe3;
   }
 
+  /* Section jumps live in the header, beside the brand. They used to be a
+     fixed rail floating in the left margin, which only had room to exist
+     above 1400px — so on every laptop the page had no way back to a section
+     except scrolling. In the bar they are always there, and there is only
+     one of them to reason about.
+
+     Hidden below 900px: the bar already carries three controls on a phone
+     and a second row of four more turns it into a menu. */
   .plain-progress {
     display: none;
+    align-items: center;
+    gap: 18px;
+    margin-left: 8px;
+    font-family: var(--font-mono);
+  }
+
+  @media (min-width: 900px) {
+    .plain-progress {
+      display: flex;
+    }
+  }
+
+  .plain-progress a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--text-faint);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    text-transform: lowercase;
+    transition: color var(--d-fast) var(--ease-out);
+  }
+
+  .plain-progress-dot {
+    width: 5px;
+    height: 5px;
+    flex: 0 0 auto;
+    border: 1px solid rgba(95, 184, 214, 0.42);
+    border-radius: 50%;
+    background: transparent;
+    transition:
+      border-color var(--d-fast) var(--ease-out),
+      background var(--d-fast) var(--ease-out),
+      box-shadow var(--d-fast) var(--ease-out);
+  }
+
+  .plain-progress a:hover,
+  .plain-progress a.is-active {
+    color: var(--text-bright);
+  }
+
+  .plain-progress a.is-active .plain-progress-dot {
+    border-color: var(--accent-warm);
+    background: var(--accent-warm);
+    box-shadow: 0 0 10px rgba(236, 200, 117, 0.7);
   }
 
   .plain-main {
@@ -1317,11 +1375,15 @@ function orderedMetrics(
     line-height: 1.2;
   }
 
+  /* pretty, not balance: it only reflows the last few lines to kill orphans
+     and short tail lines, leaving the paragraph's measure alone. `balance`
+     would even out every line and visibly narrow long paragraphs. */
   .plain-copy {
     margin: 0 0 18px;
     color: #c1d3ea;
     font-size: clamp(15px, 1.5vw, 17px);
     line-height: 1.78;
+    text-wrap: pretty;
   }
 
   .plain-bullets {
@@ -1548,6 +1610,16 @@ function orderedMetrics(
     padding: 40px 0 46px;
   }
 
+  /* The columns swap with the row, not just the contents. Without this the
+     template stayed `1.12fr 0.88fr` while the preview moved to column 2, so
+     every alternating row rendered its screenshot ~20% narrower than the row
+     above it — the RAG shot came out visibly smaller than RAMSey's for no
+     reason a reader could see. Mirroring the template keeps the preview on
+     the wider track whichever side it sits. */
+  .plain-project-reverse {
+    grid-template-columns: minmax(280px, 0.88fr) minmax(300px, 1.12fr);
+  }
+
   .plain-project-reverse .plain-project-preview {
     grid-column: 2;
     grid-row: 1;
@@ -1759,111 +1831,6 @@ function orderedMetrics(
     }
   }
 
-  @media (min-width: 1400px) {
-    .plain-progress {
-      position: fixed;
-      z-index: 12;
-      top: 50%;
-      left: max(18px, calc((100vw - 1200px) / 2 - 94px));
-      width: 88px;
-      display: flex;
-      flex-direction: column;
-      gap: 19px;
-      padding: 10px 0;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(calc(-50% + 10px));
-      transition:
-        opacity 260ms var(--ease-out),
-        transform 260ms var(--ease-out);
-    }
-
-    .plain-progress::before {
-      content: '';
-      position: absolute;
-      top: 17px;
-      bottom: 17px;
-      right: 4px;
-      width: 1px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(95, 184, 214, 0.08),
-          rgba(95, 184, 214, 0.42),
-          rgba(236, 200, 117, 0.32),
-          rgba(95, 184, 214, 0.08)
-        );
-      box-shadow: 0 0 10px rgba(95, 184, 214, 0.12);
-    }
-
-    .plain-progress.is-visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(-50%);
-    }
-
-    .plain-progress a {
-      position: relative;
-      display: flex;
-      flex-direction: row-reverse;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      color: var(--text-faint);
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.05em;
-      text-decoration: none;
-      text-transform: lowercase;
-      transition: color var(--d-fast) var(--ease-out);
-    }
-
-    .plain-progress a > span:last-child {
-      opacity: 0.68;
-      transform: translateX(2px);
-      transition:
-        opacity var(--d-fast) var(--ease-out),
-        transform var(--d-fast) var(--ease-out);
-    }
-
-    .plain-progress-dot {
-      position: relative;
-      z-index: 1;
-      width: 9px;
-      height: 9px;
-      flex: 0 0 auto;
-      border: 1px solid rgba(95, 184, 214, 0.42);
-      border-radius: 50%;
-      background: #090b1c;
-      box-shadow: 0 0 0 3px rgba(6, 6, 15, 0.86);
-      transition:
-        border-color var(--d-fast) var(--ease-out),
-        background var(--d-fast) var(--ease-out),
-        box-shadow var(--d-fast) var(--ease-out),
-        transform var(--d-fast) var(--ease-out);
-    }
-
-    .plain-progress a:hover,
-    .plain-progress a.is-active {
-      color: var(--text-bright);
-    }
-
-    .plain-progress a:hover > span:last-child,
-    .plain-progress a.is-active > span:last-child {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .plain-progress a.is-active .plain-progress-dot {
-      border-color: var(--accent-warm);
-      background: var(--accent-warm);
-      box-shadow:
-        0 0 0 3px rgba(6, 6, 15, 0.86),
-        0 0 13px rgba(236, 200, 117, 0.72);
-      transform: scale(1.12);
-    }
-  }
-
   @media (max-width: 980px) {
     .plain-hero {
       grid-template-columns: minmax(0, 1fr) 260px;
@@ -1879,6 +1846,12 @@ function orderedMetrics(
     .plain-project-featured {
       grid-template-columns: minmax(280px, 1.15fr) minmax(240px, 0.85fr);
       gap: 26px;
+    }
+
+    /* Mirrored here too: this block is later in source and would otherwise
+       put the alternating rows back on the narrow track. */
+    .plain-project-reverse {
+      grid-template-columns: minmax(240px, 0.85fr) minmax(280px, 1.15fr);
     }
   }
 
@@ -1902,16 +1875,44 @@ function orderedMetrics(
       gap: 6px;
     }
 
+    /* Two clusters instead of one: ASK ME and the CV — both ways to read this
+       page — sit together on the left, and the auto margin throws the link to
+       the other surface out to the right edge. */
+    .plain-nav-interactive {
+      margin-left: auto;
+    }
+
+    /* `lvh`, not `svh`. `svh` is the viewport with the URL bar showing, so
+       once a scroll collapses that bar the visible area grows by ~70px and
+       the hero — sized for the smaller one — stopped short, letting the top
+       of the assistant panel peek in under it. `lvh` is the viewport with
+       the bar hidden and, unlike `dvh`, never changes value, so the hero
+       covers the screen in the collapsed state and simply runs a little past
+       the fold in the expanded one. Nothing below it shows either way, and
+       nothing relayouts mid-scroll. */
     .plain-hero {
-      min-height: calc(100svh - 62px);
+      min-height: calc(100lvh - 62px);
       grid-template-columns: 1fr;
       gap: clamp(12px, 2.2svh, 22px);
       align-content: center;
       padding: clamp(20px, 3.5svh, 34px) 6px;
     }
 
+    /* Width-only sizing, deliberately. The `17svh` term used to win on a
+       normal phone (127px on a 390x844 screen, against 136px from the width
+       terms), so the portrait was governed by viewport height — and the
+       first scroll collapses the URL bar, which several mobile browsers
+       answer by re-resolving viewport units against the taller viewport.
+       The picture jumped a step wider mid-scroll, in one frame, because
+       nothing is animating it: it is a relayout, not a transition. Sizing
+       off the width alone means scrolling cannot touch it.
+
+       The tradeoff is landscape: height no longer caps the portrait, so on
+       a short wide phone it takes the full 136px instead of shrinking, and
+       the hero grows past one screenful. `min-height` lets it, and a
+       portfolio read in landscape on a phone is the rarer case. */
     .plain-portrait-orbit {
-      width: min(36vw, 17svh, 136px);
+      width: min(36vw, 136px);
       justify-self: center;
       grid-row: 2;
     }
@@ -2050,9 +2051,10 @@ function orderedMetrics(
       display: none;
     }
 
-    /* Right-aligned like every wider breakpoint. `space-between` spread the
-       three controls across the full width, which left the CV floating in
-       the middle with nothing either side of it to relate to. */
+    /* Two clusters, not three evenly spread controls: `space-between` left
+       the CV floating in the middle with nothing either side to relate to,
+       so ASK ME and the CV pair up on the left and the auto margin below
+       carries the interactive link to the right edge on its own. */
     .plain-nav {
       width: 100%;
       justify-content: flex-end;
@@ -2061,12 +2063,12 @@ function orderedMetrics(
 
     .plain-nav-action {
       margin-left: 0;
-      padding-inline: 8px;
-    }
-
-    .plain-nav-action {
       font-size: 9px !important;
       padding-inline: 6px;
+    }
+
+    .plain-nav-interactive {
+      margin-left: auto;
     }
 
     .plain-hero-contacts {
