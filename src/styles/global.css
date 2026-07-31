@@ -350,8 +350,16 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
    the column minimum so it degrades to full width in a one-column layout. */
 .project-card-grid > :last-child:nth-child(odd) {
   grid-column: 1 / -1;
-  max-width: 460px;
   justify-self: center;
+}
+/* Exactly one column wide, so the centred orphan matches its siblings
+   rather than shrinking to the 460px minimum — half the row, less half the
+   14px gap. Only above the width where two columns actually fit; below it
+   the grid is single-column and the card should simply fill it. */
+@media (min-width: 900px) {
+  .project-card-grid > :last-child:nth-child(odd) {
+    width: calc(50% - 7px);
+  }
 }
 
 /* Same aliveness signal as .all-doors-footer, pinned to the bottom of the

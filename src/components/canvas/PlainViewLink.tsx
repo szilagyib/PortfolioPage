@@ -26,38 +26,36 @@ interface PlainViewLinkProps {
  * Kept visually lighter than "see everything" — that stays the primary
  * action, since it reveals the content without leaving the experience.
  */
+/* A quiet underlined link, not a pill. Boxed, it sat directly under the CV
+ * control as a second bordered button, and the two arrows fought — ↓ meaning
+ * "save this file" beside ↗ meaning "go elsewhere" reads as one confused
+ * pair. Dropping the box and the arrow leaves the CV as the only button in
+ * that corner, and a verb ("read the…") carries the affordance instead. */
 const REST_BORDER = 'rgba(236, 200, 117, 0.4)';
-const HOVER_BORDER = 'rgba(236, 200, 117, 0.8)';
 
 export function PlainViewLink({ style }: PlainViewLinkProps) {
   return (
     <motion.a
       href="/"
       aria-label="View the full written profile"
-      whileHover={{
-        borderColor: HOVER_BORDER,
-        background: 'rgba(236, 200, 117, 0.12)',
-        color: '#f7d887',
-      }}
+      whileHover={{ color: '#f7d887' }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 6,
+        gap: 5,
         fontFamily: 'var(--font-mono)',
-        fontSize: 11,
-        letterSpacing: '0.06em',
+        fontSize: 10,
+        letterSpacing: '0.08em',
         textDecoration: 'none',
-        padding: '4px 9px',
-        border: `1px solid ${REST_BORDER}`,
-        borderRadius: 4,
-        background: 'rgba(13, 18, 48, 0.55)',
         color: 'var(--accent-warm)',
         whiteSpace: 'nowrap',
+        borderBottom: `1px solid ${REST_BORDER}`,
+        paddingBottom: 1,
         ...style,
       }}
     >
-      written profile ↗
+      read the written profile
     </motion.a>
   );
 }

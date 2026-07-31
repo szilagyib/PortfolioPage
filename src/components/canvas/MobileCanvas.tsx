@@ -46,16 +46,6 @@ const MOBILE_PILL: CSSProperties = {
   flex: '0 0 auto',
 };
 
-/* Gold, matching the desktop link: the one warm control on the canvas is
- * the one that leaves it for the plain page. */
-const MOBILE_PILL_PLAIN: CSSProperties = {
-  color: 'var(--accent-warm)',
-  borderColor: 'rgba(236, 200, 117, 0.45)',
-  textDecoration: 'none',
-  fontSize: 10,
-  padding: '5px 8px',
-};
-
 const MOBILE_PILL_CV: CSSProperties = {
   ...MOBILE_PILL,
   color: 'var(--accent-cyan)',
@@ -177,10 +167,6 @@ export default function MobileCanvas() {
               Borbála Szilágyi
             </div>
             <CvPill style={MOBILE_PILL_CV} />
-            {/* Sits with the CV rather than in the action row below: both are
-              * "take me to the content", where see-all and start-over are
-              * about the canvas itself. The name truncates, so it fits. */}
-            <PlainViewLink style={{ ...MOBILE_PILL, ...MOBILE_PILL_PLAIN }} />
           </div>
           <div
             style={{
@@ -363,9 +349,24 @@ export default function MobileCanvas() {
           * stack view that's fine — cards end with their own padding — but
           * the mobile strip needs the gap to read as the end of the page
           * rather than another item in the list. */}
+        {/* The way out sits at the end of the strip, not in the top bar —
+          * four controls never fit that row on a phone. Here it reads as the
+          * natural next step for anyone who scrolled the whole thing and
+          * wants it as a page instead. */}
         {canvasIdle && (
-          <div className="all-doors-footer" style={{ marginTop: 56 }}>
-            updated · {LAST_UPDATED_YEAR}
+          <div
+            style={{
+              marginTop: 56,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 14,
+            }}
+          >
+            <PlainViewLink />
+            <div className="all-doors-footer" style={{ padding: '0 20px 40px' }}>
+              updated · {LAST_UPDATED_YEAR}
+            </div>
           </div>
         )}
       </motion.main>
