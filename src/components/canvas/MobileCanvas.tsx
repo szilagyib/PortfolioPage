@@ -356,15 +356,21 @@ export default function MobileCanvas() {
         {canvasIdle && (
           <div
             style={{
-              marginTop: 56,
+              /* auto, not a fixed gap: in a flex column this pushes the
+               * block to the bottom of whatever space is left, so it clears
+               * the last destination without adding height. A fixed margin
+               * made the strip taller than the viewport and forced the whole
+               * canvas to scroll. */
+              marginTop: 'auto',
+              paddingTop: 28,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: 14,
+              gap: 10,
             }}
           >
             <PlainViewLink />
-            <div className="all-doors-footer" style={{ padding: '0 20px 40px' }}>
+            <div className="all-doors-footer" style={{ padding: 0 }}>
               updated · {LAST_UPDATED_YEAR}
             </div>
           </div>

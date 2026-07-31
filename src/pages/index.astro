@@ -181,7 +181,10 @@ function orderedMetrics(
                 type="text"
                 maxlength="250"
                 autocomplete="off"
-                placeholder="Ask about engineering, leadership, or AI…"
+                {/* Terse on purpose: the label above already says ASK ME, so
+                    the placeholder only has to name the territory. The full
+                    sentence ran past the edge of a phone screen. */}
+                placeholder="engineering, leadership, AI…"
                 required
               />
               <button type="submit" aria-label="Send question to the assistant">
@@ -2057,6 +2060,13 @@ function orderedMetrics(
 
     .plain-hero-ask input {
       padding-inline: 10px;
+    }
+
+    /* The input itself stays 16px — anything smaller makes iOS Safari zoom
+       on focus — but the placeholder can shrink, which buys the hint enough
+       room on a 360px screen without touching what the visitor types. */
+    .plain-hero-ask input::placeholder {
+      font-size: 13px;
     }
 
     .plain-hero-ask button {
