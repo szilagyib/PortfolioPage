@@ -300,11 +300,19 @@ export default function MobileCanvas() {
 
         {/* Destinations column. No trunk on mobile — the pentagon-spoke
          *   metaphor doesn't translate to a vertical stack; each card
-         *   already signals powered/unpowered clearly on its own. */}
+         *   already signals powered/unpowered clearly on its own.
+         *
+         *   marginTop:auto drops the column to the bottom of the strip, so
+         *   the spare height on a tall phone opens up between the YOU star
+         *   and the first destination instead of below the last one. The
+         *   rows used to sit crowded up against the star with a wide empty
+         *   band under them; now the star has air and the column reads as a
+         *   group with the way-out link it sits above. */}
         <div
           style={{
             width: '100%',
             maxWidth: 420,
+            marginTop: 'auto',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'stretch',
@@ -356,13 +364,11 @@ export default function MobileCanvas() {
         {canvasIdle && (
           <div
             style={{
-              /* auto, not a fixed gap: in a flex column this pushes the
-               * block to the bottom of whatever space is left, so it clears
-               * the last destination without adding height. A fixed margin
-               * made the strip taller than the viewport and forced the whole
-               * canvas to scroll. */
-              marginTop: 'auto',
-              paddingTop: 28,
+              /* Fixed now, not auto. The destination column above claims the
+               * spare height, so a second auto margin here would split it and
+               * leave this floating half a screen below the last row again.
+               * A plain gap keeps the link tucked under the column. */
+              paddingTop: 24,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
