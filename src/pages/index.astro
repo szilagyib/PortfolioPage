@@ -558,12 +558,21 @@ function orderedMetrics(
     color: var(--text-bright);
   }
 
+  /* The animated background is fixed behind a scrolling document, which on
+     a phone means the browser repaints it against every frame of content
+     movement. Giving it its own compositor layer lets the page scroll over
+     a texture that is already rasterised, which is the difference between
+     this and the canvas's see-all view — that one scrolls a contained
+     element, so the background never enters the equation. */
   .plain-space {
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
     opacity: 0.88;
+    will-change: transform;
+    transform: translateZ(0);
+    contain: strict;
   }
 
   .plain-space :global(astro-island) {
@@ -604,13 +613,16 @@ function orderedMetrics(
     position: sticky;
     top: 0;
     z-index: 20;
-    border-bottom: 1px solid rgba(178, 212, 229, 0.12);
+    /* Matches the canvas stack header: fades to fully transparent with no
+       bottom rule, so content passes under it instead of hitting an edge.
+       This bar used to stop at 0.68 alpha over a hairline border, which
+       read as a solid toolbar rather than the same fading treatment. */
     background:
       linear-gradient(
         180deg,
-        rgba(6, 6, 15, 0.96) 0%,
-        rgba(6, 6, 15, 0.84) 78%,
-        rgba(6, 6, 15, 0.68) 100%
+        rgba(6, 6, 15, 0.98) 0%,
+        rgba(6, 6, 15, 0.92) 55%,
+        rgba(6, 6, 15, 0) 100%
       );
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -2038,9 +2050,12 @@ function orderedMetrics(
       display: none;
     }
 
+    /* Right-aligned like every wider breakpoint. `space-between` spread the
+       three controls across the full width, which left the CV floating in
+       the middle with nothing either side of it to relate to. */
     .plain-nav {
       width: 100%;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 8px;
     }
 

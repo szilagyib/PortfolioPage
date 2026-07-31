@@ -55,7 +55,7 @@ export function PlainViewLink({ style }: PlainViewLinkProps) {
         ...style,
       }}
     >
-      read the written profile
+      read the profile
     </motion.a>
   );
 }
