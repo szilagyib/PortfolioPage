@@ -3,9 +3,9 @@ import { CV_PDF_PATH } from '@/config/cv';
 import { useCvClickFeedback } from '@/services/cv-feedback';
 
 /**
- * Quiet CV affordance, mounted directly beneath SystemReadout so a
- * recruiter who reads the name + role sees it immediately — no puzzle,
- * no door click required.
+ * Quiet CV affordance, mounted directly beneath SystemReadout so anyone who
+ * reads the name and role sees it immediately — no puzzle, no door click
+ * required.
  *
  * Two actions inside one frame: "CV" opens the PDF in a new tab, "↓"
  * saves it. Viewing is the primary action because it's a one-page PDF
