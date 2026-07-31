@@ -4,6 +4,7 @@ import { CosmicBackground } from './CosmicBackground';
 import { MobileDestination } from './MobileDestination';
 import { CvPill } from './CvPill';
 import { doors } from '@/content/doors.data';
+import { LAST_UPDATED_YEAR } from '@/content/site';
 import { useCanvasStore } from '@/state/canvas.store';
 import { useReturningVisitorAutoSkip } from '@/services/visitor.service';
 import type { DoorId } from '@/domain/door';
@@ -86,6 +87,10 @@ export default function MobileCanvas() {
 
   const cardDoor = openCard ? doors.find((d) => d.id === openCard) ?? null : null;
   const puzzleDoor = activePuzzle ? doors.find((d) => d.id === activePuzzle) ?? null : null;
+
+  /* Mirrors Canvas: the strip's own furniture only belongs on screen while
+   * nothing is overlaying it. The see-all stack brings its own footer. */
+  const canvasIdle = !openCard && !activePuzzle && !allDoorsOpen;
 
   return (
     <div
@@ -332,6 +337,15 @@ export default function MobileCanvas() {
             </motion.div>
           ))}
         </div>
+
+        {/* Same aliveness signal the desktop pentagon, the see-all stack and
+          * the plain page all carry. It was missing here, so on a phone the
+          * canvas was the one view that never showed when the site was last
+          * touched. Inside <main> so it scrolls with the strip rather than
+          * floating over the destination rows. */}
+        {canvasIdle && (
+          <div className="all-doors-footer">updated · {LAST_UPDATED_YEAR}</div>
+        )}
       </motion.main>
 
       {puzzleDoor && (
