@@ -35,26 +35,40 @@ thumbnails need a fixed `aspect-ratio` so the row stays even — the hero slot m
 *not* get one, since the previews have genuinely different proportions (see the
 RAG sizing note below) and forcing a ratio is what pillarboxed the tall one before.
 
-**Which shots to take** — the rule for all of them: real data on screen, no empty
-states, no lorem, window chrome cropped out, dark theme (the cards sit on a dark
-card and a light screenshot punches a hole in the page). Export at 1280px wide,
-`.webp`, aiming under ~60KB like the existing three.
+**Rule for all shots:** real data on screen, no empty states, window chrome cropped
+out, dark theme (the cards sit on a dark surface and a light screenshot punches a
+hole in the page). 1280px wide, `.webp`, under ~60KB like the existing three.
 
-- **GitAgents** — (1) the inline PR/MR review comment, which is what it *is*
-  (current shot, keep). (2) the cost dashboard — it's named in the summary and
-  currently unevidenced. (3) a one-click fix being applied, or the per-language
-  rule config; the fix is the better story of the two.
-- **RAMSey** — (1) the Markov chain + analysis panel (current shot, keep).
-  (2) two cursors mid-edit, proving the collaborative claim — the summary leads
-  with Yjs CRDTs and nothing on screen shows it. (3) a fault tree or the LaTeX/
-  TikZ export, to show it is more than one diagram type.
-- **GlassBox RAG** — (1) the current admin console shot, but see below: it is the
-  densest of the three and reads as a wall at card size. Consider re-shooting it
-  cropped to the Ask panel + citations. (2) the evaluation lab with the LLM-judge
-  bars. (3) a trace expanded, showing chunks and rerank scores — that is the
-  "glass box" premise and it is currently invisible.
-- **AgentsSquad** — no card yet (`public/previews/agentssquad.webp` exists and is
-  untracked). It takes the top slot in ELSEWHERE once it demos; at 4 cards the
+**Captured 2026-08-01 — second shot ready for each project:**
+
+| file | what it shows | how |
+| --- | --- | --- |
+| `ramsey-fault-tree.webp` | fault tree, 19 nodes, solved: P=0.005909 | driven live via Playwright against the running Docker stack |
+| `gitagents-dashboard.webp` | cost dashboard — $0.87430, 285 140 tokens, cost by file | cropped from `C:\git\gitagents-private\assets\dashboard-dark.png` |
+| `rag-evaluation.webp` | evaluation lab + the circular-metrics warning | cropped from `C:\git\GlassBoxRAG\assets\evaluation-warning-dark.png` |
+
+The RAMSey capture is reproducible: `scratchpad/shoot-ramsey.mjs` seeds
+`localStorage['ramsey-theme']='dark'`, creates a guest diagram, imports
+`examples/fault-tree-cooling-loss.json` through the real File → Import JSON flow,
+runs the solver, and shoots at deviceScaleFactor 2. Same flow as
+`e2e/import-example.spec.ts`.
+
+**Still to shoot (blocked, needs a decision or a credential):**
+
+- **GlassBox RAG — the pipeline trace.** `assets/pipeline-trace-dark.png` and
+  `traces-overview-dark.png` are exactly the right content (chunks, similarity
+  scores, per-stage timings) but every latency reads 110 000–268 000 ms, because
+  they were produced against local CPU Ollama. Three minutes an answer is not a
+  number to put on a portfolio. Needs a re-run against a faster backend — litellm
+  already supports hosted providers, so this is an API key, not a code change.
+- **RAMSey — two cursors mid-edit.** The summary leads with Yjs CRDTs and nothing
+  on screen shows collaboration. Needs a registered (non-guest) diagram plus two
+  browser contexts; guest mode has no Yjs at all. Doable with the auth flow in
+  `e2e/auth-journey.spec.ts` and the running mailpit, just more moving parts.
+- **GitAgents — a one-click fix landing.** Needs a live PR on a real repo with
+  tokens configured; `assets/bot-dark.png` covers the review comment only.
+- **AgentsSquad** — no card yet (`public/previews/agentssquad.webp` exists,
+  untracked). Takes the top slot in ELSEWHERE once it demos; at 4 cards the
   `.project-card-grid` orphan rule stops applying and the grid becomes a clean 2×2.
 
 ### 2. Not verified on a real device
