@@ -127,6 +127,13 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
     setDragPoint(null);
   };
 
+  /* Without this, a gesture the browser takes away mid-drag leaves
+   * dragFromIdx set and a preview line pinned to the last point it saw. */
+  const handleStarPointerCancel = () => {
+    setDragFromIdx(null);
+    setDragPoint(null);
+  };
+
   /**
    * One gradient ID per segment, scoped to the door so two stages can't
    * collide on the page. `userSpaceOnUse` + per-endpoint coordinates is
@@ -210,6 +217,15 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
             aspectRatio: '1 / 1',
             maxHeight: 'min(640px, 70vh)',
             display: 'block',
+            /* Has to live here, on the <svg>. The same declaration sits on
+             * each star's hit circle, where it does nothing: touch-action
+             * only applies to elements that generate a CSS box, and SVG
+             * child elements don't. So a touch drag was read as a pan, the
+             * browser took the gesture, and one pointermove in it fired
+             * pointercancel — the preview line froze and the drop never
+             * landed. Mouse drags were unaffected, which is why this only
+             * ever showed up on a phone. */
+            touchAction: 'none',
           }}
           initial={{ scale: 0.94, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -381,6 +397,7 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
                   onPointerDown={(e) => handleStarPointerDown(e, idx)}
                   onPointerMove={handleStarPointerMove}
                   onPointerUp={handleStarPointerUp}
+                  onPointerCancel={handleStarPointerCancel}
                   aria-label={`star ${idx + 1}`}
                   style={{ touchAction: 'none' }}
                 />
