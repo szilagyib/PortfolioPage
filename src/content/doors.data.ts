@@ -72,12 +72,12 @@ export const doors: readonly Door[] = [
         },
         {
           name: 'WebDiag', type: 'Web',
-          summary: 'Real-time diagnostics, data collection, fault analysis, and reporting for safety-critical railway signalling stations. Runs in production.',
+          summary: 'Real-time diagnostics, data collection, fault analysis, and reporting for safety-critical railway signalling stations. Runs in production. Leading the work to extend it to a new interlocking system family.',
           stack: ['Java','Spring','Postgres','Maven','Docker','React','TypeScript'],
         },
         {
           name: 'DisCom', type: 'Desktop + Web',
-          summary: 'Cross-border railway communication that translates a fixed operational phrasebook between languages. Deployed as a desktop client; a web variant is in the works.',
+          summary: 'Cross-border railway communication that translates a fixed operational phrasebook between languages. Deployed as a desktop client; a web variant is in the works. Delivered to two stations against a fixed external deadline, with operational inputs arriving the night before deployment.',
           stack: ['Java','Swing','Node.js','Express.js','React','Postgres','Maven','Docker'],
         },
         {
