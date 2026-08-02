@@ -93,7 +93,16 @@ export function ArtifactCard({
            * pentagon stage. Click anywhere outside the panel dismisses.
            * Backdrop padding is class-driven so it tightens on phones. */
           position: 'fixed',
-          inset: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          /* 100dvh rather than inset:0. A fixed element resolves against the
+           * layout viewport, which on a phone stays the tall URL-bar-hidden
+           * one — so with the bar showing, the overlay ran past the bottom
+           * of the screen and centring put the panel low, sitting closer to
+           * the bottom edge than the top. dvh tracks what is actually
+           * visible, which is also what the canvas shell underneath uses. */
+          height: '100dvh',
           pointerEvents: 'auto',
           zIndex: 10,
           cursor: 'default',

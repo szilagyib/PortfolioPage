@@ -32,6 +32,13 @@ const REVEAL_EASE = [0.16, 1, 0.3, 1] as const;
 /* Top-bar pill styling. All three buttons (CV, see-all, ↻) share the
  * same height/padding so they line up on a single row. CV keeps the
  * cyan accent to signal it's a download. */
+/* One height for every pill in the bar. The CV control nests its own
+ * padded segments inside the pill, so padding alone gave it a taller box
+ * than the plain-text buttons beside it and the row sat visibly uneven.
+ * Fixing the height and centring the contents makes the metric explicit
+ * instead of the sum of two paddings that only agree by accident. */
+const MOBILE_PILL_HEIGHT = 24;
+
 const MOBILE_PILL: CSSProperties = {
   fontFamily: 'var(--font-mono)',
   fontSize: 10,
@@ -39,7 +46,12 @@ const MOBILE_PILL: CSSProperties = {
   letterSpacing: '0.06em',
   color: 'var(--text-bright)',
   border: '1px solid var(--tech-line)',
-  padding: '5px 8px',
+  padding: '0 8px',
+  height: MOBILE_PILL_HEIGHT,
+  boxSizing: 'border-box',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   borderRadius: 4,
   background: 'rgba(13,18,48,0.55)',
   whiteSpace: 'nowrap',
@@ -48,6 +60,9 @@ const MOBILE_PILL: CSSProperties = {
 
 const MOBILE_PILL_CV: CSSProperties = {
   ...MOBILE_PILL,
+  /* stretch, not center: the pill's own segments carry the hover wash and
+   * the divider, and both need the full height to read as one control. */
+  alignItems: 'stretch',
   color: 'var(--accent-cyan)',
   borderColor: 'rgba(95, 184, 214, 0.45)',
   textDecoration: 'none',
@@ -246,7 +261,14 @@ export default function MobileCanvas() {
           left: 0,
           right: 0,
           overflowY: 'auto',
-          display: 'flex',
+          /* Gone entirely while a modal is up, not just dimmed. The panel
+           * has no backdrop of its own, so the strip used to show through
+           * the band above and below it — and because the way-out link
+           * unmounts at the same moment, the destination column's auto
+           * margin re-claimed that space and slid every row 67px down as
+           * the card opened. Hiding the strip settles both: nothing behind
+           * the panel, and nothing to move. The stars still show through. */
+          display: canvasIdle ? 'flex' : 'none',
           flexDirection: 'column',
           alignItems: 'center',
           padding: '8px 18px 28px',
