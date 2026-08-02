@@ -178,11 +178,11 @@ function orderedMetrics(
                   says ASK ME, so it only has to name the territory. The full
                   sentence ran past the edge of a phone screen.
 
-                  This note sits above the element, not among its attributes.
-                  Astro parses an attribute list as HTML, so a {/* */} comment
-                  inside one is a syntax error — it broke `astro check` (and
-                  with it `npm run typecheck`) while `astro build` still
-                  passed, so nothing surfaced it. */}
+                  This note sits above the element rather than among its
+                  attributes. Astro parses an attribute list as HTML, so a
+                  braced comment placed inside one is a syntax error — it
+                  broke `astro check`, and with it `npm run typecheck`, while
+                  `astro build` still passed, so nothing surfaced it. */}
               <input
                 id="plain-hero-question"
                 name="question"
@@ -1364,6 +1364,9 @@ function orderedMetrics(
     top: 102px;
   }
 
+  /* Title case, matching the section links in the header. The data is
+     already `About` / `Leadership`; this rule was flattening it, so the same
+     word appeared two ways depending on where you read it. */
   .plain-section-rail h2 {
     margin: 0;
     color: var(--accent-cyan);
@@ -1372,7 +1375,6 @@ function orderedMetrics(
     font-weight: 500;
     letter-spacing: 0.13em;
     line-height: 1.2;
-    text-transform: lowercase;
   }
 
   .plain-section-rail p {
