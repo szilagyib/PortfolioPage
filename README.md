@@ -1,10 +1,26 @@
 # PortfolioPage
 
-![The portfolio canvas: a pentagon of destinations around a central YOU star](public/previews/portfolio.webp)
+A portfolio that ships the same content twice: once as a page you read, once as
+a canvas you explore. Both render from one typed content source, so the copy
+cannot drift between them.
 
-Interactive single-page showcase portfolio built around a cosmic canvas,
-lightweight constellation puzzles, project cards, a CV download, and a scoped
-AI assistant.
+## Two surfaces
+
+**`/` — the written profile.** A linear, server-rendered page: hero, scoped AI
+assistant, then the full profile in sections. Readable without JavaScript, and
+the one that gets indexed.
+
+![The written profile: a dark hero with the headline "Engineering systems. Growing engineers.", an ask-me input, and a portrait in an orbit ring](public/previews/written-profile.webp)
+
+**`/interactive` — the canvas.** The same content as a pentagon of destinations
+around a central star. Each one unlocks through a small constellation puzzle, or
+"see everything" skips straight to the content. Falls back to a vertical strip on
+mobile and to a plain stack under `prefers-reduced-motion`.
+
+![The interactive canvas: five labelled destinations orbiting a bright central star, joined by faint constellation lines](public/previews/canvas.webp)
+
+Each links to the other, and `/interactive` canonicals to `/` — same content in
+two presentations should be one indexed URL, not two competing ones.
 
 ## Goal
 
@@ -41,7 +57,7 @@ src/config/        Feature switches
 src/content/       Typed portfolio content and assistant prompt
 src/domain/        Pure domain logic
 src/layouts/       Astro layouts
-src/pages/         Astro routes
+src/pages/         index (written profile), interactive (canvas), 404
 src/services/      API/browser service wrappers
 src/state/         Zustand state
 src/styles/        Global CSS and design tokens
@@ -50,6 +66,10 @@ tests/             Unit and component tests
 
 The site is static by default. Runtime behavior that needs secrets or abuse
 guards is isolated in Cloudflare Pages Functions.
+
+Both routes read `src/content/doors.data.ts`, which is typed as a union of
+content blocks — paragraphs, metrics, quotes, project cards. Each surface decides
+how to render a block; neither owns the words. A copy change lands in both.
 
 ## Checks
 
