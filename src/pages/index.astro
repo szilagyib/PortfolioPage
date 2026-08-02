@@ -132,8 +132,7 @@ function orderedMetrics(
               href={`#${section.id}`}
               data-plain-progress-link={section.id}
             >
-              <span class="plain-progress-dot" aria-hidden="true"></span>
-              <span>{toTitle(section.name)}</span>
+              {toTitle(section.name)}
             </a>
           ))}
         </nav>
@@ -175,15 +174,21 @@ function orderedMetrics(
               <span>ASK ME</span>
             </label>
             <div class="plain-hero-ask-row">
+              {/* Placeholder is terse on purpose: the label above already
+                  says ASK ME, so it only has to name the territory. The full
+                  sentence ran past the edge of a phone screen.
+
+                  This note sits above the element, not among its attributes.
+                  Astro parses an attribute list as HTML, so a {/* */} comment
+                  inside one is a syntax error — it broke `astro check` (and
+                  with it `npm run typecheck`) while `astro build` still
+                  passed, so nothing surfaced it. */}
               <input
                 id="plain-hero-question"
                 name="question"
                 type="text"
                 maxlength="250"
                 autocomplete="off"
-                {/* Terse on purpose: the label above already says ASK ME, so
-                    the placeholder only has to name the territory. The full
-                    sentence ran past the edge of a phone screen. */}
                 placeholder="engineering, leadership, AI…"
                 required
               />
@@ -508,41 +513,56 @@ function orderedMetrics(
     document.querySelectorAll<HTMLAnchorElement>('[data-plain-progress-link]'),
   );
 
-  /* Only the active-section highlight is observed now. The nav used to fade
-     itself in once the profile scrolled into view — it lived in the margin
-     and had to announce itself. In the header it is simply always there. */
-  if (progressLinks.length > 0 && 'IntersectionObserver' in window) {
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        const activeEntry = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const activeId = activeEntry?.target.id;
-        if (!activeId) return;
+  const tracked = progressLinks
+    .map((link) => {
+      const id = link.dataset.plainProgressLink;
+      const section = id ? document.getElementById(id) : null;
+      return section ? { link, section } : null;
+    })
+    .filter((entry): entry is { link: HTMLAnchorElement; section: HTMLElement } =>
+      entry !== null);
 
-        progressLinks.forEach((link) => {
-          const isActive = link.dataset.plainProgressLink === activeId;
-          link.classList.toggle('is-active', isActive);
-          if (isActive) {
-            link.setAttribute('aria-current', 'location');
-          } else {
-            link.removeAttribute('aria-current');
-          }
-        });
-      },
-      {
-        rootMargin: '-24% 0px -58% 0px',
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-      },
-    );
+  if (tracked.length > 0) {
+    let frame = 0;
 
-    progressLinks.forEach((link) => {
-      const sectionId = link.dataset.plainProgressLink;
-      const section = sectionId
-        ? document.getElementById(sectionId)
-        : null;
-      if (section) sectionObserver.observe(section);
-    });
+    /* The active section is the last one whose top has crossed a line a
+       third of the way down the viewport.
+
+       This used to rank IntersectionObserver entries by intersectionRatio,
+       which was wrong twice over. A callback only carries the sections whose
+       visibility just changed, so it ranked a subset and left the rest
+       untouched; and ratio is measured against each section's own height, so
+       a short section beat a tall one that filled the screen. The highlight
+       sat a section behind the page, and between crossings showed nothing. */
+    const sync = () => {
+      frame = 0;
+      const line = window.innerHeight / 3;
+
+      let active: typeof tracked[number] | null = null;
+      for (const entry of tracked) {
+        if (entry.section.getBoundingClientRect().top <= line) active = entry;
+      }
+
+      for (const entry of tracked) {
+        const isActive = entry === active;
+        entry.link.classList.toggle('is-active', isActive);
+        if (isActive) {
+          entry.link.setAttribute('aria-current', 'location');
+        } else {
+          entry.link.removeAttribute('aria-current');
+        }
+      }
+    };
+
+    /* Coalesced to one read per frame: the handler measures four elements,
+       and scroll fires far more often than the page can paint. */
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(sync);
+    };
+
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    sync();
   }
 </script>
 
@@ -762,39 +782,41 @@ function orderedMetrics(
     display: none;
     align-items: center;
     gap: 18px;
-    margin-left: 8px;
     font-family: var(--font-mono);
   }
 
   @media (min-width: 900px) {
     .plain-progress {
       display: flex;
+      /* Carries both groups to the right edge, so the section links sit
+         directly against the actions instead of stranded beside the brand. */
+      margin-left: auto;
+    }
+
+    /* The auto margin lives on .plain-progress at this width. Two of them
+       would split the free space and drop the section links back into the
+       middle of the bar. */
+    .plain-nav {
+      margin-left: 0;
     }
   }
 
+  /* No marker dot. It was a 5px gold circle, which is exactly what sits
+     inside the ASK ME button two items along — two small gold rings in one
+     bar read as one repeated element rather than two different meanings.
+     Gold is spoken for here: it marks the assistant and the link to the
+     other surface. The underline carries "you are here" without spending
+     it, and drops a piece of furniture from the row. */
   .plain-progress a {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid transparent;
     color: var(--text-faint);
     font-size: 10px;
     letter-spacing: 0.05em;
     text-decoration: none;
-    text-transform: lowercase;
-    transition: color var(--d-fast) var(--ease-out);
-  }
-
-  .plain-progress-dot {
-    width: 5px;
-    height: 5px;
-    flex: 0 0 auto;
-    border: 1px solid rgba(95, 184, 214, 0.42);
-    border-radius: 50%;
-    background: transparent;
     transition:
-      border-color var(--d-fast) var(--ease-out),
-      background var(--d-fast) var(--ease-out),
-      box-shadow var(--d-fast) var(--ease-out);
+      color var(--d-fast) var(--ease-out),
+      border-color var(--d-fast) var(--ease-out);
   }
 
   .plain-progress a:hover,
@@ -802,10 +824,8 @@ function orderedMetrics(
     color: var(--text-bright);
   }
 
-  .plain-progress a.is-active .plain-progress-dot {
-    border-color: var(--accent-warm);
-    background: var(--accent-warm);
-    box-shadow: 0 0 10px rgba(236, 200, 117, 0.7);
+  .plain-progress a.is-active {
+    border-bottom-color: var(--accent-cyan);
   }
 
   .plain-main {
