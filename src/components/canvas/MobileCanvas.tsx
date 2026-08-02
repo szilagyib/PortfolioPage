@@ -63,6 +63,10 @@ const MOBILE_PILL_CV: CSSProperties = {
   /* stretch, not center: the pill's own segments carry the hover wash and
    * the divider, and both need the full height to read as one control. */
   alignItems: 'stretch',
+  /* Inset matching .all-doors-header-cv, so the divider stops short of the
+   * border here the same way it does on the desktop surfaces instead of
+   * running edge to edge. */
+  padding: '3px 8px',
   color: 'var(--accent-cyan)',
   borderColor: 'rgba(95, 184, 214, 0.45)',
   textDecoration: 'none',

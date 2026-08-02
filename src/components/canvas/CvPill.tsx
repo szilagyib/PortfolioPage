@@ -16,14 +16,25 @@ const LABEL_TRANSITION = { duration: 0.18, ease: 'easeOut' } as const;
 const SEGMENT: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
+  justifyContent: 'center',
   gap: 4,
   /* Padding belongs to the segments, not the pill: it is what makes each
    * half its own hit target rather than two labels sharing one button. */
   padding: '2px 6px',
+  /* Collapse the leading so the box the flexbox centres is the type
+   * itself. With inherited line-height the box carried leading the label
+   * never used, and the pair rode high in the pill. */
+  lineHeight: 1,
   color: 'inherit',
   textDecoration: 'none',
   whiteSpace: 'nowrap',
 };
+
+/* Both labels are cap-height only — "CV" has no descender and the arrow
+ * sits on the baseline — so the ink lands slightly above the centre of a
+ * box that still reserves descender space. Half a pixel down puts the
+ * glyphs on the optical centre rather than the metric one. */
+const LABEL: CSSProperties = { transform: 'translateY(0.5px)' };
 
 const SEGMENT_HOVER = {
   background: 'rgba(95, 184, 214, 0.16)',
@@ -71,7 +82,7 @@ export function CvPill({ className, style }: CvPillProps) {
         whileHover={SEGMENT_HOVER}
         style={SEGMENT}
       >
-        CV
+        <span style={LABEL}>CV</span>
       </motion.a>
 
       <span
@@ -100,7 +111,7 @@ export function CvPill({ className, style }: CvPillProps) {
               exit={{ opacity: 0, y: 3 }}
               transition={LABEL_TRANSITION}
             >
-              ✓
+              <span style={LABEL}>✓</span>
             </motion.span>
           ) : (
             <motion.span
@@ -110,7 +121,7 @@ export function CvPill({ className, style }: CvPillProps) {
               exit={{ opacity: 0, y: -3 }}
               transition={LABEL_TRANSITION}
             >
-              ↓
+              <span style={LABEL}>↓</span>
             </motion.span>
           )}
         </AnimatePresence>
