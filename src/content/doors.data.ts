@@ -53,7 +53,7 @@ export const doors: readonly Door[] = [
     slots: 2,
     artifact: [
       { kind: 'paragraph', text:
-        '4 active products across rail and manufacturing, desktop and web. Java on all 4, Spring and Postgres behind the web ones, React and TypeScript in front.' },
+        '4 active products across rail and manufacturing, spanning desktop and web. All are built with Java, with Spring and PostgreSQL powering the web backends and React with TypeScript on the frontend.' },
       /* One product opened up before the list. The four cards below say what
        * exists; none of them show the judgment involved, which is the part
        * that actually reads as senior. Titanium is the right one to open:
