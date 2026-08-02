@@ -4,17 +4,20 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CvPill } from '@/components/canvas/CvPill';
-import { CvDownload } from '@/components/canvas/CvDownload';
 import { CV_PDF_PATH } from '@/config/cv';
 
-/* Both pills offer two actions over the same file: view (new tab) and
- * download. Previously each hard-coded the filename, which is how the
- * link drifted onto a stale PDF — these tests pin the shared constant
- * and the fact that the file actually ships in /public. */
-describe.each([
-  ['CvPill', CvPill],
-  ['CvDownload', CvDownload],
-])('%s', (_name, Component) => {
+/* The pill offers two actions over the same file: view (new tab) and
+ * download. It used to hard-code the filename, which is how the link
+ * drifted onto a stale PDF — these tests pin the shared constant and the
+ * fact that the file actually ships in /public.
+ *
+ * There was a second component here, CvDownload, covered by the same
+ * table: a near-copy of this one used only on the desktop pentagon, which
+ * is why the CV button looked different depending on the view. Every
+ * surface renders CvPill now. */
+describe('CvPill', () => {
+  const Component = CvPill;
+
   it('offers a view link that opens the PDF in a new tab', () => {
     render(<Component />);
     const view = screen.getByLabelText('view CV');

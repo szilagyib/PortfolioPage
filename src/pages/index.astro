@@ -684,7 +684,11 @@ function orderedMetrics(
 
   .plain-nav {
     display: flex;
-    align-items: center;
+    /* stretch, not center: the CV control builds its height from its own
+       nested segments and the other two build theirs from padding, so at
+       `center` the three settled at three different heights. Stretching
+       makes the row itself the single source of height. */
+    align-items: stretch;
     justify-content: flex-end;
     gap: 6px;
     /* Holds the actions against the right edge whether or not the section
@@ -709,6 +713,8 @@ function orderedMetrics(
   }
 
   .plain-nav-action {
+    display: inline-flex;
+    align-items: center;
     margin-left: 4px;
     padding: 6px 9px;
     border: 1px solid rgba(95, 184, 214, 0.34);

@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { CosmicBackground } from './CosmicBackground';
 import { SystemReadout } from './SystemReadout';
-import { CvDownload } from './CvDownload';
+import { CvPill } from './CvPill';
 import { PlainViewLink } from './PlainViewLink';
 import { SkipButton } from './SkipButton';
 import { YouStar } from './YouStar';
@@ -147,7 +147,14 @@ export default function Canvas() {
       {canvasIdle && (
         <>
           <SystemReadout />
-          <CvDownload />
+          {/* Same control as the see-all header and the written profile —
+            * this corner used to render a second, hand-built variant with a
+            * document icon and its own padding, so the CV button changed
+            * shape depending on which desktop view you were looking at. */}
+          <CvPill
+            className="all-doors-header-cv"
+            style={{ position: 'absolute', top: 64, left: 22 }}
+          />
           <PlainViewLink style={{ position: 'absolute', top: 100, left: 22 }} />
           <SkipButton
             onClick={openAll}
