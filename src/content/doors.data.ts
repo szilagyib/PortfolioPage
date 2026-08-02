@@ -180,11 +180,10 @@ export const doors: readonly Door[] = [
         kind: 'profileHeader',
         photo: { src: '/profile.jpg', alt: 'Portrait of Borbála Szilágyi' },
         name: 'Borbála Szilágyi',
-        /* Same string the written profile carries under its hero. The canvas
-           used to give only the city, so the two surfaces answered "where
-           is she" differently — and the city alone is the half that reads as
-           a filter. */
-        location: 'Budapest, Hungary · remote, timezone flexible',
+        /* City only, matching the written profile's hero. Working
+           arrangements are on the CV; repeating them here made the line a
+           pitch rather than a fact. */
+        location: 'Budapest, Hungary',
         contacts: [
           { icon: 'github',   label: 'GitHub',   href: 'https://github.com/szilagyib' },
           { icon: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/szilagyiborbala8' },
