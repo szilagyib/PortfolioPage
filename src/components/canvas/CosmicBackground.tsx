@@ -86,6 +86,14 @@ export function CosmicBackground() {
     if (typeof window === 'undefined') return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    /* Nothing to track without a mouse. The loop below used to run on
+     * phones too — forever, at every frame, writing two custom properties
+     * that several parallax layers read — so the browser restyled the
+     * whole background on every frame of every scroll, for a parallax
+     * offset that stayed pinned at zero. That is the scroll cost on the
+     * written profile, where this sits behind the hero. */
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
     const root = rootRef.current;
     if (!root) return;
 
@@ -94,12 +102,9 @@ export function CosmicBackground() {
     let currentX = 0;
     let currentY = 0;
     const smoothing = 0.08;
-
-    const onMove = (e: MouseEvent) => {
-      const { innerWidth: w, innerHeight: h } = window;
-      targetX = (e.clientX / w) * 2 - 1;
-      targetY = (e.clientY / h) * 2 - 1;
-    };
+    /* Below this the remaining travel is far under one device pixel, so
+     * further frames would repaint identical output. */
+    const SETTLED = 0.0005;
 
     let raf = 0;
     const tick = () => {
@@ -107,7 +112,23 @@ export function CosmicBackground() {
       currentY += (targetY - currentY) * smoothing;
       root.style.setProperty('--parallax-x', currentX.toFixed(3));
       root.style.setProperty('--parallax-y', currentY.toFixed(3));
+
+      if (
+        Math.abs(targetX - currentX) < SETTLED
+        && Math.abs(targetY - currentY) < SETTLED
+      ) {
+        /* Park the loop instead of idling. onMove restarts it. */
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(tick);
+    };
+
+    const onMove = (e: MouseEvent) => {
+      const { innerWidth: w, innerHeight: h } = window;
+      targetX = (e.clientX / w) * 2 - 1;
+      targetY = (e.clientY / h) * 2 - 1;
+      if (!raf) raf = requestAnimationFrame(tick);
     };
 
     window.addEventListener('mousemove', onMove, { passive: true });
