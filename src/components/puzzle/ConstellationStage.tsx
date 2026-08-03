@@ -69,6 +69,11 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
   const [dragFromIdx, setDragFromIdx] = useState<number | null>(null);
   const [dragPoint, setDragPoint] = useState<{ x: number; y: number } | null>(null);
 
+  /* Same value as dragFromIdx, readable during the pointerdown that sets
+   * it. The touchmove listener below runs before React has re-rendered, so
+   * it can't ask state whether a drag is in progress. */
+  const dragFromRef = useRef<number | null>(null);
+
   /**
    * Convert a pointer event's client position into SVG viewBox coordinates
    * using the SVG's own current transformation matrix. Unlike a manual
@@ -93,15 +98,14 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
 
   const handleStarPointerDown = (e: ReactPointerEvent<SVGCircleElement>, idx: number) => {
     e.stopPropagation();
+    dragFromRef.current = idx;
     setDragFromIdx(idx);
     setDragPoint({ x: stars[idx].x, y: stars[idx].y });
     setState((s) => tryClick(s, idx));
 
-    /* Best-effort, and last. Capture is a nicety here — the move and up
-     * handlers live on the <svg>, which the finger stays inside for the
-     * whole gesture — but engines disagree about when a pointer is
-     * capturable, and a throw used to happen before any of the state above
-     * was set, taking the star's light and the drag with it. */
+    /* Best-effort, and last: the move/up handlers live on the <svg>, which
+     * the finger stays inside anyway. Previously this ran first, so an
+     * engine refusing capture took the star's light down with it. */
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {
@@ -110,13 +114,15 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
   };
 
   const handleStarPointerMove = (e: ReactPointerEvent) => {
-    if (dragFromIdx === null) return;
+    if (dragFromRef.current === null) return;
     const p = eventToSvgCoords(e);
     if (p) setDragPoint(p);
   };
 
   const handleStarPointerUp = (e: ReactPointerEvent) => {
-    if (dragFromIdx === null) return;
+    const from = dragFromRef.current;
+    if (from === null) return;
+    dragFromRef.current = null;
     const p = eventToSvgCoords(e);
     if (p) {
       // Hit-test: which star (if any) is within 12 SVG units of release
@@ -124,7 +130,7 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
       // (~80px tap area) — well above Apple's 44px touch-target minimum,
       // so drag-drop lands even with a fingertip approximation.
       const hitIdx = stars.findIndex((s, i) => {
-        if (i === dragFromIdx) return false;
+        if (i === from) return false;
         const dx = s.x - p.x;
         const dy = s.y - p.y;
         return Math.sqrt(dx * dx + dy * dy) <= 12;
@@ -140,33 +146,32 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
   /* Without this, a gesture the browser takes away mid-drag leaves
    * dragFromIdx set and a preview line pinned to the last point it saw. */
   const handleStarPointerCancel = () => {
+    dragFromRef.current = null;
     setDragFromIdx(null);
     setDragPoint(null);
   };
 
   /**
-   * Holds the gesture for the duration of a drag.
+   * Keeps the gesture while a drag is running. `touch-action: none` on the
+   * <svg> handles Chromium, but WebKit doesn't apply touch-action to SVG
+   * content, so on iOS the browser can still read the drag as a page pan
+   * and cancel the pointer mid-line. preventDefault on touchmove holds it
+   * in every engine.
    *
-   * `touch-action: none` on the <svg> covers Chromium, but WebKit does not
-   * apply touch-action to SVG content at all — so on iOS the first move of
-   * a drag still reads as a page pan, the browser claims the gesture and
-   * fires pointercancel, and the line stops following the finger. Calling
-   * preventDefault on touchmove keeps it, and works the same everywhere.
-   *
-   * Native and explicitly non-passive: React's own touch listeners are
-   * passive, where preventDefault is a no-op. Only bound while a drag is
-   * actually in progress, so ordinary scrolling over the puzzle is
-   * untouched.
+   * Native and non-passive — React's touch listeners are passive, where
+   * preventDefault does nothing. Bound once, gated on the ref, so normal
+   * scrolling over the puzzle is unaffected.
    */
   useEffect(() => {
-    if (dragFromIdx === null) return;
     const svg = svgRef.current;
     if (!svg) return;
 
-    const hold = (e: TouchEvent) => e.preventDefault();
+    const hold = (e: TouchEvent) => {
+      if (dragFromRef.current !== null) e.preventDefault();
+    };
     svg.addEventListener('touchmove', hold, { passive: false });
     return () => svg.removeEventListener('touchmove', hold);
-  }, [dragFromIdx]);
+  }, []);
 
   /**
    * One gradient ID per segment, scoped to the door so two stages can't
