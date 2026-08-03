@@ -92,20 +92,30 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
   };
 
   const handleStarPointerDown = (e: ReactPointerEvent<SVGCircleElement>, idx: number) => {
-    e.currentTarget.setPointerCapture(e.pointerId);
     e.stopPropagation();
     setDragFromIdx(idx);
     setDragPoint({ x: stars[idx].x, y: stars[idx].y });
     setState((s) => tryClick(s, idx));
+
+    /* Best-effort, and last. Capture is a nicety here — the move and up
+     * handlers live on the <svg>, which the finger stays inside for the
+     * whole gesture — but engines disagree about when a pointer is
+     * capturable, and a throw used to happen before any of the state above
+     * was set, taking the star's light and the drag with it. */
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* capture refused; the svg-level handlers carry the drag */
+    }
   };
 
-  const handleStarPointerMove = (e: ReactPointerEvent<SVGCircleElement>) => {
+  const handleStarPointerMove = (e: ReactPointerEvent) => {
     if (dragFromIdx === null) return;
     const p = eventToSvgCoords(e);
     if (p) setDragPoint(p);
   };
 
-  const handleStarPointerUp = (e: ReactPointerEvent<SVGCircleElement>) => {
+  const handleStarPointerUp = (e: ReactPointerEvent) => {
     if (dragFromIdx === null) return;
     const p = eventToSvgCoords(e);
     if (p) {
@@ -133,6 +143,30 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
     setDragFromIdx(null);
     setDragPoint(null);
   };
+
+  /**
+   * Holds the gesture for the duration of a drag.
+   *
+   * `touch-action: none` on the <svg> covers Chromium, but WebKit does not
+   * apply touch-action to SVG content at all — so on iOS the first move of
+   * a drag still reads as a page pan, the browser claims the gesture and
+   * fires pointercancel, and the line stops following the finger. Calling
+   * preventDefault on touchmove keeps it, and works the same everywhere.
+   *
+   * Native and explicitly non-passive: React's own touch listeners are
+   * passive, where preventDefault is a no-op. Only bound while a drag is
+   * actually in progress, so ordinary scrolling over the puzzle is
+   * untouched.
+   */
+  useEffect(() => {
+    if (dragFromIdx === null) return;
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const hold = (e: TouchEvent) => e.preventDefault();
+    svg.addEventListener('touchmove', hold, { passive: false });
+    return () => svg.removeEventListener('touchmove', hold);
+  }, [dragFromIdx]);
 
   /**
    * One gradient ID per segment, scoped to the door so two stages can't
@@ -210,6 +244,14 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
         <motion.svg
           ref={svgRef}
           onClick={(e) => e.stopPropagation()}
+          /* Move/up live on the stage, not on each star. A finger that
+           * leaves the 12-unit hit circle mid-drag — which is the whole
+           * point of dragging — stops getting events from it unless
+           * pointer capture held, so the drag hung on capture succeeding.
+           * The stage is under the finger for the entire gesture. */
+          onPointerMove={handleStarPointerMove}
+          onPointerUp={handleStarPointerUp}
+          onPointerCancel={handleStarPointerCancel}
           viewBox="0 0 100 100"
           preserveAspectRatio="xMidYMid meet"
           width="min(640px, 100%)"
@@ -395,9 +437,6 @@ export function ConstellationStage({ door, onClose, onSolved }: ConstellationSta
                   fill="transparent"
                   onClick={() => handleStarClick(idx)}
                   onPointerDown={(e) => handleStarPointerDown(e, idx)}
-                  onPointerMove={handleStarPointerMove}
-                  onPointerUp={handleStarPointerUp}
-                  onPointerCancel={handleStarPointerCancel}
                   aria-label={`star ${idx + 1}`}
                   style={{ touchAction: 'none' }}
                 />
