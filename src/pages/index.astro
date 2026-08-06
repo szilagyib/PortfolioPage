@@ -868,15 +868,17 @@ function orderedMetrics(
      the column had no room for, and at the 92px cap the second line finished
      on top of the orbit rings.
 
-     `10.4cqw` measures the copy column itself. It comes from the longer line,
-     `Engineering systems.`, which sets about 8.4em wide here, plus headroom.
-     It sits outside the clamp on purpose, so it can also win under the 44px
-     floor — below ~800px the column is narrow enough that the floor would
-     overflow it again. */
+     `11.4cqw` measures the copy column itself. `Engineering systems.` sets at
+     a measured 8.418x its font-size in Inter 500 at this tracking, constant at
+     every width, so 1/8.418 = 11.88cqw would fill the column exactly and 11.4
+     leaves 4% for a fallback face to be wider than Inter during a font swap.
+     Even then it spends the 56px gap, not the portrait. It sits outside the
+     clamp on purpose, so it can also win under the 44px floor — below ~800px
+     the column is narrow enough that the floor would overflow it again. */
   .plain-hero h1 {
     max-width: 780px;
     margin: 0;
-    font-size: min(clamp(44px, min(7vw, 12svh), 92px), 10.4cqw);
+    font-size: min(clamp(44px, min(7vw, 12svh), 92px), 11.4cqw);
     font-weight: 500;
     line-height: 0.98;
     letter-spacing: -0.055em;
@@ -1886,6 +1888,13 @@ function orderedMetrics(
     .plain-hero {
       grid-template-columns: minmax(0, 1fr) 200px;
       gap: 32px;
+    }
+
+    /* The base rule's 220px floor outlived the track it was written for: in a
+       200px column the picture drew 220px wide and leaned 20px back into the
+       gap. Track and element have to name the same number. */
+    .plain-portrait-orbit {
+      width: 200px;
     }
 
     .plain-section {
