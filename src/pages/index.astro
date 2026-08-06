@@ -567,7 +567,19 @@ function orderedMetrics(
 </script>
 
 <style>
+  /* One shell width for the bar and the document beneath it, so their left
+     edges are the same line at every viewport.
+
+     It grew a second stage for wide displays. Capped flat at 1200px, the page
+     was a 1200px island on a 3440px monitor and the headline — which sizes
+     itself off its column — had no way to answer the extra room: it read the
+     same on an ultrawide as on a 1440px laptop. `70vw` takes over once it
+     exceeds 1200px, at about 1715px, and runs out at 1440px, so the widening
+     is continuous either side of the handover and there is no breakpoint to
+     jump at. 1440px is where the document's own line-length caps take back
+     control, so growing past it would only stretch the card, not the page. */
   .plain-page {
+    --shell: min(100% - 40px, clamp(1200px, 70vw, 1440px));
     position: relative;
     z-index: 1;
     min-height: 100dvh;
@@ -648,7 +660,7 @@ function orderedMetrics(
      than it was for two, and the section nav takes the slack instead of one
      wide void in the middle. */
   .plain-topbar-inner {
-    width: min(100% - 40px, 1200px);
+    width: var(--shell);
     min-height: 68px;
     margin: 0 auto;
     display: flex;
@@ -835,7 +847,7 @@ function orderedMetrics(
   }
 
   .plain-main {
-    width: min(100% - 40px, 1200px);
+    width: var(--shell);
     margin: 0 auto;
   }
 
@@ -843,21 +855,30 @@ function orderedMetrics(
      and both used to take more than the row could spare: a 390px picture and
      a 100px gap left the copy column 638px inside a 1200px page, which is not
      enough for the headline at the size the viewport was asking for. Trimmed
-     to 330 and 56, the column is 742px. */
+     to 330 and 56, the column is 742px.
+
+     `--portrait` grows over the same span as `--shell`, so the picture keeps
+     its share of a row that is getting wider instead of sitting still while
+     the headline takes all of the new room. Both the track and the element
+     read it, which is the whole point of naming it: they were two literals
+     that had to agree, and below 980px they had already drifted apart. */
   .plain-hero {
+    --portrait: clamp(330px, 18vw, 380px);
     min-height: calc(100svh - 68px);
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(220px, min(26vw, 44svh, 330px));
+    grid-template-columns: minmax(0, 1fr) minmax(220px, min(26vw, 44svh, var(--portrait)));
     gap: clamp(28px, 4vw, 56px);
     align-items: center;
     padding: clamp(34px, 7svh, 80px) clamp(8px, 3vw, 36px);
   }
 
   /* Query container for the headline below, which has to size itself against
-     this column rather than the viewport. */
+     this column rather than the viewport. The cap is the headline's ceiling at
+     its widest, not a reading measure — the deck and the ask row set their own,
+     narrower ones, so raising this does not lengthen a line of prose. */
   .plain-hero-copy {
     container-type: inline-size;
-    max-width: 760px;
+    max-width: 920px;
   }
 
   /* The `cqw` term is the one doing the real work. Both lines are `nowrap`,
@@ -874,11 +895,18 @@ function orderedMetrics(
      leaves 4% for a fallback face to be wider than Inter during a font swap.
      Even then it spends the 56px gap, not the portrait. It sits outside the
      clamp on purpose, so it can also win under the 44px floor — below ~800px
-     the column is narrow enough that the floor would overflow it again. */
+     the column is narrow enough that the floor would overflow it again.
+
+     No `max-width` here any more. It was 780px, which never bound while the
+     column was 742px, and would have started clipping the moment the shell
+     grew — a second, staler bound on a width `.plain-hero-copy` already owns.
+     The 110px cap replaces 92px for the same reason: 92 was below what the
+     column can now feed the headline, so it, not the column, would have
+     decided the size on a wide display. `12svh` still holds the ceiling down
+     on short screens, which is what keeps the hero inside one screenful. */
   .plain-hero h1 {
-    max-width: 780px;
     margin: 0;
-    font-size: min(clamp(44px, min(7vw, 12svh), 92px), 11.4cqw);
+    font-size: min(clamp(44px, min(7vw, 12svh), 110px), 11.4cqw);
     font-weight: 500;
     line-height: 0.98;
     letter-spacing: -0.055em;
@@ -1073,7 +1101,7 @@ function orderedMetrics(
 
   .plain-portrait-orbit {
     position: relative;
-    width: clamp(220px, min(25vw, 44svh), 330px);
+    width: clamp(220px, min(25vw, 44svh), var(--portrait));
     aspect-ratio: 1;
     display: grid;
     place-items: center;
@@ -1912,6 +1940,18 @@ function orderedMetrics(
        put the alternating rows back on the narrow track. */
     .plain-project-reverse {
       grid-template-columns: minmax(240px, 0.85fr) minmax(280px, 1.15fr);
+    }
+  }
+
+  /* Once the shell has finished growing, the section content track outruns its
+     own 850px cap and the card is left with an empty strip down the right.
+     The rail takes that width instead of the prose: `.plain-section-content`
+     stays at 850px, because at 17px body copy that is already about 100
+     characters a line and 950 would be 112. A wider card is worth having; a
+     longer line is not. */
+  @media (min-width: 2000px) {
+    .plain-section {
+      grid-template-columns: minmax(170px, 320px) minmax(0, 1fr);
     }
   }
 
